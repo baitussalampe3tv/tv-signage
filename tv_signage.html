@@ -424,7 +424,7 @@
     imgs   = slides.filter(isImg);
     quotes = slides.filter(isQuote);
 
-    // MODE TANPA GAMBAR → tampilkan quote langsung
+    /* === MODE TANPA GAMBAR → tampilkan quote langsung === */
     if(imgs.length===0 && quotes.length>0){
       board.style.display="none";
       const firstQ = quotes[0];
@@ -435,8 +435,14 @@
       board.style.display="grid";
       aPtr=0; bPtr=(imgs.length>1?1:0); cPtr=(imgs.length>2?2:(imgs.length>1?0:0));
       cycle("A"); setTimeout(()=>cycle("B"),400); setTimeout(()=>cycle("C"),800);
-      // tampilkan quote pertama cepat (1 detik) agar terasa langsung
-      if(quotes.length>0) queueNextQuote(1000);
+
+      // === PATCH BARU: TAMPILKAN QUOTE PERTAMA LANGSUNG ===
+      if(quotes.length>0){
+        const firstQ = quotes.shift();
+        quotes.push(firstQ);
+        showQuoteFullscreen(firstQ, Number(firstQ.durationSec||10));
+        // setelah selesai, showQuoteFullscreen otomatis panggil queueNextQuote()
+      }
     }
 
     // Ticker
