@@ -1,199 +1,3 @@
-<!doctype html>
-<html lang="id">
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TV Signage – Masjid</title>
-<style>
-  :root{
-    --bg1:#E8FFF7; --bg2:#D9F7F0;
-    --panel:#F4FBF8; --border:#B6E2D5;
-    --gold:#C9A23C; --text:#102A27; --muted:#3A5F58;
-    --shadow:0 12px 40px rgba(0,0,0,.16);
-    --tickerBg:#0B1C53; --tickerText:#FFFFFF;
-  }
-  /* THEME: EMERALD */
-  body.theme-emerald{
-    --bg1:#0d2d28; --bg2:#134238;
-    --panel:#123a32; --border:#2f6b5e;
-    --gold:#e8c15a; --text:#EAF7F3; --muted:#bfe4d8;
-    --shadow:0 16px 48px rgba(0,0,0,.28);
-    --tickerBg:#0f3b34; --tickerText:#fdfdfd;
-  }
-  /* THEME: GOLD */
-  body.theme-gold{
-    --bg1:#fff7e0; --bg2:#ffefc6;
-    --panel:#fff8e8; --border:#f0db9a;
-    --gold:#d5a921; --text:#2b240f; --muted:#5b4d1d;
-    --shadow:0 16px 48px rgba(0,0,0,.18);
-    --tickerBg:#7a5a12; --tickerText:#fffaf0;
-  }
-
-  html,body{height:100%;margin:0;overflow:hidden;font-family:Inter,"Segoe UI",Roboto,system-ui,Arial,sans-serif}
-  body{
-    background:
-      radial-gradient(1200px 700px at 10% 0%, rgba(36,198,174,.25), transparent 60%),
-      radial-gradient(1200px 700px at 90% 10%, rgba(0,184,148,.22), transparent 60%),
-      linear-gradient(180deg, var(--bg1), var(--bg2));
-  }
-
-  /* =================== TOP BAR =================== */
-  .topbar{
-    position:fixed; top:14px; left:16px; right:16px;
-    display:grid; grid-template-columns:auto 1fr; align-items:start;
-    gap:16px; z-index:5;
-  }
-  .brand{
-    display:flex; gap:12px; align-items:center;
-    padding:10px 14px;
-    background:linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.10));
-    border-radius:14px; box-shadow:var(--shadow);
-    border:1px solid var(--border);
-    backdrop-filter: blur(6px);
-  }
-  .brand img{height:44px;width:auto;display:block}
-  .brand-text{display:flex; flex-direction:column; line-height:1.1}
-  .brand-name{color:var(--text); font-weight:900; font-size:18px}
-  .brand-sub{color:var(--muted); font-weight:700; font-size:13px}
-
-  /* Panel Waktu Sholat */
-  .pray-wrap{display:flex; justify-content:flex-end}
-  .prayer{
-    display:grid; grid-template-columns:auto 1fr auto auto; align-items:center; gap:14px;
-    padding:10px 14px;
-    background:linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.10));
-    border-radius:14px; box-shadow:var(--shadow);
-    border:1px solid var(--border); color:var(--text);
-    min-width:min(72vw,1320px); backdrop-filter: blur(6px);
-  }
-  .prayer .heading{font-weight:900; color:var(--text)}
-  .pt{display:grid; grid-template-columns:repeat(6, auto auto); gap:6px 14px; align-items:center} /* +Syuruq */
-  .pt .name{color:var(--muted); font-weight:800}
-  .pt .time{font-weight:900; color:var(--text)}
-  .next{color:var(--gold); font-weight:900}
-  .cd{font-weight:900; color:var(--text)}
-
-  /* ================ STAGE (BOARD + FRAMES) ================ */
-  #stage{
-    position:relative; margin:128px 16px 58px; border-radius:22px;
-    background:linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
-    box-shadow:var(--shadow); overflow:hidden; display:grid; place-items:center;
-    border:1px solid var(--border);
-  }
-  .board{
-    width:min(92vw,1680px); height:min(70vh,820px);
-    background:linear-gradient(180deg, var(--panel), color-mix(in srgb, var(--panel), #000 6%));
-    border-radius:20px; border:1px solid var(--border);
-    box-shadow:inset 0 0 0 2px rgba(255,255,255,.20);
-    padding:22px; display:grid; grid-template-columns:2fr 1fr; gap:22px;
-  }
-  .frame{
-    position:relative; background:linear-gradient(180deg, color-mix(in srgb, var(--panel), #fff 6%), var(--panel));
-    border-radius:14px; overflow:hidden;
-    box-shadow:0 8px 24px rgba(0,0,0,.18), inset 0 0 0 2px rgba(255,255,255,.20);
-    border:1px solid var(--border);
-  }
-  .stack{display:grid; grid-template-rows:1fr 1fr; gap:22px}
-  .frame img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .6s ease}
-  .frame img.show{opacity:1}
-  .caption{
-    position:absolute; left:14px; right:14px; bottom:14px; padding:12px 14px;
-    background:linear-gradient(180deg, rgba(0,0,0,.00), rgba(0,0,0,.22));
-    color:#fff; border-radius:10px; border:1px solid rgba(255,255,255,.15)
-  }
-  .cap-title{font-weight:900; font-size:clamp(18px,2.0vw,26px); margin:0 0 4px}
-  .cap-desc{font-weight:600; font-size:clamp(14px,1.4vw,18px); margin:0; opacity:.92}
-
-  /* ====== QUOTE FULLSCREEN ====== */
-  #quoteOverlay{
-    position:absolute; inset:0; display:none; align-items:center; justify-content:center; z-index:3;
-  }
-  .qcard{
-    width:100%; height:100%; display:grid; place-items:center; padding:26px;
-    background:
-      linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.55)),
-      url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiNlOGMxNWEiIHN0cm9rZS1vcGFjaXR5PSIwLjE0IiBzdHJva2Utd2lkdGg9IjEiPjxwYXRoIGQ9Ik0wLDMwSDYwIi8+PHBhdGggZD0iTTMwLDBWNjAiLz48cGF0aCBkPSJNMCwwbDYwLDYwIi8+PHBhdGggZD0iTTYwLDBMMCw2MCIvPjxjaXJjbGUgY3g9IjMwIiBjeT0iMzAiIHI9IjgiLz48L2c+PC9zdmc+") center/60px 60px repeat;
-  }
-  .qwrap{max-width:84%;background:rgba(0,0,0,.38);border:1px solid rgba(255,255,255,.22);border-radius:18px;padding:28px 34px;color:#fff;box-shadow:0 12px 30px rgba(0,0,0,.35)}
-  .qtext{font-weight:900;font-size:clamp(22px,3.2vw,48px);line-height:1.35;margin:0 0 10px;text-align:center;text-shadow:0 2px 6px rgba(0,0,0,.45)}
-  .qsrc{font-weight:700;font-size:clamp(14px,1.6vw,22px);opacity:.95;margin:0;text-align:center}
-
-  /* ================ PRAYER OVERLAY (IQOMAH FULLSCREEN) ================ */
-  #prayerOverlay{
-    position:absolute; inset:0; display:none; align-items:center; justify-content:center;
-    background:linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.65));
-    z-index:4;
-  }
-  .pCard{
-    display:grid; gap:12px; place-items:center;
-    padding:30px 40px; border-radius:22px;
-    background:linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.10));
-    border:1px solid var(--border); box-shadow:var(--shadow);
-    color:#fff; text-align:center; backdrop-filter:blur(6px);
-  }
-  .pTitle{font-weight:900; font-size:clamp(28px,3.2vw,56px); letter-spacing:.4px}
-  .pName{font-weight:900; font-size:clamp(34px,4vw,72px); color:var(--gold)}
-  .pTimer{font-weight:900; font-size:clamp(48px,7vw,120px); letter-spacing:1px}
-
-  /* ================ TICKER (loop + pause) ================ */
-  #ticker{display:none; position:fixed; left:0; right:0; bottom:0;
-    background:var(--tickerBg); color:var(--tickerText); min-height:48px; align-items:center; overflow:hidden}
-  #tickerInner{white-space:nowrap; will-change:transform; padding:0 100vw 0 0}
-  #tickerText{display:inline-block; padding:12px 28px; font-size:clamp(16px,1.6vw,22px); font-weight:800; letter-spacing:.2px}
-</style>
-</head>
-<body class="theme-emerald">
-  <!-- TOPBAR -->
-  <div class="topbar">
-    <div class="brand">
-      <img src="logo.png" alt="Logo">
-      <div class="brand-text">
-        <div class="brand-name">Masjid Baitussalam</div>
-        <div class="brand-sub">Premier Estate 3</div>
-      </div>
-    </div>
-    <div class="pray-wrap">
-      <div class="prayer">
-        <div class="heading">Waktu Sholat</div>
-        <div class="pt" id="pt"></div>
-        <div class="next" id="next">-</div>
-        <div class="cd" id="cd">--:--:--</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- STAGE -->
-  <div id="stage">
-    <div class="board" id="board">
-      <div class="frame" id="frameA"></div>
-      <div class="stack">
-        <div class="frame" id="frameB"></div>
-        <div class="frame" id="frameC"></div>
-      </div>
-    </div>
-
-    <!-- QUOTE FULLSCREEN -->
-    <div id="quoteOverlay">
-      <div class="qcard">
-        <div class="qwrap">
-          <p class="qtext" id="qtext"></p>
-          <p class="qsrc" id="qsrc"></p>
-        </div>
-      </div>
-    </div>
-
-    <!-- IQOMAH FULLSCREEN -->
-    <div id="prayerOverlay">
-      <div class="pCard">
-        <div class="pTitle">Menuju Iqomah</div>
-        <div class="pName" id="pName">Sholat</div>
-        <div class="pTimer" id="pTimer">--:--</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- TICKER -->
-  <div id="ticker"><div id="tickerInner"><span id="tickerText"></span></div></div>
-
 <script>
 (function(){
   const qs=new URLSearchParams(location.search);
@@ -211,8 +15,8 @@
   const imagesParam=qs.get("images");
   const tickerParam=qs.get("ticker");
   const showTicker=["1","true","yes","on"].includes((qs.get("showTicker")||"").toLowerCase());
-  const tickerPauseSec = parseFloat(qs.get("tickerPauseSec")||"2");   // jeda 2 detik (default)
-  const tickerSpeed = parseFloat(qs.get("tickerSpeed")||"120");       // px per detik (lebih besar = lebih cepat)
+  const tickerPauseSec = parseFloat(qs.get("tickerPauseSec")||"2");
+  const tickerSpeed = parseFloat(qs.get("tickerSpeed")||"120");
 
   /* ====== Elements ====== */
   const frameA=document.getElementById("frameA");
@@ -233,10 +37,14 @@
   const cdEl=document.getElementById("cd");
 
   /* ====== Slides (image + quote) ====== */
-  let slides=[]; // {url,title,desc,durationSec} | {quote,source,durationSec}
-  let idxA=0, idxB=1, idxC=2; let tA,tB,tC;
+  let slides=[];            // campuran: {url,title,desc,durationSec} | {quote,source,durationSec}
+  let imgIdx=[];            // index-index di 'slides' yang bertipe gambar saja
+  let aPtr=0,bPtr=1,cPtr=2; // pointer mandiri untuk A/B/C → indeks ke imgIdx
+  let tA,tB,tC;
   let showingQuote=false, quoteTimer=null;
 
+  function isImg(item){ return !!item.url; }
+  function isQuote(item){ return !!item.quote; }
   function createImg(src){ const i=new Image(); i.src=src; i.decoding="async"; i.loading="eager"; return i; }
 
   function mountFrame(frame, s){
@@ -256,55 +64,78 @@
     if(which==="C"){clearTimeout(tC);tC=setTimeout(fn,ms);}
   }
 
-  function cycle(which){
-    if(!slides.length || showingQuote) return;
-    let i=(which==="A"?idxA:which==="B"?idxB:idxC)%slides.length;
-    const s=slides[i];
-
-    // Jika slide adalah QUOTE → tampilkan fullscreen, jeda semua frame
-    if(s.quote){
-      showingQuote=true;
-      clearTimeout(tA); clearTimeout(tB); clearTimeout(tC);
-      board.style.visibility="hidden";
-      quoteOverlay.style.display="flex";
-      qtext.textContent = s.quote;
-      qsrc.textContent = s.source || "";
-      const dur = Number(s.durationSec||10);
-      clearTimeout(quoteTimer);
-      quoteTimer=setTimeout(()=>{
-        quoteOverlay.style.display="none";
-        board.style.visibility="visible";
-        showingQuote=false;
-        // advance indeks agar tidak mengulang quote terus
-        idxA=(i+1)%slides.length; idxB=idxA; idxC=idxA;
-        // lanjut lagi rotasi
-        cycle("A"); setTimeout(()=>cycle("B"),1000); setTimeout(()=>cycle("C"),2000);
-      }, dur*1000);
-      return;
-    }
-
-    // Jika slide adalah GAMBAR → render di frame terkait
-    const dur=Number(s.durationSec||8);
-    if(which==="A"){ mountFrame(frameA,s); idxA=(i+1)%slides.length; schedule("A",dur); }
-    if(which==="B"){ mountFrame(frameB,s); idxB=(i+1)%slides.length; schedule("B",dur); }
-    if(which==="C"){ mountFrame(frameC,s); idxC=(i+1)%slides.length; schedule("C",dur); }
+  // Tampilkan quote fullscreen & jeda board sepenuhnya
+  function showQuoteFullscreen(item, durSec){
+    showingQuote=true;
+    clearTimeout(tA); clearTimeout(tB); clearTimeout(tC);
+    // Sembunyikan board total agar tidak ada “bayangan” gambar di balik quote
+    board.style.display="none";
+    quoteOverlay.style.display="flex";
+    qtext.textContent=item.quote;
+    qsrc.textContent=item.source||"";
+    clearTimeout(quoteTimer);
+    quoteTimer=setTimeout(()=>{
+      quoteOverlay.style.display="none";
+      board.style.display="grid";
+      showingQuote=false;
+      // lanjut rotasi lagi tanpa mengubah pointer A/B/C (supaya tidak sinkron)
+      cycle("A"); setTimeout(()=>cycle("B"),1000); setTimeout(()=>cycle("C"),2000);
+    }, (durSec||10)*1000);
   }
 
-  /* ====== Ticker (loop + jeda 2 detik) ====== */
+  function nextImage(of){ // of: "A"|"B"|"C" → ambil item gambar untuk frame tsb, geser pointer-nya
+    if(imgIdx.length===0) return null;
+    if(of==="A"){ const item=slides[ imgIdx[(aPtr%imgIdx.length+imgIdx.length)%imgIdx.length] ]; aPtr=(aPtr+1)%imgIdx.length; return item; }
+    if(of==="B"){ const item=slides[ imgIdx[(bPtr%imgIdx.length+imgIdx.length)%imgIdx.length] ]; bPtr=(bPtr+1)%imgIdx.length; return item; }
+    const item=slides[ imgIdx[(cPtr%imgIdx.length+imgIdx.length)%imgIdx.length] ]; cPtr=(cPtr+1)%imgIdx.length; return item;
+  }
+
+  function cycle(which){
+    if(showingQuote) return;
+    // Cek apakah slide terdekat berikutnya adalah QUOTE (global) → bila ya, tampilkan & jangan render image dulu.
+    // Caranya: lihat pointer “terdepan” di antara aPtr/bPtr/cPtr (sekedar heuristik)
+    const ahead = Math.min(aPtr,bPtr,cPtr);
+    const globalNext = slides[ imgIdx.length? imgIdx[ahead % imgIdx.length] : 0 ];
+    // Kalau slide berikutnya di daftar global ada item QUOTE di urutan slides (bukan imgIdx), kita tetap biarkan frame berjalan;
+    // tetapi, agar quote bisa muncul sesuai urutan di 'slides', kita cek di bawah saat applyConfig (lihat pemanggilan initialQuoteCheck).
+
+    // Render satu frame
+    const imgItem = nextImage(which);
+    if(imgItem){ 
+      const dur = Number(imgItem.durationSec||8);
+      if(which==="A"){ mountFrame(frameA,imgItem); schedule("A",dur); }
+      if(which==="B"){ mountFrame(frameB,imgItem); schedule("B",dur); }
+      if(which==="C"){ mountFrame(frameC,imgItem); schedule("C",dur); }
+    }
+  }
+
+  /* ====== Quote scheduler: tampilkan quote pada giliran mereka ======
+     Kita jalan independen dari frame, agar quote tidak “mengambil” pointer frame. */
+  let quoteQueue=[]; // [{quote,source,durationSec}]
+  let quotePoll=null;
+  function startQuotePoll(){
+    clearInterval(quotePoll);
+    if(quoteQueue.length===0) return;
+    quotePoll=setInterval(()=>{
+      if(showingQuote) return;
+      // Ambil satu quote secara bergiliran
+      const q=quoteQueue.shift();
+      quoteQueue.push(q);
+      showQuoteFullscreen(q, Number(q.durationSec||10));
+    }, 12000); // coba tampilkan quote setiap ±12 detik (akan override jika sedang tampil)
+  }
+
+  /* ====== Ticker (loop + jeda) ====== */
   function startTicker(){
-    // restart state
     tickerInner.style.transition="none";
-    // start from right edge
     tickerInner.style.transform=`translateX(${window.innerWidth}px)`;
     requestAnimationFrame(()=>{
       const width=tickerInner.getBoundingClientRect().width;
       const total=width + window.innerWidth;
-      const dur= total / Math.max(60, tickerSpeed); // px/s → detik
-      // animate to left end
+      const dur= total / Math.max(60, tickerSpeed);
       tickerInner.style.transition=`transform ${dur}s linear`;
       tickerInner.style.transform=`translateX(-${width}px)`;
       tickerInner.ontransitionend = ()=>{
-        // pause sebentar (default 2s), lalu ulang
         setTimeout(startTicker, Math.max(0,tickerPauseSec)*1000);
       };
     });
@@ -340,7 +171,7 @@
     const y=today.toLocaleString('en-CA',{year:'numeric',timeZone:tz});
     const m=today.toLocaleString('en-CA',{month:'2-digit',timeZone:tz});
     const d=today.toLocaleString('en-CA',{day:'2-digit',timeZone:tz});
-    // MyQuran (Jakarta=1301) — gunakan 'terbit' untuk Syuruq
+    // MyQuran
     try{
       const r=await fetch(`https://api.myquran.com/v2/sholat/jadwal/1301/${y}/${m}/${d}`,{cache:'no-store'});
       if(r.ok){
@@ -358,7 +189,7 @@
         }
       }
     }catch(_){}
-    // Fallback Aladhan — gunakan 'Sunrise' untuk Syuruq
+    // Fallback Aladhan
     try{
       const r=await fetch(`https://api.aladhan.com/v1/timingsByCity?city=Jakarta&country=Indonesia&method=3`,{cache:'no-store'});
       const j=await r.json(); const t=j?.data?.timings;
@@ -392,7 +223,7 @@
 
   function currentCountdownWindow(){
     if(!pTimes) return null;
-    const order=["Fajr","Dhuhr","Asr","Maghrib","Isha"]; // **tidak** ada countdown untuk Syuruq
+    const order=["Fajr","Dhuhr","Asr","Maghrib","Isha"]; // tidak ada countdown untuk Syuruq
     const now=new Date(new Date().toLocaleString('en-US',{timeZone:tz}));
     for(const k of order){
       const start=pTimes[k];
@@ -411,7 +242,7 @@
     const now=new Date(new Date().toLocaleString('en-US',{timeZone:tz}));
     let nextKey=null;
     for(const k of order){ if(now<pTimes[k]){ nextKey=k; break; } }
-    if(!nextKey) nextKey="Fajr"; // besok
+    if(!nextKey) nextKey="Fajr";
     const target=pTimes[nextKey] < now ? new Date(pTimes[nextKey].getTime()+24*3600*1000) : pTimes[nextKey];
     const diff=target-now;
     const h=String(Math.floor(diff/3600000)).padStart(2,'0');
@@ -419,7 +250,6 @@
     const s=String(Math.floor((diff%60000)/1000)).padStart(2,'0');
     nextEl.textContent="Selanjutnya: "+nameMap[nextKey];
     cdEl.textContent=`${h}:${m}:${s}`;
-    // highlight tabel
     Array.from(ptEl.children).forEach((el,i)=>{
       const key=order[Math.floor(i/2)];
       el.style.color = (key===nextKey) ? 'var(--gold)' : '';
@@ -427,18 +257,19 @@
   }
 
   function updateOverlay(){
-    // test window punya prioritas
     const wnd = currentCountdownWindowTest() || currentCountdownWindow();
     if(!wnd){
       overlay.style.display="none";
-      board.style.visibility="visible";
-      if(!showingQuote){ quoteOverlay.style.display="none"; } // pastikan tersembunyi saat normal
+      if(!showingQuote) { // board hanya tampil jika tidak ada quote
+        board.style.display="grid";
+        quoteOverlay.style.display="none";
+      }
       updateNextHeader();
       return;
     }
     overlay.style.display="flex";
-    board.style.visibility="hidden";
-    quoteOverlay.style.display="none"; // pastikan quote tertutup saat iqomah
+    board.style.display="none";
+    quoteOverlay.style.display="none";
     const mapName={Fajr:"Subuh",Dhuhr:"Zuhur",Asr:"Asar",Maghrib:"Maghrib",Isha:"Isya"};
     pName.textContent="Iqomah " + mapName[wnd.key];
     const now=new Date(new Date().toLocaleString('en-US',{timeZone:tz}));
@@ -458,7 +289,7 @@
     // Optional: override durasi iqomah via JSON
     if(cfg?.countdownMinutes){ DUR = Object.assign(DUR, cfg.countdownMinutes); }
 
-    // Slides: campur image & quote
+    // Build slides
     if(cfg && Array.isArray(cfg.slides)){
       slides = cfg.slides.map(s=>{
         const item={ durationSec:Number(s.durationSec||8) };
@@ -472,17 +303,30 @@
       slides = [
         {url:"https://picsum.photos/seed/a/1600/900",title:"Kegiatan Masjid",desc:"Contoh 1",durationSec:8},
         {quote:"“Sebaik-baik kalian adalah yang mempelajari Al-Qur’an dan mengajarkannya.”", source:"HR. Bukhari", durationSec:12},
-        {url:"https://picsum.photos/seed/b/1600/900",title:"Kajian Rutin",desc:"Contoh 2",durationSec:8}
+        {url:"https://picsum.photos/seed/b/1600/900",title:"Kajian Rutin",desc:"Contoh 2",durationSec:8},
+        {url:"https://picsum.photos/seed/c/1600/900",title:"Kerja Bakti",desc:"Contoh 3",durationSec:8}
       ];
     }
 
-    // Mulai rotasi: frame jalan mandiri; quote akan interupsi fullscreen lewat cycle("A")
-    if(slides.length===1){ idxA=0; idxB=0; idxC=0; } else { idxA=0; idxB=1%slides.length; idxC=2%slides.length; }
-    cycle("A"); setTimeout(()=>cycle("B"),1000); setTimeout(()=>cycle("C"),2000);
+    // Siapkan index untuk gambar & quote
+    imgIdx = slides.map((s,idx)=> isImg(s)? idx : -1).filter(i=>i>=0);
+    const quotes = slides.filter(isQuote);
+    quoteQueue = quotes.slice(); // rotasi siklis
+
+    // Inisialisasi pointer A/B/C agar pasti 3 gambar berbeda
+    if(imgIdx.length===1){ aPtr=0; bPtr=0; cPtr=0; }
+    else if(imgIdx.length===2){ aPtr=0; bPtr=1; cPtr=0; }
+    else { aPtr=0; bPtr=1; cPtr=2; }
+
+    // Mulai rotasi frame dan polling quote
+    if(imgIdx.length>0){
+      cycle("A"); setTimeout(()=>cycle("B"),400); setTimeout(()=>cycle("C"),800);
+    }
+    startQuotePoll();
 
     // Ticker
     const t=tickerParam ?? cfg?.ticker; 
-    const s=showTicker || !!cfg?.showTicker || !!t; // tampil jika ada teks
+    const s=showTicker || !!cfg?.showTicker || !!t;
     if(s && t){ ticker.style.display="flex"; tickerText.textContent=t; startTicker(); } else { ticker.style.display="none"; }
   }
 
@@ -493,10 +337,7 @@
     if(refreshMin>0 && configUrl){
       setInterval(async()=>{ const c=await fetchConfig(); if(c) applyConfig(c); }, refreshMin*60*1000);
     }
-    // Update overlay & header tiap detik
     setInterval(updateOverlay, 1000);
   })();
 })();
 </script>
-</body>
-</html>
