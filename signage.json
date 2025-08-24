@@ -1,11 +1,11 @@
 {
   "slides": [
-    { "url": "images/kegiatan-1.jpg", "title": "Kajian Rutin", "desc": "Kitab Minhajul Muslim – Rabu malam", "durationSec": 8 },
-    { "quote": "“Sebaik-baik kalian adalah yang mempelajari Al-Qur’an dan mengajarkannya.”", "source": "HR. Bukhari", "durationSec": 10 },
-    { "url": "images/kegiatan-2.jpg", "title": "Tausiyah Pekanan", "desc": "Ustadz Fulan – Ba'da Magrib", "durationSec": 8 },
-    { "quote": "“Barangsiapa beriman kepada Allah dan hari akhir, hendaklah berkata baik atau diam.”", "source": "HR. Bukhari & Muslim", "durationSec": 10 },
+    { "url": "images/kegiatan-1.jpg", "title": "Kajian Rutin", "desc": "Kitab Minhajul Muslim — Rabu malam", "durationSec": 8 },
+    { "quote": "“Sebaik-baik kalian adalah yang mempelajari Al-Qur’an dan mengajarkannya.”", "source": "HR. Bukhari", "durationSec": 12 },
+    { "url": "images/kegiatan-2.jpg", "title": "Tausiyah Pekanan", "desc": "Ustadz Ibrahim Saleh — Ba'da Magrib", "durationSec": 8 },
+    { "quote": "“Barangsiapa beriman kepada Allah dan hari akhir, hendaklah berkata baik atau diam.”", "source": "HR. Bukhari & Muslim", "durationSec": 12 },
     { "url": "images/kegiatan-3.jpg", "title": "Kerja Bakti", "desc": "Lingkungan Masjid Baitussalam", "durationSec": 8 }
   ],
-  "ticker": "Pengumuman: Kajian malam ini pukul 19:00 | Donasi pembangunan masjid dibuka.",
+  "ticker": "Pengumuman: Kajian malam ini pukul 19:00 | Donasi pembangunan masjid dibuka | Informasi: sekretariat ta'mir.",
   "showTicker": true
 }
