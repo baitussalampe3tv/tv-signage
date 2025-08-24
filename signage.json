@@ -6,13 +6,6 @@
     { "quote": "“Barangsiapa beriman kepada Allah dan hari akhir, hendaklah berkata baik atau diam.”", "source": "HR. Bukhari & Muslim", "durationSec": 12 },
     { "url": "images/kegiatan-3.jpg", "title": "Kerja Bakti", "desc": "Lingkungan Masjid Baitussalam", "durationSec": 8 }
   ],
-  "countdownMinutes": {
-  "Fajr": 20,
-  "Dhuhr": 15,
-  "Asr": 15,
-  "Maghrib": 10,
-  "Isha": 15
-    }
   "ticker": "Pengumuman: Kajian malam ini pukul 19:00 | Donasi pembangunan masjid dibuka | Informasi: sekretariat ta'mir.",
   "showTicker": true
 }
