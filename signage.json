@@ -1,8 +1,8 @@
 {
   "slides": [
     { "url": "images/kegiatan-1.jpg", "title": "Kegiatan 1", "desc": "Contoh caption", "durationSec": 8 },
-    { "url": "images/kegiatan-1.jpg", "title": "Kegiatan 2", "desc": "Contoh caption", "durationSec": 8 },
-    { "url": "images/kegiatan-1.jpg", "title": "Kegiatan 3", "desc": "Contoh caption", "durationSec": 8 }
+    { "url": "images/kegiatan-2.jpg", "title": "Kegiatan 2", "desc": "Contoh caption", "durationSec": 8 },
+    { "url": "images/kegiatan-3.jpg", "title": "Kegiatan 3", "desc": "Contoh caption", "durationSec": 8 }
   ],
   "ticker": "Pengumuman: Kajian malam ini pukul 19:00 | Donasi pembangunan masjid dibuka.",
   "showTicker": true
