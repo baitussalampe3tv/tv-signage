@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TV Signage</title>
+<style>
+  html,body{height:100%;margin:0;background:#000;overflow:hidden;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;cursor:none}
+  /* Container */
+  #root{position:fixed;inset:0;display:grid;grid-template-rows:1fr auto;}
+
+  /* Slide area */
+  #stage{position:relative;overflow:hidden;background:#000}
+  .slide{position:absolute;inset:0;opacity:0;transition:opacity .6s ease}
+  .slide.show{opacity:1}
+  .slide img{width:100%;height:100%;object-fit:cover;display:block}
+
+  /* Banner (center) */
+  #bannerWrap{position:absolute;inset:0;display:none;place-items:center;pointer-events:none}
+  #banner{pointer-events:auto;background:rgba(12,16,32,.86);border-radius:18px;padding:24px 28px;max-width:min(88vw,1200px);box-shadow:0 16px 40px rgba(0,0,0,.45)}
+  #bannerTitle{color:#F2C75C;font-weight:800;font-size:clamp(28px,2.6vw,42px);margin:0 0 10px 0}
+  #bannerMsg{color:#fff;font-size:clamp(20px,2.0vw,28px);margin:0}
+
+  /* Ticker */
+  #ticker{display:none;background:rgba(11,28,83,.92);color:#fff;min-height:42px;align-items:center}
+  #tickerInner{white-space:nowrap;will-change:transform;padding:0 100vw 0 0}
+  #tickerText{display:inline-block;padding:10px 24px;font-size:clamp(16px,1.6vw,24px)}
+  #tickerBullet{display:inline-block;margin:0 16px;color:#F2C75C}
+
+  /* Small hint (can be disabled) */
+  #hint{position:fixed;right:10px;bottom:10px;color:#fff8;font-size:12px}
+
+  /* Theme vars (editable via query) */
+  :root{
+    --accent:#0B1C53;     /* ticker bg */
+    --accent2:#E0B14A;    /* gold */
+    --text:#FFFFFF;
+  }
+</style>
+</head>
+<body>
+  <div id="root">
+    <div id="stage">
+      <div id="bannerWrap"><div id="banner">
+        <h1 id="bannerTitle"></h1>
+        <p id="bannerMsg"></p>
+      </div></div>
+    </div>
+    <div id="ticker"><div id="tickerInner"><span id="tickerText"></span></div></div>
+  </div>
+  <div id="hint">Tekan [OK] pada remote untuk toggle banner (demo)</div>
+
+<script>
+(function(){
+  const qs = new URLSearchParams(location.search);
+  /* Config options */
+  const DEFAULTS = {
+    transition: qs.get("transition") || "fade", // reserved
+    durationSec: parseFloat(qs.get("durationSec")||"8"),
+    loop: true,
+    tickerSpeed: parseFloat(qs.get("tickerSpeed")||"65"), // px per second
+    bg: qs.get("bg") || "#000000"
+  };
+  document.body.style.background = DEFAULTS.bg;
+
+  /* Theme override via query (optional) */
+  const tickerBg = qs.get("tickerBg"); if(tickerBg) document.documentElement.style.setProperty("--accent", tickerBg);
+  const gold = qs.get("gold"); if(gold) document.documentElement.style.setProperty("--accent2", gold);
+  const textCol = qs.get("text"); if(textCol) document.documentElement.style.setProperty("--text", textCol);
+
+  /* Data sources */
+  const configUrl = qs.get("config");       // remote JSON url
+  const imagesParam = qs.get("images");     // comma-separated image urls
+  const bannerTitleParam = qs.get("bannerTitle");
+  const bannerMsgParam = qs.get("bannerMsg");
+  const showBannerParam = qs.get("showBanner"); // 1/true
+  const tickerParam = qs.get("ticker");
+  const showTickerParam = qs.get("showTicker"); // 1/true
+  const refreshMin = parseFloat(qs.get("refreshMin")||"0"); // re-fetch config every N minutes
+
+  const stage = document.getElementById("stage");
+  const bannerWrap = document.getElementById("bannerWrap");
+  const bannerTitle = document.getElementById("bannerTitle");
+  const bannerMsg = document.getElementById("bannerMsg");
+  const ticker = document.getElementById("ticker");
+  const tickerInner = document.getElementById("tickerInner");
+  const tickerText = document.getElementById("tickerText");
+  const hint = document.getElementById("hint");
+
+  /* State */
+  let slides = []; // [{url, durationSec}]
+  let idx = 0, timer = null;
+  let playing = true;
+
+  function parseBool(v){ return ["1","true","yes","on"].includes(String(v||"").toLowerCase()); }
+
+  async function fetchConfig() {
+    try {
+      if(!configUrl) return null;
+      const resp = await fetch(configUrl, {cache:"no-store"});
+      if(!resp.ok) throw new Error("Config fetch failed");
+      return await resp.json();
+    } catch(e){ console.error(e); return null; }
+  }
+
+  function setBanner({title, message, show}){
+    bannerTitle.textContent = title || "";
+    bannerMsg.textContent = message || "";
+    bannerWrap.style.display = show && (title||message) ? "grid" : "none";
+  }
+
+  function setTicker(text, show){
+    tickerText.textContent = text || "";
+    ticker.style.display = show && text ? "flex" : "none";
+    if(show && text){
+      startTicker();
+    }
+  }
+
+  /* Simple marquee animation */
+  function startTicker(){
+    const speed = DEFAULTS.tickerSpeed; // px/s
+    tickerInner.style.transition = "none";
+    tickerInner.style.transform = "translateX(100vw)";
+    requestAnimationFrame(()=>{
+      const total = tickerInner.getBoundingClientRect().width + window.innerWidth;
+      const dur = total / speed; // seconds
+      tickerInner.style.transition = `transform ${dur}s linear`;
+      tickerInner.style.transform = `translateX(-${total}px)`;
+      tickerInner.ontransitionend = startTicker;
+    });
+  }
+
+  function clearSlides(){
+    // remove all slides but keep bannerWrap
+    Array.from(stage.children).forEach(ch=>{
+      if(ch !== bannerWrap) stage.removeChild(ch);
+    });
+  }
+
+  function renderSlides(){
+    clearSlides();
+    slides.forEach((s)=>{
+      const el = document.createElement("div");
+      el.className = "slide";
+      const img = document.createElement("img");
+      img.loading = "eager";
+      img.src = s.url;
+      el.appendChild(img);
+      stage.insertBefore(el, bannerWrap);
+    });
+  }
+
+  function showSlide(i){
+    const all = Array.from(stage.querySelectorAll(".slide"));
+    all.forEach((el, k)=>{ el.classList.toggle("show", k === i); });
+  }
+
+  function scheduleNext(){
+    clearTimeout(timer);
+    if(!playing || slides.length === 0) return;
+    const dur = slides[idx].durationSec || DEFAULTS.durationSec;
+    timer = setTimeout(()=>{
+      idx = (idx + 1) % slides.length;
+      showSlide(idx);
+      scheduleNext();
+    }, dur * 1000);
+  }
+
+  async function applyConfig(cfg){
+    /* Slides from config or query */
+    if(cfg && Array.isArray(cfg.slides)){
+      slides = cfg.slides.map(x => ({ url: x.url, durationSec: Number(x.durationSec || DEFAULTS.durationSec) }))
+                         .filter(x => !!x.url);
+    } else if(imagesParam){
+      slides = imagesParam.split(",").map(u => u.trim()).filter(Boolean)
+                  .map(u => ({url:u, durationSec: DEFAULTS.durationSec}));
+    } else {
+      // Demo slides (ganti dengan gambar kamu)
+      slides = [
+        {url:"https://picsum.photos/seed/a/1920/1080", durationSec:DEFAULTS.durationSec},
+        {url:"https://picsum.photos/seed/b/1920/1080", durationSec:DEFAULTS.durationSec},
+        {url:"https://picsum.photos/seed/c/1920/1080", durationSec:DEFAULTS.durationSec}
+      ];
+    }
+
+    renderSlides();
+    idx = 0; showSlide(idx); scheduleNext();
+
+    /* Banner & ticker */
+    const banner = cfg?.banner || {};
+    const title = bannerTitleParam ?? banner.title ?? "";
+    const message = bannerMsgParam ?? banner.message ?? "";
+    const showB = showBannerParam != null ? parseBool(showBannerParam) : !!banner.showBanner;
+    setBanner({title, message, show: showB});
+
+    const tText = tickerParam ?? (cfg?.ticker || "");
+    const tShow = showTickerParam != null ? parseBool(showTickerParam) : !!cfg?.showTicker;
+    setTicker(tText, tShow);
+  }
+
+  /* Initial load */
+  (async function init(){
+    const cfg = await fetchConfig();
+    await applyConfig(cfg);
+
+    if(refreshMin > 0 && configUrl){
+      setInterval(async()=>{
+        const c = await fetchConfig();
+        if(c) await applyConfig(c);
+      }, refreshMin * 60 * 1000);
+    }
+  })();
+
+  /* Demo toggle banner with OK/Enter key */
+  document.addEventListener("keydown", (e)=>{
+    if(e.key === "Enter" || e.key === "OK" || e.keyCode === 13){
+      bannerWrap.style.display = (bannerWrap.style.display === "none" || bannerWrap.style.display === "") ? "grid" : "none";
+    }
+  });
+
+  // Hide hint after 10s
+  setTimeout(()=>{ if(hint) hint.style.display="none"; }, 10000);
+})();
+</script>
+</body>
+</html>
