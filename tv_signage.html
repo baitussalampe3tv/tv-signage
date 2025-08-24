@@ -1,121 +1,229 @@
 <!doctype html>
 <html lang="id">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>TV Signage – Masjid</title>
 <style>
-  html,body{height:100%;margin:0;background:#000;overflow:hidden;
-    font-family:Inter,"Segoe UI",Roboto,system-ui,Arial,sans-serif}
-  #stage{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center}
-  .slide{position:absolute;inset:0;opacity:0;transition:opacity .6s ease}
-  .slide.show{opacity:1}
-  .slide img{width:100%;height:100%;object-fit:cover}
-  #ticker{position:fixed;bottom:0;left:0;right:0;background:#0B1C53;
-    color:#fff;min-height:42px;display:none;align-items:center;overflow:hidden}
+  :root{
+    --bg:#0c1020; --surface:#11162e; --gold:#E0B14A; --brand:#0B1C53;
+    --text:#FFFFFF; --muted:#C9D6F2; --shadow:0 12px 40px rgba(0,0,0,.45);
+    --radius:18px; --pad:22px; --tickerBg:#0B1C53;
+  }
+  html,body{height:100%;margin:0;background:#000;overflow:hidden;font-family:Inter,"Segoe UI",Roboto,system-ui,Arial,sans-serif}
+  #root{position:fixed;inset:0;display:grid;grid-template-rows:1fr auto;background:var(--bg)}
+  /* Top bar (logo + masjid + waktu sholat) */
+  .topbar{position:fixed;top:16px;left:16px;right:16px;display:flex;gap:16px;align-items:center;z-index:5}
+  .brand{display:flex;gap:12px;align-items:center;padding:10px 14px;background:linear-gradient(180deg,rgba(17,22,46,.9),rgba(10,14,34,.9));border-radius:14px;box-shadow:var(--shadow);border:1px solid rgba(224,177,74,.35)}
+  .brand img{height:42px;width:auto;display:block;filter:drop-shadow(0 4px 8px rgba(0,0,0,.35))}
+  .brand .title{color:#fff;font-weight:800;font-size:18px;line-height:1.1}
+  .brand .sub{color:#dfe8ff;font-weight:600;font-size:13px;opacity:.9}
+  .prayer{margin-left:auto;display:grid;grid-auto-flow:column;gap:10px;align-items:center;background:linear-gradient(180deg,rgba(17,22,46,.9),rgba(10,14,34,.9));border-radius:14px;box-shadow:var(--shadow);padding:10px 12px;border:1px solid rgba(224,177,74,.35);color:#fff;font-size:14px}
+  .clock{font-weight:800;letter-spacing:.5px}
+  .pt{display:grid;grid-template-columns:auto auto;gap:6px 10px;align-items:center}
+  .pt .name{color:#cfe0ff}.pt .time{font-weight:700}.next{color:var(--gold);font-weight:800}.cd{font-weight:700;color:#fff}
+  /* Stage (board + frames) */
+  #stage{position:relative;margin:90px 16px 58px;border-radius:20px;background:radial-gradient(140% 100% at 30% 20%,#171c3b,#0b0f24 60%);box-shadow:var(--shadow);overflow:hidden;display:grid;place-items:center}
+  .board{width:min(92vw,1680px);height:min(70vh,820px);background:linear-gradient(180deg,#141a36,#0d1127);border-radius:20px;border:1px solid rgba(224,177,74,.30);box-shadow:inset 0 0 0 2px rgba(224,177,74,.25),0 16px 40px rgba(0,0,0,.45);padding:var(--pad);display:grid;grid-template-columns:2fr 1fr;gap:var(--pad)}
+  .frame{position:relative;background:linear-gradient(180deg,#0f1430,#090d22);border-radius:14px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.35),inset 0 0 0 2px rgba(224,177,74,.25)}
+  .stack{display:grid;grid-template-rows:1fr 1fr;gap:var(--pad)}
+  .frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s ease}
+  .frame img.show{opacity:1}
+  /* Caption per frame */
+  .caption{position:absolute;left:14px;right:14px;bottom:14px;padding:12px 14px;background:linear-gradient(180deg,rgba(0,0,0,.0),rgba(0,0,0,.55));color:#fff;border-radius:10px}
+  .cap-title{font-weight:800;font-size:clamp(18px,2.2vw,28px);margin:0 0 4px}
+  .cap-desc{font-weight:600;font-size:clamp(14px,1.5vw,20px);margin:0;color:#dbe6ff}
+  /* Ticker */
+  #ticker{display:none;background:var(--tickerBg);color:#fff;min-height:42px;align-items:center}
   #tickerInner{white-space:nowrap;will-change:transform;padding:0 100vw 0 0}
-  #tickerText{display:inline-block;padding:10px 24px;font-size:20px}
+  #tickerText{display:inline-block;padding:10px 24px;font-size:clamp(16px,1.6vw,22px)}
 </style>
 </head>
 <body>
-  <div id="stage"></div>
+  <div class="topbar">
+    <div class="brand">
+      <img src="logo.png" alt="Logo"><div><div class="title">Masjid Baitissalam</div><div class="sub">Premier Estate 3</div></div>
+    </div>
+    <div class="prayer">
+      <div class="clock" id="clock">--:-- WIB</div>
+      <div class="pt" id="pt"></div>
+      <div class="next" id="next">-</div><div class="cd" id="cd">--:--:--</div>
+    </div>
+  </div>
+
+  <div id="stage">
+    <div class="board">
+      <div class="frame" id="frameA"></div>
+      <div class="stack">
+        <div class="frame" id="frameB"></div>
+        <div class="frame" id="frameC"></div>
+      </div>
+    </div>
+  </div>
+
   <div id="ticker"><div id="tickerInner"><span id="tickerText"></span></div></div>
 
 <script>
 (function(){
   const qs=new URLSearchParams(location.search);
-  const stage=document.getElementById("stage");
+  /* Sumber data */
+  const configUrl=qs.get("config");
+  const refreshMin=parseFloat(qs.get("refreshMin")||"5");
+  const imagesParam=qs.get("images"); // uji cepat: ?images=images/a.jpg,images/b.jpg
+  const tickerParam=qs.get("ticker");
+  const showTicker=["1","true","yes","on"].includes((qs.get("showTicker")||"").toLowerCase());
+  const bg=qs.get("bg"); if(bg) document.documentElement.style.setProperty('--bg',bg);
+
+  /* Elemen */
+  const frameA=document.getElementById("frameA");
+  const frameB=document.getElementById("frameB");
+  const frameC=document.getElementById("frameC");
   const ticker=document.getElementById("ticker");
   const tickerInner=document.getElementById("tickerInner");
   const tickerText=document.getElementById("tickerText");
+  const clockEl=document.getElementById("clock");
+  const ptEl=document.getElementById("pt");
+  const nextEl=document.getElementById("next");
+  const cdEl=document.getElementById("cd");
 
-  const imagesParam=qs.get("images");       // daftar gambar
-  const configUrl=qs.get("config");         // url JSON
-  const refreshMin=parseFloat(qs.get("refreshMin")||"0");
-  const tickerParam=qs.get("ticker");
-  const showTicker=["1","true","yes","on"].includes((qs.get("showTicker")||"").toLowerCase());
+  /* State */
+  let slides=[]; // [{url,title,desc,durationSec}]
+  let idxA=0, idxB=1, idxC=2; let tA,tB,tC;
 
-  let slides=[]; let idx=0; let timer=null;
-
-  function createSlide(url){
-    const d=document.createElement("div");
-    d.className="slide";
-    const i=document.createElement("img");
-    i.src=url; i.loading="eager"; d.appendChild(i);
-    stage.appendChild(d);
-    return d;
+  /* Helpers */
+  function createImg(src){const i=new Image(); i.src=src; i.decoding="async"; i.loading="eager"; return i;}
+  function mountFrame(frame, s){
+    frame.innerHTML="";
+    const img=createImg(s.url);
+    img.className=""; frame.appendChild(img);
+    const cap=document.createElement("div"); cap.className="caption";
+    const h=document.createElement("h3"); h.className="cap-title"; h.textContent=s.title||"";
+    const p=document.createElement("p"); p.className="cap-desc"; p.textContent=s.desc||"";
+    cap.appendChild(h); cap.appendChild(p); frame.appendChild(cap);
+    requestAnimationFrame(()=>{img.classList.add("show");});
+  }
+  function schedule(which, dur){
+    const fn=()=>cycle(which);
+    const ms=(dur||8)*1000;
+    if(which==="A"){clearTimeout(tA);tA=setTimeout(fn,ms);}
+    if(which==="B"){clearTimeout(tB);tB=setTimeout(fn,ms);}
+    if(which==="C"){clearTimeout(tC);tC=setTimeout(fn,ms);}
+  }
+  function cycle(which){
+    if(!slides.length) return;
+    let i = (which==="A"?idxA:which==="B"?idxB:idxC) % slides.length;
+    const s=slides[i]; const dur=Number(s.durationSec||8);
+    const frame = which==="A"?frameA:which==="B"?frameB:frameC;
+    mountFrame(frame,s);
+    if(which==="A"){idxA=(i+1)%slides.length; schedule("A",dur);}
+    if(which==="B"){idxB=(i+1)%slides.length; schedule("B",dur);}
+    if(which==="C"){idxC=(i+1)%slides.length; schedule("C",dur);}
   }
 
-  function showSlide(i){
-    const all=[...stage.querySelectorAll(".slide")];
-    all.forEach((el,k)=>el.classList.toggle("show",k===i));
-  }
-
-  function scheduleNext(){
-    clearTimeout(timer);
-    if(slides.length===0) return;
-    const dur=slides[idx].durationSec||8;
-    timer=setTimeout(()=>{
-      idx=(idx+1)%slides.length;
-      showSlide(idx);
-      scheduleNext();
-    },dur*1000);
-  }
-
-  async function fetchConfig(){
-    if(!configUrl) return null;
-    try{
-      const r=await fetch(configUrl,{cache:"no-store"});
-      if(!r.ok) return null;
-      return await r.json();
-    }catch(e){return null;}
-  }
-
-  function applyConfig(cfg){
-    stage.innerHTML="";
-    slides=[];
-
-    if(cfg && Array.isArray(cfg.slides)){
-      slides=cfg.slides.map(s=>({url:s.url,durationSec:Number(s.durationSec||8)}));
-    }else if(imagesParam){
-      slides=imagesParam.split(",").map(u=>({url:u.trim(),durationSec:8}));
-    }else{
-      // demo
-      slides=[
-        {url:"https://picsum.photos/seed/a/1280/720",durationSec:8},
-        {url:"https://picsum.photos/seed/b/1280/720",durationSec:8}
-      ];
-    }
-
-    slides.forEach(s=>createSlide(s.url));
-    idx=0; showSlide(idx); scheduleNext();
-
-    const t=tickerParam ?? cfg?.ticker;
-    const s=showTicker || cfg?.showTicker;
-    if(s && t){ ticker.style.display="flex"; tickerText.textContent=t; startTicker(); }
-    else ticker.style.display="none";
-  }
-
+  /* Ticker */
   function startTicker(){
     tickerInner.style.transition="none";
     tickerInner.style.transform="translateX(100vw)";
     requestAnimationFrame(()=>{
       const total=tickerInner.getBoundingClientRect().width+window.innerWidth;
-      const dur=total/60;
+      const dur=total/65;
       tickerInner.style.transition=`transform ${dur}s linear`;
       tickerInner.style.transform=`translateX(-${total}px)`;
       tickerInner.ontransitionend=startTicker;
     });
   }
 
+  /* Prayer times Jakarta */
+  const tz="Asia/Jakarta";
+  function parseLcl(hm){const [H,M]=hm.split(":").map(Number);const now=new Date(new Date().toLocaleString('en-US',{timeZone:tz}));now.setHours(H,M,0,0);return now;}
+  async function loadPrayer(){
+    const today=new Date(); const y=today.toLocaleString('en-CA',{year:'numeric',timeZone:tz});
+    const m=today.toLocaleString('en-CA',{month:'2-digit',timeZone:tz});
+    const d=today.toLocaleString('en-CA',{day:'2-digit',timeZone:tz});
+    // MyQuran (Jakarta=1301), fallback Aladhan
+    try{
+      const r=await fetch(`https://api.myquran.com/v2/sholat/jadwal/1301/${y}/${m}/${d}`,{cache:'no-store'});
+      if(r.ok){const j=await r.json();const t=j?.data?.jadwal; if(t){return {Fajr:t.subuh,Dhuhr:t.dzuhur,Asr:t.ashar,Maghrib:t.maghrib,Isha:t.isya};}}
+    }catch(_){}
+    try{
+      const r=await fetch(`https://api.aladhan.com/v1/timingsByCity?city=Jakarta&country=Indonesia&method=3`,{cache:'no-store'});
+      const j=await r.json();const t=j?.data?.timings; if(t){return {Fajr:t.Fajr,Dhuhr:t.Dhuhr,Asr:t.Asr,Maghrib:t.Maghrib,Isha:t.Isha};}
+    }catch(_){}
+    return null;
+  }
+  function renderPrayer(times){
+    if(!times){ptEl.innerHTML='<span style="opacity:.7">Jadwal salat tidak tersedia</span>';return;}
+    const order=["Fajr","Dhuhr","Asr","Maghrib","Isha"];
+    const map={};
+    ptEl.innerHTML="";
+    order.forEach(n=>{
+      map[n]=parseLcl(times[n]);
+      const nameMap={Fajr:"Subuh",Dhuhr:"Zuhur",Asr:"Asar",Maghrib:"Maghrib",Isha:"Isya"};
+      const nm=document.createElement("div"); nm.className="name"; nm.textContent=nameMap[n];
+      const tm=document.createElement("div"); tm.className="time"; tm.textContent=times[n];
+      ptEl.appendChild(nm); ptEl.appendChild(tm);
+    });
+    function nextPrayer(){
+      const now=new Date(new Date().toLocaleString('en-US',{timeZone:tz}));
+      for(const n of order){ if(now<map[n]) return n; } return "Fajr";
+    }
+    function tick(){
+      const now=new Date(new Date().toLocaleString('en-US',{timeZone:tz}));
+      const n=nextPrayer(); let target=map[n];
+      if(now>target && n==="Fajr") target=new Date(target.getTime()+24*3600*1000);
+      const diff=target-now; const h=String(Math.floor(diff/3600000)).padStart(2,'0');
+      const m=String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
+      const s=String(Math.floor((diff%60000)/1000)).padStart(2,'0');
+      nextEl.textContent="Selanjutnya: "+({Fajr:"Subuh",Dhuhr:"Zuhur",Asr:"Asar",Maghrib:"Maghrib",Isha:"Isya"}[n]);
+      cdEl.textContent=`${h}:${m}:${s}`;
+      // highlight
+      Array.from(ptEl.children).forEach((el,i)=>{
+        const isRowName=i%2===0; const key=order[Math.floor(i/2)];
+        el.style.color = (key===n) ? 'var(--gold)' : '';
+      });
+    }
+    tick(); setInterval(tick,1000);
+  }
+  function startClock(){
+    setInterval(()=>{
+      const now=new Date(new Date().toLocaleString('en-US',{timeZone:"Asia/Jakarta"}));
+      const hh=String(now.getHours()).padStart(2,"0"); const mm=String(now.getMinutes()).padStart(2,"0");
+      clockEl.textContent=`${hh}:${mm} WIB`;
+    },1000);
+  }
+
+  /* Config */
+  async function fetchConfig(){
+    if(!configUrl) return null;
+    try{const r=await fetch(configUrl,{cache:'no-store'}); if(!r.ok) return null; return await r.json();}catch(_){return null;}
+  }
+  function applyConfig(cfg){
+    // slides dari JSON atau dari ?images
+    if(cfg && Array.isArray(cfg.slides)){
+      slides=cfg.slides.map(s=>({url:String(s.url||"").trim(),title:s.title||"",desc:s.desc||"",durationSec:Number(s.durationSec||8)})).filter(s=>s.url);
+    }else if(imagesParam){
+      slides=imagesParam.split(",").map(u=>u.trim()).filter(Boolean).map(u=>({url:u,title:"",desc:"",durationSec:8}));
+    }else{
+      slides=[
+        {url:"https://picsum.photos/seed/a/1600/900",title:"Kegiatan Masjid",desc:"Contoh 1",durationSec:8},
+        {url:"https://picsum.photos/seed/b/1600/900",title:"Kajian Rutin",desc:"Contoh 2",durationSec:8},
+        {url:"https://picsum.photos/seed/c/1600/900",title:"Penggalangan",desc:"Contoh 3",durationSec:8}
+      ];
+    }
+    if(slides.length===1){ idxA=0; idxB=0; idxC=0; } else { idxA=0; idxB=1%slides.length; idxC=2%slides.length; }
+    cycle("A"); setTimeout(()=>cycle("B"),1200); setTimeout(()=>cycle("C"),2400);
+
+    // ticker
+    const t=tickerParam ?? cfg?.ticker; const s=showTicker || !!cfg?.showTicker;
+    if(s && t){ ticker.style.display="flex"; tickerText.textContent=t; startTicker(); } else { ticker.style.display="none"; }
+  }
+
+  // Init
   (async function init(){
-    const cfg=await fetchConfig();
-    applyConfig(cfg);
+    startClock();
+    renderPrayer(await loadPrayer());
+    const cfg=await fetchConfig(); applyConfig(cfg);
     if(refreshMin>0 && configUrl){
-      setInterval(async()=>{
-        const c=await fetchConfig();
-        if(c) applyConfig(c);
-      },refreshMin*60000);
+      setInterval(async()=>{const c=await fetchConfig(); if(c) applyConfig(c);}, refreshMin*60*1000);
     }
   })();
 })();
