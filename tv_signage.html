@@ -5,12 +5,11 @@
 <title>TV Signage – Masjid</title>
 <style>
   :root{
-    /* default fallback */
+    /* fallback tema terang */
     --bg1:#E8FFF7; --bg2:#D9F7F0;
     --panel:#F4FBF8; --border:#B6E2D5;
     --gold:#C9A23C; --text:#102A27; --muted:#3A5F58;
     --shadow:0 12px 40px rgba(0,0,0,.16);
-    --radius:18px; --pad:22px;
     --tickerBg:#0B1C53; --tickerText:#FFFFFF;
   }
   /* THEME: EMERALD (hijau zamrud pekat) */
@@ -42,10 +41,10 @@
   .topbar{
     position:fixed; top:14px; left:16px; right:16px;
     display:grid; grid-template-columns:auto 1fr; align-items:start;
-    gap:16px; z-index:5; pointer-events:none;
+    gap:16px; z-index:5;
   }
   .brand{
-    pointer-events:auto; display:flex; gap:12px; align-items:center;
+    display:flex; gap:12px; align-items:center;
     padding:10px 14px;
     background:linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.10));
     border-radius:14px; box-shadow:var(--shadow);
@@ -58,7 +57,7 @@
   .brand-sub{color:var(--muted); font-weight:700; font-size:13px}
 
   /* Panel Waktu Sholat */
-  .pray-wrap{pointer-events:auto; display:flex; justify-content:flex-end}
+  .pray-wrap{display:flex; justify-content:flex-end}
   .prayer{
     display:grid; grid-template-columns:auto 1fr auto auto; align-items:center; gap:14px;
     padding:10px 14px;
@@ -67,12 +66,7 @@
     border:1px solid var(--border); color:var(--text);
     min-width:min(70vw,1280px); backdrop-filter: blur(6px);
   }
-  .prayer .heading{font-weight:900; color:var(--text); display:flex; align-items:center; gap:8px}
-  .prayer .heading::before{
-    content:""; width:8px; height:24px; border-radius:6px;
-    background:linear-gradient(180deg, #fff3b0, var(--gold));
-    box-shadow:0 1px 0 rgba(0,0,0,.05) inset;
-  }
+  .prayer .heading{font-weight:900; color:var(--text)}
   .pt{display:grid; grid-template-columns:repeat(5, auto auto); gap:6px 14px; align-items:center}
   .pt .name{color:var(--muted); font-weight:800}
   .pt .time{font-weight:900; color:var(--text)}
@@ -91,7 +85,7 @@
     background:linear-gradient(180deg, var(--panel), color-mix(in srgb, var(--panel), #000 6%));
     border-radius:20px; border:1px solid var(--border);
     box-shadow:inset 0 0 0 2px rgba(255,255,255,.20);
-    padding:var(--pad); display:grid; grid-template-columns:2fr 1fr; gap:var(--pad);
+    padding:22px; display:grid; grid-template-columns:2fr 1fr; gap:22px;
   }
   .frame{
     position:relative; background:linear-gradient(180deg, color-mix(in srgb, var(--panel), #fff 6%), var(--panel));
@@ -99,7 +93,7 @@
     box-shadow:0 8px 24px rgba(0,0,0,.18), inset 0 0 0 2px rgba(255,255,255,.20);
     border:1px solid var(--border);
   }
-  .stack{display:grid; grid-template-rows:1fr 1fr; gap:var(--pad)}
+  .stack{display:grid; grid-template-rows:1fr 1fr; gap:22px}
   .frame img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .6s ease}
   .frame img.show{opacity:1}
   .caption{
@@ -111,34 +105,17 @@
   .cap-desc{font-weight:600; font-size:clamp(14px,1.4vw,18px); margin:0; opacity:.92}
 
   /* ====== QUOTE CARD (motif islami) ====== */
-.qcard{
-  position:absolute; inset:0; display:grid; place-items:center; padding:26px;
-  /* Layer 1: glassy overlay */
-  background:
-    linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.35)),
-  /* Layer 2: motif arabesque (SVG pattern emas, repeated) */
-    url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZzkgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZThjMTVhIiBzdHJva2Utb3BhY2l0eT0iMC4xMiIgc3Ryb2tlLXdpZHRoPSIxIj48cGF0aCBkPSJNMCwzMEg2MCIvPjxwYXRoIGQ9Ik0zMCwwVjYwIi8+PHBhdGggZD0iTTAsMGw2MCw2MCIvPjxwYXRoIGQ9Ik02MCwwTDAsNjAiLz48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSI4Ii8+PC9nPjwvc3ZnPg==") center/60px 60px repeat;
-}
-.qwrap{
-  max-width:90%;
-  background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
-  border:1px solid rgba(255,255,255,.22);
-  border-radius:16px; padding:20px 24px; color:#fff;
-  box-shadow:0 10px 24px rgba(0,0,0,.25);
-  backdrop-filter: blur(4px);
-}
-.qtext{
-  font-weight:800; font-size:clamp(18px,2.0vw,28px);
-  line-height:1.35; margin:0 0 8px;
-  text-shadow:0 2px 6px rgba(0,0,0,.35);
-}
-.qsrc{
-  font-weight:600; font-size:clamp(12px,1.2vw,16px);
-  opacity:.95; margin:0;
-}
+  .qcard{
+    position:absolute; inset:0; display:grid; place-items:center; padding:26px;
+    background:
+      linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.55)),
+      url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiNlOGMxNWEiIHN0cm9rZS1vcGFjaXR5PSIwLjE0IiBzdHJva2Utd2lkdGg9IjEiPjxwYXRoIGQ9Ik0wLDMwSDYwIi8+PHBhdGggZD0iTTMwLDBWNjAiLz48cGF0aCBkPSJNMCwwbDYwLDYwIi8+PHBhdGggZD0iTTYwLDBMMCw2MCIvPjxjaXJjbGUgY3g9IjMwIiBjeT0iMzAiIHI9IjgiLz48L2c+PC9zdmc+") center/60px 60px repeat;
+  }
+  .qwrap{max-width:85%;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:20px 24px;color:#fff;box-shadow:0 10px 24px rgba(0,0,0,.25)}
+  .qtext{font-weight:800;font-size:clamp(18px,2.0vw,28px);line-height:1.35;margin:0 0 8px;text-shadow:0 2px 6px rgba(0,0,0,.4)}
+  .qsrc{font-weight:600;font-size:clamp(12px,1.2vw,16px);opacity:.9;margin:0}
 
-
-  /* ================ PRAYER OVERLAY (COUNTDOWN) ================ */
+  /* ================ PRAYER OVERLAY (IQOMAH) ================ */
   #prayerOverlay{
     position:absolute; inset:0; display:none; align-items:center; justify-content:center;
     background:linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.55));
@@ -191,10 +168,10 @@
         <div class="frame" id="frameC"></div>
       </div>
     </div>
-    <!-- Overlay countdown saat masuk waktu sholat -->
+    <!-- Overlay countdown menuju iqomah -->
     <div id="prayerOverlay">
       <div class="pCard">
-        <div class="pTitle">Hitung Mundur</div>
+        <div class="pTitle">Menuju Iqomah</div>
         <div class="pName" id="pName">Sholat</div>
         <div class="pTimer" id="pTimer">--:--</div>
       </div>
@@ -238,20 +215,20 @@
   const cdEl=document.getElementById("cd");
 
   /* ====== Slides (image + quote support) ====== */
-  let slides=[]; // item: {url?, title?, desc?, durationSec?} OR {quote, source, durationSec?}
+  let slides=[]; // item: {url,title,desc,durationSec} OR {quote,source,durationSec}
   let idxA=0, idxB=1, idxC=2; let tA,tB,tC;
 
   function createImg(src){ const i=new Image(); i.src=src; i.decoding="async"; i.loading="eager"; return i; }
 
   function mountFrame(frame, s){
     frame.innerHTML="";
-    if(s.quote){ // render QUOTE
+    if(s.quote){ // QUOTE
       const wrap=document.createElement("div"); wrap.className="qcard";
       const card=document.createElement("div"); card.className="qwrap";
       const qt=document.createElement("p"); qt.className="qtext"; qt.textContent=s.quote;
       const qs=document.createElement("p"); qs.className="qsrc"; qs.textContent=s.source||"";
       card.appendChild(qt); card.appendChild(qs); wrap.appendChild(card); frame.appendChild(wrap);
-    }else{ // render IMAGE + caption
+    }else{ // IMAGE + caption
       const img=createImg(s.url); frame.appendChild(img);
       const cap=document.createElement("div"); cap.className="caption";
       const h=document.createElement("h3"); h.className="cap-title"; h.textContent=s.title||"";
@@ -286,28 +263,50 @@
       const dur=total/65; // px/s
       tickerInner.style.transition=`transform ${dur}s linear`;
       tickerInner.style.transform=`translateX(-${total}px)`;
-      tickerInner.ontransitionend=startTicker; // loop
+      tickerInner.ontransitionend=startTicker;
     });
   }
 
-  /* ====== Prayer times (Jakarta) + overlay countdown ====== */
+  /* ====== Jadwal sholat Jakarta + overlay iqomah ====== */
   const tz="Asia/Jakarta";
-  const DUR = { Fajr:20, Dhuhr:15, Asr:15, Maghrib:10, Isha:15 }; // menit
-  function parseLcl(hm){ const [H,M]=hm.split(":").map(Number); const now=new Date(new Date().toLocaleString('en-US',{timeZone:tz})); now.setHours(H,M,0,0); return now; }
+  // Default durasi (menit); bisa dioverride lewat signage.json > countdownMinutes
+  let DUR = { Fajr:20, Dhuhr:15, Asr:15, Maghrib:10, Isha:15 };
+
+  // MODE UJI via URL: ?testPrayer=Maghrib&testDurationSec=30
+  const testPrayer = (qs.get("testPrayer") || "").toLowerCase();
+  const testDurationSec = parseInt(qs.get("testDurationSec") || "0", 10);
+  const keyMap = { fajr:"Fajr", subuh:"Fajr", dhuhr:"Dhuhr", zuhur:"Dhuhr", dzuhur:"Dhuhr",
+                   asr:"Asr", ashar:"Asr", maghrib:"Maghrib", isya:"Isha", isha:"Isha" };
+  function currentCountdownWindowTest(){
+    if(!testPrayer || !keyMap[testPrayer]) return null;
+    const key = keyMap[testPrayer];
+    const now = new Date();
+    const end = new Date(now.getTime() + (Math.max(testDurationSec,10) * 1000));
+    return { key, start: now, end };
+  }
+
+  function parseLcl(hm){
+    const [H,M]=hm.split(":").map(Number);
+    const now=new Date(new Date().toLocaleString('en-US',{timeZone:tz}));
+    now.setHours(H,M,0,0); return now;
+  }
 
   let pTimes=null; // {Fajr:Date, Dhuhr:Date, ...}
 
   async function loadPrayer(){
-    const today=new Date(); const y=today.toLocaleString('en-CA',{year:'numeric',timeZone:tz});
+    const today=new Date();
+    const y=today.toLocaleString('en-CA',{year:'numeric',timeZone:tz});
     const m=today.toLocaleString('en-CA',{month:'2-digit',timeZone:tz});
     const d=today.toLocaleString('en-CA',{day:'2-digit',timeZone:tz});
-    // MyQuran (Jakarta=1301), fallback Aladhan
+    // MyQuran (Jakarta=1301)
     try{
       const r=await fetch(`https://api.myquran.com/v2/sholat/jadwal/1301/${y}/${m}/${d}`,{cache:'no-store'});
-      if(r.ok){ const j=await r.json(); const t=j?.data?.jadwal;
+      if(r.ok){
+        const j=await r.json(); const t=j?.data?.jadwal;
         if(t){ pTimes={Fajr:parseLcl(t.subuh), Dhuhr:parseLcl(t.dzuhur), Asr:parseLcl(t.ashar), Maghrib:parseLcl(t.maghrib), Isha:parseLcl(t.isya)}; return true; }
       }
     }catch(_){}
+    // fallback Aladhan
     try{
       const r=await fetch(`https://api.aladhan.com/v1/timingsByCity?city=Jakarta&country=Indonesia&method=3`,{cache:'no-store'});
       const j=await r.json(); const t=j?.data?.timings;
@@ -335,7 +334,7 @@
     const now=new Date(new Date().toLocaleString('en-US',{timeZone:tz}));
     for(const k of order){
       const start=pTimes[k];
-      const end=new Date(start.getTime()+DUR[k]*60*1000);
+      const end=new Date(start.getTime() + (DUR[k]*60*1000));
       if(now>=start && now<end){
         return { key:k, start, end };
       }
@@ -343,44 +342,45 @@
     return null;
   }
 
+  function updateNextHeader(){
+    if(!pTimes) return;
+    const order=["Fajr","Dhuhr","Asr","Maghrib","Isha"];
+    const nameMap={Fajr:"Subuh",Dhuhr:"Zuhur",Asr:"Asar",Maghrib:"Maghrib",Isha:"Isya"};
+    const now=new Date(new Date().toLocaleString('en-US',{timeZone:tz}));
+    let nextKey=null;
+    for(const k of order){ if(now<pTimes[k]){ nextKey=k; break; } }
+    if(!nextKey) nextKey="Fajr";
+    const target=pTimes[nextKey] < now ? new Date(pTimes[nextKey].getTime()+24*3600*1000) : pTimes[nextKey];
+    const diff=target-now;
+    const h=String(Math.floor(diff/3600000)).padStart(2,'0');
+    const m=String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
+    const s=String(Math.floor((diff%60000)/1000)).padStart(2,'0');
+    nextEl.textContent="Selanjutnya: "+nameMap[nextKey];
+    cdEl.textContent=`${h}:${m}:${s}`;
+    // highlight tabel
+    Array.from(ptEl.children).forEach((el,i)=>{
+      const key=order[Math.floor(i/2)];
+      el.style.color = (key===nextKey) ? 'var(--gold)' : '';
+    });
+  }
+
   function updateOverlay(){
-    const wnd=currentCountdownWindow();
+    // test window punya prioritas
+    const wnd = currentCountdownWindowTest() || currentCountdownWindow();
     if(!wnd){
-      // normal mode
       overlay.style.display="none";
       board.style.visibility="visible";
-      // update next & countdown to next prayer (header)
-      if(pTimes){
-        const order=["Fajr","Dhuhr","Asr","Maghrib","Isha"];
-        const nameMap={Fajr:"Subuh",Dhuhr:"Zuhur",Asr:"Asar",Maghrib:"Maghrib",Isha:"Isya"};
-        const now=new Date(new Date().toLocaleString('en-US',{timeZone:tz}));
-        let nextKey=null;
-        for(const k of order){ if(now<pTimes[k]){ nextKey=k; break; } }
-        if(!nextKey) nextKey="Fajr"; // besok
-        const target=pTimes[nextKey] < now ? new Date(pTimes[nextKey].getTime()+24*3600*1000) : pTimes[nextKey];
-        const diff=target-now;
-        const h=String(Math.floor(diff/3600000)).padStart(2,'0');
-        const m=String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
-        const s=String(Math.floor((diff%60000)/1000)).padStart(2,'0');
-        nextEl.textContent="Selanjutnya: "+nameMap[nextKey];
-        cdEl.textContent=`${h}:${m}:${s}`;
-        // highlight di tabel
-        Array.from(ptEl.children).forEach((el,i)=>{
-          const key=order[Math.floor(i/2)];
-          el.style.color = (key===nextKey) ? 'var(--gold)' : '';
-        });
-      }
+      updateNextHeader();
       return;
     }
-    // COUNTDOWN MODE
-    const mapName={Fajr:"Subuh",Dhuhr:"Zuhur",Asr:"Asar",Maghrib:"Maghrib",Isha:"Isya"};
     overlay.style.display="flex";
     board.style.visibility="hidden";
-    pName.textContent = "Sholat " + mapName[wnd.key];
+    const mapName={Fajr:"Subuh",Dhuhr:"Zuhur",Asr:"Asar",Maghrib:"Maghrib",Isha:"Isya"};
+    pName.textContent="Iqomah " + mapName[wnd.key];
     const now=new Date(new Date().toLocaleString('en-US',{timeZone:tz}));
     const rem = wnd.end - now;
-    const mm=String(Math.floor(rem/60000)).padStart(2,'0');
-    const ss=String(Math.floor((rem%60000)/1000)).padStart(2,'0');
+    const mm=String(Math.max(0,Math.floor(rem/60000))).padStart(2,'0');
+    const ss=String(Math.max(0,Math.floor((rem%60000)/1000))).padStart(2,'0');
     pTimer.textContent = `${mm}:${ss}`;
   }
 
@@ -391,7 +391,11 @@
     catch(_){ return null; }
   }
   function applyConfig(cfg){
-    // slides: bisa campur image & quote
+    // optional override durasi iqomah dari JSON
+    if(cfg?.countdownMinutes){
+      DUR = Object.assign(DUR, cfg.countdownMinutes);
+    }
+    // slides: campur image & quote
     if(cfg && Array.isArray(cfg.slides)){
       slides = cfg.slides.map(s=>{
         const item={ durationSec:Number(s.durationSec||8) };
@@ -404,30 +408,29 @@
     }else{
       slides = [
         {url:"https://picsum.photos/seed/a/1600/900",title:"Kegiatan Masjid",desc:"Contoh 1",durationSec:8},
-        {quote:"“Sebaik-baik kalian adalah yang mempelajari Al-Qur’an dan mengajarkannya.”", source:"HR. Bukhari", durationSec:10},
-        {url:"https://picsum.photos/seed/b/1600/900",title:"Kajian Rutin",desc:"Contoh 2",durationSec:8},
-        {quote:"“Barangsiapa beriman kepada Allah dan hari akhir, hendaklah berkata baik atau diam.”", source:"HR. Bukhari & Muslim", durationSec:10},
-        {url:"https://picsum.photos/seed/c/1600/900",title:"Penggalangan",desc:"Contoh 3",durationSec:8}
+        {quote:"“Sebaik-baik kalian adalah yang mempelajari Al-Qur’an dan mengajarkannya.”", source:"HR. Bukhari", durationSec:12},
+        {url:"https://picsum.photos/seed/b/1600/900",title:"Kajian Rutin",desc:"Contoh 2",durationSec:8}
       ];
     }
+    // mulai rotasi
     if(slides.length===1){ idxA=0; idxB=0; idxC=0; } else { idxA=0; idxB=1%slides.length; idxC=2%slides.length; }
     cycle("A"); setTimeout(()=>cycle("B"),1200); setTimeout(()=>cycle("C"),2400);
 
+    // ticker
     const t=tickerParam ?? cfg?.ticker; const s=showTicker || !!cfg?.showTicker;
     if(s && t){ ticker.style.display="flex"; tickerText.textContent=t; startTicker(); } else { ticker.style.display="none"; }
   }
 
   /* ====== Init ====== */
   (async function init(){
-    // waktu sholat
-    const ok = await loadPrayer();
-    renderPrayerTable();
-    // slides
+    // jadwal & tabel
+    await loadPrayer(); renderPrayerTable();
+    // config & slides
     const cfg=await fetchConfig(); applyConfig(cfg);
     if(refreshMin>0 && configUrl){
       setInterval(async()=>{ const c=await fetchConfig(); if(c) applyConfig(c); }, refreshMin*60*1000);
     }
-    // overlay updater tiap detik
+    // update overlay/next header tiap detik
     setInterval(updateOverlay, 1000);
   })();
 })();
