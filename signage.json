@@ -1,0 +1,13 @@
+{
+  "slides": [
+    {"url": "https://picsum.photos/seed/a/1920/1080", "durationSec": 8},
+    {"url": "https://picsum.photos/seed/b/1920/1080", "durationSec": 10}
+  ],
+  "ticker": "Pengumuman: Kajian ba'da Magrib dimulai pukul 19:00 | Donasi pembangunan ...",
+  "showTicker": true,
+  "banner": {
+    "title": "Informasi Penting",
+    "message": "Parkir motor di area timur.",
+    "showBanner": false
+  }
+}
