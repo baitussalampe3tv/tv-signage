@@ -3,224 +3,341 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TV Signage</title>
+<title>TV Signage – Masjid</title>
 <style>
-  html,body{height:100%;margin:0;background:#000;overflow:hidden;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;cursor:none}
-  /* Container */
-  #root{position:fixed;inset:0;display:grid;grid-template-rows:1fr auto;}
-
-  /* Slide area */
-  #stage{position:relative;overflow:hidden;background:#000}
-  .slide{position:absolute;inset:0;opacity:0;transition:opacity .6s ease}
-  .slide.show{opacity:1}
-  .slide img{width:100%;height:100%;object-fit:cover;display:block}
-
-  /* Banner (center) */
-  #bannerWrap{position:absolute;inset:0;display:none;place-items:center;pointer-events:none}
-  #banner{pointer-events:auto;background:rgba(12,16,32,.86);border-radius:18px;padding:24px 28px;max-width:min(88vw,1200px);box-shadow:0 16px 40px rgba(0,0,0,.45)}
-  #bannerTitle{color:#F2C75C;font-weight:800;font-size:clamp(28px,2.6vw,42px);margin:0 0 10px 0}
-  #bannerMsg{color:#fff;font-size:clamp(20px,2.0vw,28px);margin:0}
-
-  /* Ticker */
-  #ticker{display:none;background:rgba(11,28,83,.92);color:#fff;min-height:42px;align-items:center}
-  #tickerInner{white-space:nowrap;will-change:transform;padding:0 100vw 0 0}
-  #tickerText{display:inline-block;padding:10px 24px;font-size:clamp(16px,1.6vw,24px)}
-  #tickerBullet{display:inline-block;margin:0 16px;color:#F2C75C}
-
-  /* Small hint (can be disabled) */
-  #hint{position:fixed;right:10px;bottom:10px;color:#fff8;font-size:12px}
-
-  /* Theme vars (editable via query) */
   :root{
-    --accent:#0B1C53;     /* ticker bg */
-    --accent2:#E0B14A;    /* gold */
+    --bg:#0c1020;               /* latar belakang panggung */
+    --surface:#11162e;          /* panel tengah polos */
+    --gold:#E0B14A;
+    --brand:#0B1C53;
     --text:#FFFFFF;
+    --muted:#C9D6F2;
+    --shadow:0 12px 40px rgba(0,0,0,.45);
+    --radius:18px;
+    --pad:22px;
+    --tickerBg:#0B1C53;
   }
+  html,body{height:100%;margin:0;background:#000;overflow:hidden;font-family:Inter,"Segoe UI",Roboto,system-ui,Arial,sans-serif}
+  #root{position:fixed;inset:0;display:grid;grid-template-rows:1fr auto;background:var(--bg)}
+  /* ===== HEADER BRAND & PRAYER BOX ===== */
+  .topbar{
+    position:fixed; top:16px; left:16px; right:16px; display:flex; gap:16px; align-items:center; z-index:5;
+  }
+  .brand{
+    display:flex; gap:12px; align-items:center; padding:10px 14px;
+    background:linear-gradient(180deg,rgba(17,22,46,.9),rgba(10,14,34,.9));
+    border-radius:14px; box-shadow:var(--shadow); border:1px solid rgba(224,177,74,.35);
+  }
+  .brand img{height:42px; width:auto; display:block; filter:drop-shadow(0 4px 8px rgba(0,0,0,.35))}
+  .brand .title{color:#fff; font-weight:800; font-size:18px; line-height:1.1}
+  .brand .sub{color:#dfe8ff; font-weight:600; font-size:13px; opacity:.9}
+
+  .prayer{
+    margin-left:auto; display:grid; grid-auto-flow:column; gap:10px; align-items:center;
+    background:linear-gradient(180deg,rgba(17,22,46,.9),rgba(10,14,34,.9));
+    border-radius:14px; box-shadow:var(--shadow); padding:10px 12px; border:1px solid rgba(224,177,74,.35);
+    color:#fff; font-size:14px;
+  }
+  .clock{font-weight:800; letter-spacing:.5px}
+  .pt{display:grid; grid-template-columns:auto auto; gap:6px 10px; align-items:center}
+  .pt .name{color:#cfe0ff}
+  .pt .time{font-weight:700}
+  .next{color:var(--gold); font-weight:800}
+  .cd{font-weight:700; color:#fff}
+
+  /* ===== STAGE CENTER with FRAMES ===== */
+  #stage{position:relative; margin:90px 16px 58px; border-radius:20px;
+         background:radial-gradient(140% 100% at 30% 20%, #171c3b, #0b0f24 60%);
+         box-shadow:var(--shadow); overflow:hidden; display:grid; place-items:center;}
+  .board{
+    width:min(92vw, 1680px); height:min(70vh, 820px);
+    background:linear-gradient(180deg, #141a36, #0d1127);
+    border-radius:20px; border:1px solid rgba(224,177,74,.30);
+    box-shadow:inset 0 0 0 2px rgba(224,177,74,.25), 0 16px 40px rgba(0,0,0,.45);
+    padding:var(--pad); display:grid; grid-template-columns:2fr 1fr; gap:var(--pad);
+  }
+  /* Frames layout: left big + right stacked */
+  .frame{
+    position:relative; background:linear-gradient(180deg,#0f1430,#090d22);
+    border-radius:14px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,.35), inset 0 0 0 2px rgba(224,177,74,.25);
+  }
+  .frame img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .6s ease}
+  .frame img.show{opacity:1}
+  .stack{display:grid; grid-template-rows:1fr 1fr; gap:var(--pad)}
+  /* Captions */
+  .caption{
+    position:absolute; left:14px; right:14px; bottom:14px; padding:12px 14px;
+    background:linear-gradient(180deg, rgba(0,0,0,.0), rgba(0,0,0,.55));
+    color:#fff; border-radius:10px;
+  }
+  .cap-title{font-weight:800; font-size:clamp(18px,2.4vw,28px); margin:0 0 6px}
+  .cap-desc{font-weight:600; font-size:clamp(14px,1.6vw,20px); margin:0; color:#dbe6ff}
+
+  /* ===== TICKER ===== */
+  #ticker{display:none; background:var(--tickerBg); color:#fff; min-height:42px; align-items:center}
+  #tickerInner{white-space:nowrap; will-change:transform; padding:0 100vw 0 0}
+  #tickerText{display:inline-block; padding:10px 24px; font-size:clamp(16px,1.6vw,22px)}
+  /* Hint kecil (bisa dihilangkan) */
+  #hint{position:fixed; right:10px; bottom:10px; color:#fff9; font-size:12px}
 </style>
 </head>
 <body>
-  <div id="root">
-    <div id="stage">
-      <div id="bannerWrap"><div id="banner">
-        <h1 id="bannerTitle"></h1>
-        <p id="bannerMsg"></p>
-      </div></div>
+  <!-- TOP -->
+  <div class="topbar">
+    <div class="brand">
+      <!-- ganti logo.png di repo kamu -->
+      <img src="logo.png" alt="Logo">
+      <div>
+        <div class="title">Masjid Baitissalam</div>
+        <div class="sub">Premier Estate 3</div>
+      </div>
     </div>
-    <div id="ticker"><div id="tickerInner"><span id="tickerText"></span></div></div>
+    <div class="prayer">
+      <div class="clock" id="clock">--:-- WIB</div>
+      <div class="pt" id="pt">
+        <!-- diisi via JS: Fajr, Dhuhr, Asr, Maghrib, Isha -->
+      </div>
+      <div class="next" id="next">-</div>
+      <div class="cd" id="cd">--:--:--</div>
+    </div>
   </div>
-  <div id="hint">Tekan [OK] pada remote untuk toggle banner (demo)</div>
+
+  <!-- STAGE -->
+  <div id="stage">
+    <div class="board">
+      <div class="frame" id="frameA">
+        <!-- gambar besar -->
+      </div>
+      <div class="stack">
+        <div class="frame" id="frameB"></div>
+        <div class="frame" id="frameC"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TICKER -->
+  <div id="ticker"><div id="tickerInner"><span id="tickerText"></span></div></div>
+  <div id="hint">Tekan [OK] untuk toggle banner (dinonaktifkan di versi ini)</div>
 
 <script>
 (function(){
   const qs = new URLSearchParams(location.search);
-  /* Config options */
-  const DEFAULTS = {
-    transition: qs.get("transition") || "fade", // reserved
-    durationSec: parseFloat(qs.get("durationSec")||"8"),
-    loop: true,
-    tickerSpeed: parseFloat(qs.get("tickerSpeed")||"65"), // px per second
-    bg: qs.get("bg") || "#000000"
-  };
-  document.body.style.background = DEFAULTS.bg;
 
-  /* Theme override via query (optional) */
-  const tickerBg = qs.get("tickerBg"); if(tickerBg) document.documentElement.style.setProperty("--accent", tickerBg);
-  const gold = qs.get("gold"); if(gold) document.documentElement.style.setProperty("--accent2", gold);
-  const textCol = qs.get("text"); if(textCol) document.documentElement.style.setProperty("--text", textCol);
+  /* ====== Sumber data ====== */
+  const configUrl = qs.get("config");              // JSON config di repo kamu
+  const refreshMin = parseFloat(qs.get("refreshMin")||"5"); // cek ulang config
+  const tickerStr = qs.get("ticker");              // override ticker
+  const showTicker = ["1","true","on","yes"].includes((qs.get("showTicker")||"").toLowerCase());
+  const bg = qs.get("bg"); if(bg) document.documentElement.style.setProperty('--bg', bg);
 
-  /* Data sources */
-  const configUrl = qs.get("config");       // remote JSON url
-  const imagesParam = qs.get("images");     // comma-separated image urls
-  const bannerTitleParam = qs.get("bannerTitle");
-  const bannerMsgParam = qs.get("bannerMsg");
-  const showBannerParam = qs.get("showBanner"); // 1/true
-  const tickerParam = qs.get("ticker");
-  const showTickerParam = qs.get("showTicker"); // 1/true
-  const refreshMin = parseFloat(qs.get("refreshMin")||"0"); // re-fetch config every N minutes
-
-  const stage = document.getElementById("stage");
-  const bannerWrap = document.getElementById("bannerWrap");
-  const bannerTitle = document.getElementById("bannerTitle");
-  const bannerMsg = document.getElementById("bannerMsg");
+  /* ====== Elemen ====== */
+  const frameA = document.getElementById("frameA");
+  const frameB = document.getElementById("frameB");
+  const frameC = document.getElementById("frameC");
   const ticker = document.getElementById("ticker");
   const tickerInner = document.getElementById("tickerInner");
   const tickerText = document.getElementById("tickerText");
-  const hint = document.getElementById("hint");
+  const clockEl = document.getElementById("clock");
+  const ptEl = document.getElementById("pt");
+  const nextEl = document.getElementById("next");
+  const cdEl = document.getElementById("cd");
 
-  /* State */
-  let slides = []; // [{url, durationSec}]
-  let idx = 0, timer = null;
-  let playing = true;
+  /* ====== State slideshow ====== */
+  let slides = []; // [{url, title, desc, durationSec}]
+  let idxA = 0, idxB = 1, idxC = 2;
+  let tA, tB, tC;
 
-  function parseBool(v){ return ["1","true","yes","on"].includes(String(v||"").toLowerCase()); }
+  /* ====== Helper ====== */
+  function createImg(src){ const i=new Image(); i.src=src; i.decoding="async"; i.loading="eager"; i.style.opacity=0; return i; }
+  function swapImage(frame, src, title, desc){
+    const img = createImg(src);
+    const cap = document.createElement("div");
+    cap.className = "caption";
+    const h = document.createElement("h3"); h.className="cap-title"; h.textContent = title||"";
+    const p = document.createElement("p"); p.className="cap-desc"; p.textContent = desc||"";
+    cap.appendChild(h); cap.appendChild(p);
 
-  async function fetchConfig() {
-    try {
-      if(!configUrl) return null;
-      const resp = await fetch(configUrl, {cache:"no-store"});
-      if(!resp.ok) throw new Error("Config fetch failed");
-      return await resp.json();
-    } catch(e){ console.error(e); return null; }
+    // clear frame then add
+    frame.innerHTML = "";
+    frame.appendChild(img);
+    frame.appendChild(cap);
+    requestAnimationFrame(()=>{ img.classList.add("show"); });
+  }
+  function schedule(frame, whichIdx, delay){
+    return setTimeout(()=>cycleFrame(frame, whichIdx), delay*1000);
+  }
+  function cycleFrame(frame, which){
+    if(slides.length===0) return;
+    let i = (which==="A"? idxA : which==="B"? idxB : idxC) % slides.length;
+    const s = slides[i];
+    swapImage(frame, s.url, s.title, s.desc);
+    const dur = Number(s.durationSec || 8);
+
+    // increment pointer for next
+    if(which==="A"){ idxA = (i+1)%slides.length; clearTimeout(tA); tA=schedule(frameA,"A",dur); }
+    if(which==="B"){ idxB = (i+1)%slides.length; clearTimeout(tB); tB=schedule(frameB,"B",dur); }
+    if(which==="C"){ idxC = (i+1)%slides.length; clearTimeout(tC); tC=schedule(frameC,"C",dur); }
   }
 
-  function setBanner({title, message, show}){
-    bannerTitle.textContent = title || "";
-    bannerMsg.textContent = message || "";
-    bannerWrap.style.display = show && (title||message) ? "grid" : "none";
-  }
-
-  function setTicker(text, show){
-    tickerText.textContent = text || "";
-    ticker.style.display = show && text ? "flex" : "none";
-    if(show && text){
-      startTicker();
-    }
-  }
-
-  /* Simple marquee animation */
+  /* ====== Ticker ====== */
   function startTicker(){
-    const speed = DEFAULTS.tickerSpeed; // px/s
     tickerInner.style.transition = "none";
     tickerInner.style.transform = "translateX(100vw)";
     requestAnimationFrame(()=>{
       const total = tickerInner.getBoundingClientRect().width + window.innerWidth;
-      const dur = total / speed; // seconds
+      const dur = total / 65; // px/s
       tickerInner.style.transition = `transform ${dur}s linear`;
       tickerInner.style.transform = `translateX(-${total}px)`;
       tickerInner.ontransitionend = startTicker;
     });
   }
 
-  function clearSlides(){
-    // remove all slides but keep bannerWrap
-    Array.from(stage.children).forEach(ch=>{
-      if(ch !== bannerWrap) stage.removeChild(ch);
+  /* ====== PRAYER TIMES (Jakarta) ====== */
+  const tz = "Asia/Jakarta";
+  function fmtTime(d){ return d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',timeZone:tz}); }
+  function parseTimeToDate(hm){ // "05:02"
+    const [H,M]=hm.split(":").map(Number);
+    const now = new Date();
+    const d = new Date(now.toLocaleString('en-US', { timeZone: tz }));
+    d.setHours(H, M, 0, 0);
+    return d;
+  }
+  async function loadPrayerTimes(){
+    const today = new Date();
+    const y = today.toLocaleString('en-CA',{year:'numeric', timeZone:tz});
+    const m = today.toLocaleString('en-CA',{month:'2-digit', timeZone:tz});
+    const d = today.toLocaleString('en-CA',{day:'2-digit', timeZone:tz});
+
+    // 1) coba MyQuran (kode kota Jakarta=1301)
+    try{
+      const r = await fetch(`https://api.myquran.com/v2/sholat/jadwal/1301/${y}/${m}/${d}`, {cache:'no-store'});
+      if(r.ok){
+        const j = await r.json();
+        const t = j?.data?.jadwal;
+        if(t){ renderPrayer({
+          Fajr:t.subuh, Dhuhr:t.dzuhur, Asr:t.ashar, Maghrib:t.maghrib, Isha:t.isya
+        }); return; }
+      }
+    }catch(e){ /* ignore and fallback */ }
+
+    // 2) fallback Aladhan
+    try{
+      const r = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=Jakarta&country=Indonesia&method=3`, {cache:'no-store'});
+      const j = await r.json();
+      const t = j?.data?.timings;
+      if(t){
+        renderPrayer({
+          Fajr:t.Fajr, Dhuhr:t.Dhuhr, Asr:t.Asr, Maghrib:t.Maghrib, Isha:t.Isha
+        }); return;
+      }
+    }catch(e){ /* ignore */ }
+
+    // 3) gagal total
+    ptEl.innerHTML = `<span style="opacity:.7">Jadwal salat tidak tersedia</span>`;
+  }
+  function renderPrayer(times){
+    const order = ["Fajr","Dhuhr","Asr","Maghrib","Isha"];
+    ptEl.innerHTML = "";
+    const map = {};
+    order.forEach(n=>{
+      map[n] = parseTimeToDate(times[n]);
+      const name = {"Fajr":"Subuh","Dhuhr":"Zuhur","Asr":"Asar","Maghrib":"Maghrib","Isha":"Isya"}[n];
+      const rowName = document.createElement("div"); rowName.className="name"; rowName.textContent=name;
+      const rowTime = document.createElement("div"); rowTime.className="time"; rowTime.textContent=times[n];
+      ptEl.appendChild(rowName); ptEl.appendChild(rowTime);
     });
+    // tentukan salat berikut
+    function nextPrayer(){
+      const now = new Date(new Date().toLocaleString('en-US',{timeZone:tz}));
+      for(const n of order){
+        if(now < map[n]) return n;
+      }
+      return "Fajr"; // besok subuh
+    }
+    function countdown(){
+      const now = new Date(new Date().toLocaleString('en-US',{timeZone:tz}));
+      const n = nextPrayer();
+      let target = map[n];
+      if(now > target){ // sudah lewat Isya → set target besok Subuh
+        if(n==="Fajr"){ target = new Date(target.getTime() + 24*3600*1000); }
+      }
+      const diff = target - now;
+      const h = String(Math.floor(diff/3600000)).padStart(2,'0');
+      const m = String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
+      const s = String(Math.floor((diff%60000)/1000)).padStart(2,'0');
+      nextEl.textContent = "Selanjutnya: " + ({"Fajr":"Subuh","Dhuhr":"Zuhur","Asr":"Asar","Maghrib":"Maghrib","Isha":"Isya"}[n]);
+      cdEl.textContent = `${h}:${m}:${s}`;
+      // highlight di tabel
+      Array.from(ptEl.children).forEach((el,i)=>{
+        el.style.color = ((i%2===0) && order[i/2]===n) ? 'var(--gold)' : '';
+        if(i%2===1 && order[(i-1)/2]===n) el.style.color='var(--gold)';
+      });
+    }
+    countdown();
+    setInterval(countdown, 1000);
+  }
+  function startClock(){
+    setInterval(()=>{
+      const now = new Date(new Date().toLocaleString('en-US',{timeZone:"Asia/Jakarta"}));
+      const hh = String(now.getHours()).padStart(2,"0");
+      const mm = String(now.getMinutes()).padStart(2,"0");
+      clockEl.textContent = `${hh}:${mm} WIB`;
+    },1000);
   }
 
-  function renderSlides(){
-    clearSlides();
-    slides.forEach((s)=>{
-      const el = document.createElement("div");
-      el.className = "slide";
-      const img = document.createElement("img");
-      img.loading = "eager";
-      img.src = s.url;
-      el.appendChild(img);
-      stage.insertBefore(el, bannerWrap);
-    });
+  /* ====== CONFIG ====== */
+  async function fetchConfig(){
+    if(!configUrl) return null;
+    try{
+      const r = await fetch(configUrl, {cache:'no-store'});
+      if(!r.ok) return null;
+      return await r.json();
+    }catch(e){ return null; }
   }
+  function applyConfig(cfg){
+    // Slides: dukung path relatif repo (mis: "images/foto1.jpg")
+    const arr = Array.isArray(cfg?.slides) ? cfg.slides : [];
+    slides = arr.map(s=>({
+      url: String(s.url||"").trim(),
+      title: s.title||"",
+      desc: s.desc||"",
+      durationSec: Number(s.durationSec||8)
+    })).filter(s=>s.url);
 
-  function showSlide(i){
-    const all = Array.from(stage.querySelectorAll(".slide"));
-    all.forEach((el, k)=>{ el.classList.toggle("show", k === i); });
-  }
-
-  function scheduleNext(){
-    clearTimeout(timer);
-    if(!playing || slides.length === 0) return;
-    const dur = slides[idx].durationSec || DEFAULTS.durationSec;
-    timer = setTimeout(()=>{
-      idx = (idx + 1) % slides.length;
-      showSlide(idx);
-      scheduleNext();
-    }, dur * 1000);
-  }
-
-  async function applyConfig(cfg){
-    /* Slides from config or query */
-    if(cfg && Array.isArray(cfg.slides)){
-      slides = cfg.slides.map(x => ({ url: x.url, durationSec: Number(x.durationSec || DEFAULTS.durationSec) }))
-                         .filter(x => !!x.url);
-    } else if(imagesParam){
-      slides = imagesParam.split(",").map(u => u.trim()).filter(Boolean)
-                  .map(u => ({url:u, durationSec: DEFAULTS.durationSec}));
-    } else {
-      // Demo slides (ganti dengan gambar kamu)
+    // Jika kosong, demo
+    if(slides.length===0){
       slides = [
-        {url:"https://picsum.photos/seed/a/1920/1080", durationSec:DEFAULTS.durationSec},
-        {url:"https://picsum.photos/seed/b/1920/1080", durationSec:DEFAULTS.durationSec},
-        {url:"https://picsum.photos/seed/c/1920/1080", durationSec:DEFAULTS.durationSec}
+        {url:"https://picsum.photos/seed/a/1600/900", title:"Kegiatan Masjid", desc:"Contoh gambar 1", durationSec:8},
+        {url:"https://picsum.photos/seed/b/1600/900", title:"Kajian Rutin",   desc:"Contoh gambar 2", durationSec:8},
+        {url:"https://picsum.photos/seed/c/1600/900", title:"Penggalangan",   desc:"Contoh gambar 3", durationSec:8},
       ];
     }
 
-    renderSlides();
-    idx = 0; showSlide(idx); scheduleNext();
+    // Ticker
+    const txt = tickerStr ?? (cfg?.ticker || "");
+    const show = showTicker || !!cfg?.showTicker;
+    ticker.style.display = (show && txt) ? "flex" : "none";
+    tickerText.textContent = txt;
+    if(show && txt) startTicker();
 
-    /* Banner & ticker */
-    const banner = cfg?.banner || {};
-    const title = bannerTitleParam ?? banner.title ?? "";
-    const message = bannerMsgParam ?? banner.message ?? "";
-    const showB = showBannerParam != null ? parseBool(showBannerParam) : !!banner.showBanner;
-    setBanner({title, message, show: showB});
-
-    const tText = tickerParam ?? (cfg?.ticker || "");
-    const tShow = showTickerParam != null ? parseBool(showTickerParam) : !!cfg?.showTicker;
-    setTicker(tText, tShow);
+    // Mulai rotasi tiap frame (offset beda biar tidak serentak)
+    idxA = 0; idxB = 1%slides.length; idxC = 2%slides.length;
+    cycleFrame(frameA,"A");
+    setTimeout(()=>cycleFrame(frameB,"B"), 1200);
+    setTimeout(()=>cycleFrame(frameC,"C"), 2400);
   }
 
-  /* Initial load */
+  /* ====== INIT ====== */
   (async function init(){
-    const cfg = await fetchConfig();
-    await applyConfig(cfg);
+    startClock();
+    await loadPrayerTimes();
 
-    if(refreshMin > 0 && configUrl){
-      setInterval(async()=>{
-        const c = await fetchConfig();
-        if(c) await applyConfig(c);
-      }, refreshMin * 60 * 1000);
+    const cfg = await fetchConfig();
+    applyConfig(cfg);
+    if(refreshMin>0 && configUrl){
+      setInterval(async()=>{ const c=await fetchConfig(); if(c) applyConfig(c); }, refreshMin*60*1000);
     }
   })();
-
-  /* Demo toggle banner with OK/Enter key */
-  document.addEventListener("keydown", (e)=>{
-    if(e.key === "Enter" || e.key === "OK" || e.keyCode === 13){
-      bannerWrap.style.display = (bannerWrap.style.display === "none" || bannerWrap.style.display === "") ? "grid" : "none";
-    }
-  });
-
-  // Hide hint after 10s
-  setTimeout(()=>{ if(hint) hint.style.display="none"; }, 10000);
 })();
 </script>
 </body>
