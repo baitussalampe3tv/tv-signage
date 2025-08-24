@@ -9,3 +9,10 @@
   "ticker": "Pengumuman: Kajian malam ini pukul 19:00 | Donasi pembangunan masjid dibuka | Informasi: sekretariat ta'mir.",
   "showTicker": true
 }
+"countdownMinutes": {
+  "Fajr": 20,
+  "Dhuhr": 15,
+  "Asr": 15,
+  "Maghrib": 10,
+  "Isha": 15
+}
