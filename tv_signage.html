@@ -5,337 +5,117 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>TV Signage – Masjid</title>
 <style>
-  :root{
-    --bg:#0c1020;               /* latar belakang panggung */
-    --surface:#11162e;          /* panel tengah polos */
-    --gold:#E0B14A;
-    --brand:#0B1C53;
-    --text:#FFFFFF;
-    --muted:#C9D6F2;
-    --shadow:0 12px 40px rgba(0,0,0,.45);
-    --radius:18px;
-    --pad:22px;
-    --tickerBg:#0B1C53;
-  }
-  html,body{height:100%;margin:0;background:#000;overflow:hidden;font-family:Inter,"Segoe UI",Roboto,system-ui,Arial,sans-serif}
-  #root{position:fixed;inset:0;display:grid;grid-template-rows:1fr auto;background:var(--bg)}
-  /* ===== HEADER BRAND & PRAYER BOX ===== */
-  .topbar{
-    position:fixed; top:16px; left:16px; right:16px; display:flex; gap:16px; align-items:center; z-index:5;
-  }
-  .brand{
-    display:flex; gap:12px; align-items:center; padding:10px 14px;
-    background:linear-gradient(180deg,rgba(17,22,46,.9),rgba(10,14,34,.9));
-    border-radius:14px; box-shadow:var(--shadow); border:1px solid rgba(224,177,74,.35);
-  }
-  .brand img{height:42px; width:auto; display:block; filter:drop-shadow(0 4px 8px rgba(0,0,0,.35))}
-  .brand .title{color:#fff; font-weight:800; font-size:18px; line-height:1.1}
-  .brand .sub{color:#dfe8ff; font-weight:600; font-size:13px; opacity:.9}
-
-  .prayer{
-    margin-left:auto; display:grid; grid-auto-flow:column; gap:10px; align-items:center;
-    background:linear-gradient(180deg,rgba(17,22,46,.9),rgba(10,14,34,.9));
-    border-radius:14px; box-shadow:var(--shadow); padding:10px 12px; border:1px solid rgba(224,177,74,.35);
-    color:#fff; font-size:14px;
-  }
-  .clock{font-weight:800; letter-spacing:.5px}
-  .pt{display:grid; grid-template-columns:auto auto; gap:6px 10px; align-items:center}
-  .pt .name{color:#cfe0ff}
-  .pt .time{font-weight:700}
-  .next{color:var(--gold); font-weight:800}
-  .cd{font-weight:700; color:#fff}
-
-  /* ===== STAGE CENTER with FRAMES ===== */
-  #stage{position:relative; margin:90px 16px 58px; border-radius:20px;
-         background:radial-gradient(140% 100% at 30% 20%, #171c3b, #0b0f24 60%);
-         box-shadow:var(--shadow); overflow:hidden; display:grid; place-items:center;}
-  .board{
-    width:min(92vw, 1680px); height:min(70vh, 820px);
-    background:linear-gradient(180deg, #141a36, #0d1127);
-    border-radius:20px; border:1px solid rgba(224,177,74,.30);
-    box-shadow:inset 0 0 0 2px rgba(224,177,74,.25), 0 16px 40px rgba(0,0,0,.45);
-    padding:var(--pad); display:grid; grid-template-columns:2fr 1fr; gap:var(--pad);
-  }
-  /* Frames layout: left big + right stacked */
-  .frame{
-    position:relative; background:linear-gradient(180deg,#0f1430,#090d22);
-    border-radius:14px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,.35), inset 0 0 0 2px rgba(224,177,74,.25);
-  }
-  .frame img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .6s ease}
-  .frame img.show{opacity:1}
-  .stack{display:grid; grid-template-rows:1fr 1fr; gap:var(--pad)}
-  /* Captions */
-  .caption{
-    position:absolute; left:14px; right:14px; bottom:14px; padding:12px 14px;
-    background:linear-gradient(180deg, rgba(0,0,0,.0), rgba(0,0,0,.55));
-    color:#fff; border-radius:10px;
-  }
-  .cap-title{font-weight:800; font-size:clamp(18px,2.4vw,28px); margin:0 0 6px}
-  .cap-desc{font-weight:600; font-size:clamp(14px,1.6vw,20px); margin:0; color:#dbe6ff}
-
-  /* ===== TICKER ===== */
-  #ticker{display:none; background:var(--tickerBg); color:#fff; min-height:42px; align-items:center}
-  #tickerInner{white-space:nowrap; will-change:transform; padding:0 100vw 0 0}
-  #tickerText{display:inline-block; padding:10px 24px; font-size:clamp(16px,1.6vw,22px)}
-  /* Hint kecil (bisa dihilangkan) */
-  #hint{position:fixed; right:10px; bottom:10px; color:#fff9; font-size:12px}
+  html,body{height:100%;margin:0;background:#000;overflow:hidden;
+    font-family:Inter,"Segoe UI",Roboto,system-ui,Arial,sans-serif}
+  #stage{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center}
+  .slide{position:absolute;inset:0;opacity:0;transition:opacity .6s ease}
+  .slide.show{opacity:1}
+  .slide img{width:100%;height:100%;object-fit:cover}
+  #ticker{position:fixed;bottom:0;left:0;right:0;background:#0B1C53;
+    color:#fff;min-height:42px;display:none;align-items:center;overflow:hidden}
+  #tickerInner{white-space:nowrap;will-change:transform;padding:0 100vw 0 0}
+  #tickerText{display:inline-block;padding:10px 24px;font-size:20px}
 </style>
 </head>
 <body>
-  <!-- TOP -->
-  <div class="topbar">
-    <div class="brand">
-      <!-- ganti logo.png di repo kamu -->
-      <img src="logo.png" alt="Logo">
-      <div>
-        <div class="title">Masjid Baitissalam</div>
-        <div class="sub">Premier Estate 3</div>
-      </div>
-    </div>
-    <div class="prayer">
-      <div class="clock" id="clock">--:-- WIB</div>
-      <div class="pt" id="pt">
-        <!-- diisi via JS: Fajr, Dhuhr, Asr, Maghrib, Isha -->
-      </div>
-      <div class="next" id="next">-</div>
-      <div class="cd" id="cd">--:--:--</div>
-    </div>
-  </div>
-
-  <!-- STAGE -->
-  <div id="stage">
-    <div class="board">
-      <div class="frame" id="frameA">
-        <!-- gambar besar -->
-      </div>
-      <div class="stack">
-        <div class="frame" id="frameB"></div>
-        <div class="frame" id="frameC"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- TICKER -->
+  <div id="stage"></div>
   <div id="ticker"><div id="tickerInner"><span id="tickerText"></span></div></div>
-  <div id="hint">Tekan [OK] untuk toggle banner (dinonaktifkan di versi ini)</div>
 
 <script>
 (function(){
-  const qs = new URLSearchParams(location.search);
+  const qs=new URLSearchParams(location.search);
+  const stage=document.getElementById("stage");
+  const ticker=document.getElementById("ticker");
+  const tickerInner=document.getElementById("tickerInner");
+  const tickerText=document.getElementById("tickerText");
 
-  /* ====== Sumber data ====== */
-  const configUrl = qs.get("config");              // JSON config di repo kamu
-  const refreshMin = parseFloat(qs.get("refreshMin")||"5"); // cek ulang config
-  const tickerStr = qs.get("ticker");              // override ticker
-  const showTicker = ["1","true","on","yes"].includes((qs.get("showTicker")||"").toLowerCase());
-  const bg = qs.get("bg"); if(bg) document.documentElement.style.setProperty('--bg', bg);
+  const imagesParam=qs.get("images");       // daftar gambar
+  const configUrl=qs.get("config");         // url JSON
+  const refreshMin=parseFloat(qs.get("refreshMin")||"0");
+  const tickerParam=qs.get("ticker");
+  const showTicker=["1","true","yes","on"].includes((qs.get("showTicker")||"").toLowerCase());
 
-  /* ====== Elemen ====== */
-  const frameA = document.getElementById("frameA");
-  const frameB = document.getElementById("frameB");
-  const frameC = document.getElementById("frameC");
-  const ticker = document.getElementById("ticker");
-  const tickerInner = document.getElementById("tickerInner");
-  const tickerText = document.getElementById("tickerText");
-  const clockEl = document.getElementById("clock");
-  const ptEl = document.getElementById("pt");
-  const nextEl = document.getElementById("next");
-  const cdEl = document.getElementById("cd");
+  let slides=[]; let idx=0; let timer=null;
 
-  /* ====== State slideshow ====== */
-  let slides = []; // [{url, title, desc, durationSec}]
-  let idxA = 0, idxB = 1, idxC = 2;
-  let tA, tB, tC;
-
-  /* ====== Helper ====== */
-  function createImg(src){ const i=new Image(); i.src=src; i.decoding="async"; i.loading="eager"; i.style.opacity=0; return i; }
-  function swapImage(frame, src, title, desc){
-    const img = createImg(src);
-    const cap = document.createElement("div");
-    cap.className = "caption";
-    const h = document.createElement("h3"); h.className="cap-title"; h.textContent = title||"";
-    const p = document.createElement("p"); p.className="cap-desc"; p.textContent = desc||"";
-    cap.appendChild(h); cap.appendChild(p);
-
-    // clear frame then add
-    frame.innerHTML = "";
-    frame.appendChild(img);
-    frame.appendChild(cap);
-    requestAnimationFrame(()=>{ img.classList.add("show"); });
-  }
-  function schedule(frame, whichIdx, delay){
-    return setTimeout(()=>cycleFrame(frame, whichIdx), delay*1000);
-  }
-  function cycleFrame(frame, which){
-    if(slides.length===0) return;
-    let i = (which==="A"? idxA : which==="B"? idxB : idxC) % slides.length;
-    const s = slides[i];
-    swapImage(frame, s.url, s.title, s.desc);
-    const dur = Number(s.durationSec || 8);
-
-    // increment pointer for next
-    if(which==="A"){ idxA = (i+1)%slides.length; clearTimeout(tA); tA=schedule(frameA,"A",dur); }
-    if(which==="B"){ idxB = (i+1)%slides.length; clearTimeout(tB); tB=schedule(frameB,"B",dur); }
-    if(which==="C"){ idxC = (i+1)%slides.length; clearTimeout(tC); tC=schedule(frameC,"C",dur); }
-  }
-
-  /* ====== Ticker ====== */
-  function startTicker(){
-    tickerInner.style.transition = "none";
-    tickerInner.style.transform = "translateX(100vw)";
-    requestAnimationFrame(()=>{
-      const total = tickerInner.getBoundingClientRect().width + window.innerWidth;
-      const dur = total / 65; // px/s
-      tickerInner.style.transition = `transform ${dur}s linear`;
-      tickerInner.style.transform = `translateX(-${total}px)`;
-      tickerInner.ontransitionend = startTicker;
-    });
-  }
-
-  /* ====== PRAYER TIMES (Jakarta) ====== */
-  const tz = "Asia/Jakarta";
-  function fmtTime(d){ return d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',timeZone:tz}); }
-  function parseTimeToDate(hm){ // "05:02"
-    const [H,M]=hm.split(":").map(Number);
-    const now = new Date();
-    const d = new Date(now.toLocaleString('en-US', { timeZone: tz }));
-    d.setHours(H, M, 0, 0);
+  function createSlide(url){
+    const d=document.createElement("div");
+    d.className="slide";
+    const i=document.createElement("img");
+    i.src=url; i.loading="eager"; d.appendChild(i);
+    stage.appendChild(d);
     return d;
   }
-  async function loadPrayerTimes(){
-    const today = new Date();
-    const y = today.toLocaleString('en-CA',{year:'numeric', timeZone:tz});
-    const m = today.toLocaleString('en-CA',{month:'2-digit', timeZone:tz});
-    const d = today.toLocaleString('en-CA',{day:'2-digit', timeZone:tz});
 
-    // 1) coba MyQuran (kode kota Jakarta=1301)
-    try{
-      const r = await fetch(`https://api.myquran.com/v2/sholat/jadwal/1301/${y}/${m}/${d}`, {cache:'no-store'});
-      if(r.ok){
-        const j = await r.json();
-        const t = j?.data?.jadwal;
-        if(t){ renderPrayer({
-          Fajr:t.subuh, Dhuhr:t.dzuhur, Asr:t.ashar, Maghrib:t.maghrib, Isha:t.isya
-        }); return; }
-      }
-    }catch(e){ /* ignore and fallback */ }
-
-    // 2) fallback Aladhan
-    try{
-      const r = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=Jakarta&country=Indonesia&method=3`, {cache:'no-store'});
-      const j = await r.json();
-      const t = j?.data?.timings;
-      if(t){
-        renderPrayer({
-          Fajr:t.Fajr, Dhuhr:t.Dhuhr, Asr:t.Asr, Maghrib:t.Maghrib, Isha:t.Isha
-        }); return;
-      }
-    }catch(e){ /* ignore */ }
-
-    // 3) gagal total
-    ptEl.innerHTML = `<span style="opacity:.7">Jadwal salat tidak tersedia</span>`;
-  }
-  function renderPrayer(times){
-    const order = ["Fajr","Dhuhr","Asr","Maghrib","Isha"];
-    ptEl.innerHTML = "";
-    const map = {};
-    order.forEach(n=>{
-      map[n] = parseTimeToDate(times[n]);
-      const name = {"Fajr":"Subuh","Dhuhr":"Zuhur","Asr":"Asar","Maghrib":"Maghrib","Isha":"Isya"}[n];
-      const rowName = document.createElement("div"); rowName.className="name"; rowName.textContent=name;
-      const rowTime = document.createElement("div"); rowTime.className="time"; rowTime.textContent=times[n];
-      ptEl.appendChild(rowName); ptEl.appendChild(rowTime);
-    });
-    // tentukan salat berikut
-    function nextPrayer(){
-      const now = new Date(new Date().toLocaleString('en-US',{timeZone:tz}));
-      for(const n of order){
-        if(now < map[n]) return n;
-      }
-      return "Fajr"; // besok subuh
-    }
-    function countdown(){
-      const now = new Date(new Date().toLocaleString('en-US',{timeZone:tz}));
-      const n = nextPrayer();
-      let target = map[n];
-      if(now > target){ // sudah lewat Isya → set target besok Subuh
-        if(n==="Fajr"){ target = new Date(target.getTime() + 24*3600*1000); }
-      }
-      const diff = target - now;
-      const h = String(Math.floor(diff/3600000)).padStart(2,'0');
-      const m = String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
-      const s = String(Math.floor((diff%60000)/1000)).padStart(2,'0');
-      nextEl.textContent = "Selanjutnya: " + ({"Fajr":"Subuh","Dhuhr":"Zuhur","Asr":"Asar","Maghrib":"Maghrib","Isha":"Isya"}[n]);
-      cdEl.textContent = `${h}:${m}:${s}`;
-      // highlight di tabel
-      Array.from(ptEl.children).forEach((el,i)=>{
-        el.style.color = ((i%2===0) && order[i/2]===n) ? 'var(--gold)' : '';
-        if(i%2===1 && order[(i-1)/2]===n) el.style.color='var(--gold)';
-      });
-    }
-    countdown();
-    setInterval(countdown, 1000);
-  }
-  function startClock(){
-    setInterval(()=>{
-      const now = new Date(new Date().toLocaleString('en-US',{timeZone:"Asia/Jakarta"}));
-      const hh = String(now.getHours()).padStart(2,"0");
-      const mm = String(now.getMinutes()).padStart(2,"0");
-      clockEl.textContent = `${hh}:${mm} WIB`;
-    },1000);
+  function showSlide(i){
+    const all=[...stage.querySelectorAll(".slide")];
+    all.forEach((el,k)=>el.classList.toggle("show",k===i));
   }
 
-  /* ====== CONFIG ====== */
+  function scheduleNext(){
+    clearTimeout(timer);
+    if(slides.length===0) return;
+    const dur=slides[idx].durationSec||8;
+    timer=setTimeout(()=>{
+      idx=(idx+1)%slides.length;
+      showSlide(idx);
+      scheduleNext();
+    },dur*1000);
+  }
+
   async function fetchConfig(){
     if(!configUrl) return null;
     try{
-      const r = await fetch(configUrl, {cache:'no-store'});
+      const r=await fetch(configUrl,{cache:"no-store"});
       if(!r.ok) return null;
       return await r.json();
-    }catch(e){ return null; }
+    }catch(e){return null;}
   }
-  function applyConfig(cfg){
-    // Slides: dukung path relatif repo (mis: "images/foto1.jpg")
-    const arr = Array.isArray(cfg?.slides) ? cfg.slides : [];
-    slides = arr.map(s=>({
-      url: String(s.url||"").trim(),
-      title: s.title||"",
-      desc: s.desc||"",
-      durationSec: Number(s.durationSec||8)
-    })).filter(s=>s.url);
 
-    // Jika kosong, demo
-    if(slides.length===0){
-      slides = [
-        {url:"https://picsum.photos/seed/a/1600/900", title:"Kegiatan Masjid", desc:"Contoh gambar 1", durationSec:8},
-        {url:"https://picsum.photos/seed/b/1600/900", title:"Kajian Rutin",   desc:"Contoh gambar 2", durationSec:8},
-        {url:"https://picsum.photos/seed/c/1600/900", title:"Penggalangan",   desc:"Contoh gambar 3", durationSec:8},
+  function applyConfig(cfg){
+    stage.innerHTML="";
+    slides=[];
+
+    if(cfg && Array.isArray(cfg.slides)){
+      slides=cfg.slides.map(s=>({url:s.url,durationSec:Number(s.durationSec||8)}));
+    }else if(imagesParam){
+      slides=imagesParam.split(",").map(u=>({url:u.trim(),durationSec:8}));
+    }else{
+      // demo
+      slides=[
+        {url:"https://picsum.photos/seed/a/1280/720",durationSec:8},
+        {url:"https://picsum.photos/seed/b/1280/720",durationSec:8}
       ];
     }
 
-    // Ticker
-    const txt = tickerStr ?? (cfg?.ticker || "");
-    const show = showTicker || !!cfg?.showTicker;
-    ticker.style.display = (show && txt) ? "flex" : "none";
-    tickerText.textContent = txt;
-    if(show && txt) startTicker();
+    slides.forEach(s=>createSlide(s.url));
+    idx=0; showSlide(idx); scheduleNext();
 
-    // Mulai rotasi tiap frame (offset beda biar tidak serentak)
-    idxA = 0; idxB = 1%slides.length; idxC = 2%slides.length;
-    cycleFrame(frameA,"A");
-    setTimeout(()=>cycleFrame(frameB,"B"), 1200);
-    setTimeout(()=>cycleFrame(frameC,"C"), 2400);
+    const t=tickerParam ?? cfg?.ticker;
+    const s=showTicker || cfg?.showTicker;
+    if(s && t){ ticker.style.display="flex"; tickerText.textContent=t; startTicker(); }
+    else ticker.style.display="none";
   }
 
-  /* ====== INIT ====== */
-  (async function init(){
-    startClock();
-    await loadPrayerTimes();
+  function startTicker(){
+    tickerInner.style.transition="none";
+    tickerInner.style.transform="translateX(100vw)";
+    requestAnimationFrame(()=>{
+      const total=tickerInner.getBoundingClientRect().width+window.innerWidth;
+      const dur=total/60;
+      tickerInner.style.transition=`transform ${dur}s linear`;
+      tickerInner.style.transform=`translateX(-${total}px)`;
+      tickerInner.ontransitionend=startTicker;
+    });
+  }
 
-    const cfg = await fetchConfig();
+  (async function init(){
+    const cfg=await fetchConfig();
     applyConfig(cfg);
     if(refreshMin>0 && configUrl){
-      setInterval(async()=>{ const c=await fetchConfig(); if(c) applyConfig(c); }, refreshMin*60*1000);
+      setInterval(async()=>{
+        const c=await fetchConfig();
+        if(c) applyConfig(c);
+      },refreshMin*60000);
     }
   })();
 })();
