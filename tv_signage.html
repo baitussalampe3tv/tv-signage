@@ -66,9 +66,13 @@
   .cd{font-weight:900}
 
   /* STAGE */
-  #stage{position:relative; margin:128px 16px 58px; border-radius:22px;
+  #stage{
+    position:relative; margin:128px 16px 58px; border-radius:22px;
     background:linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
-    box-shadow:var(--shadow); overflow:hidden; display:grid; place-items:center; border:1px solid var(--border)}
+    box-shadow:var(--shadow); overflow:hidden; display:grid; place-items:center; border:1px solid var(--border);
+    /* FIX UTAMA: pastikan tinggi tetap ada saat .board disembunyikan */
+    min-height:min(70vh,820px);
+  }
   .board{display:grid; grid-template-columns:2fr 1fr; gap:22px; width:min(92vw,1680px); height:min(70vh,820px);
     background:linear-gradient(180deg, var(--panel), rgba(0,0,0,.06));
     border-radius:20px; border:1px solid var(--border); box-shadow:inset 0 0 0 2px rgba(255,255,255,.20); padding:22px}
@@ -262,7 +266,6 @@
 
   /* ===== Quote fullscreen ===== */
   function showQuoteFullscreen(item, durSec){
-    // console.log("[Quote] show now:", item);
     showingQuote=true;
     clearTimeout(tA); clearTimeout(tB); clearTimeout(tC);
     board.style.display="none";
@@ -302,7 +305,7 @@
     if(which==="C"){ mountFrame(frameC,item); schedule("C",dur); }
   }
 
-  /* ===== Ticker ===== */
+  /* ===== TICKER ===== */
   function startTicker(){
     tickerInner.style.transition="none";
     tickerInner.style.transform=`translateX(${window.innerWidth}px)`;
@@ -346,7 +349,7 @@
   }
 
   function renderPrayerTable(){
-    if(!pTimes){ ptEl.innerHTML='<span style="opacity:.7)">Jadwal salat tidak tersedia</span>'; return; }
+    if(!pTimes){ ptEl.innerHTML='<span style="opacity:.7">Jadwal salat tidak tersedia</span>'; return; }
     const order=["Fajr","Syuruq","Dhuhr","Asr","Maghrib","Isha"];
     const nameMap={Fajr:"Subuh",Syuruq:"Syuruq",Dhuhr:"Zuhur",Asr:"Asar",Maghrib:"Maghrib",Isha:"Isya"};
     function fmt(d){ const hh=String(d.getHours()).padStart(2,"0"); const mm=String(d.getMinutes()).padStart(2,"0"); return `${hh}:${mm}`; }
@@ -424,7 +427,7 @@
   async function fetchConfig(){
     if(!configUrl) return null;
     try{ const r=await fetch(configUrl,{cache:'no-store'}); if(!r.ok) return null; return await r.json(); }
-    catch(e){ return null; }
+    catch(_){ return null; }
   }
   function applyConfig(cfg){
     if(cfg?.countdownMinutes){ DUR = Object.assign(DUR, cfg.countdownMinutes); }
