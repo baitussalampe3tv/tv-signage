@@ -70,9 +70,9 @@
     background:linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
     box-shadow:var(--shadow); overflow:hidden; display:grid; place-items:center; border:1px solid var(--border)}
   .board{display:grid; grid-template-columns:2fr 1fr; gap:22px; width:min(92vw,1680px); height:min(70vh,820px);
-    background:linear-gradient(180deg, var(--panel), color-mix(in srgb, var(--panel), #000 6%));
+    background:linear-gradient(180deg, var(--panel), rgba(0,0,0,.06));
     border-radius:20px; border:1px solid var(--border); box-shadow:inset 0 0 0 2px rgba(255,255,255,.20); padding:22px}
-  .frame{position:relative; background:linear-gradient(180deg, color-mix(in srgb, var(--panel), #fff 6%), var(--panel));
+  .frame{position:relative; background:linear-gradient(180deg, rgba(255,255,255,.06), var(--panel));
     border-radius:14px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,.18), inset 0 0 0 2px rgba(255,255,255,.20); border:1px solid var(--border)}
   .stack{display:grid; grid-template-rows:1fr 1fr; gap:22px}
   .frame img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .6s}
@@ -82,8 +82,8 @@
   .cap-title{font-weight:900; font-size:clamp(18px,2vw,26px); margin:0 0 4px}
   .cap-desc{font-weight:600; font-size:clamp(14px,1.4vw,18px); margin:0}
 
-  /* QUOTE FULLSCREEN */
-  #quoteOverlay{position:absolute; inset:0; display:none; align-items:center; justify-content:center; z-index:4}
+  /* QUOTE FULLSCREEN (z-index tinggi) */
+  #quoteOverlay{position:absolute; inset:0; display:none; align-items:center; justify-content:center; z-index:20}
   .qcard{width:100%; height:100%; display:grid; place-items:center; padding:26px;
     background:
       linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.55)),
@@ -94,7 +94,7 @@
 
   /* IQOMAH FULLSCREEN */
   #prayerOverlay{position:absolute; inset:0; display:none; align-items:center; justify-content:center;
-    background:linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.65)); z-index:5}
+    background:linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.65)); z-index:30}
   .pCard{display:grid; gap:12px; place-items:center; padding:30px 40px; border-radius:22px;
     background:linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.10)); border:1px solid var(--border); box-shadow:var(--shadow); color:#fff; text-align:center; backdrop-filter:blur(6px)}
   .pTitle{font-weight:900; font-size:clamp(28px,3.2vw,56px)}
@@ -178,6 +178,8 @@
   const showTicker=["1","true","yes","on"].includes((qs.get("showTicker")||"").toLowerCase());
   const tickerPauseSec = parseFloat(qs.get("tickerPauseSec")||"2");
   const tickerSpeed = parseFloat(qs.get("tickerSpeed")||"120");
+  const showQuoteNow = ["1","true","yes","on"].includes((qs.get("showQuoteNow")||"").toLowerCase());
+  const onlyQuote = ["1","true","yes","on"].includes((qs.get("onlyQuote")||"").toLowerCase());
 
   /* ===== Elements ===== */
   const frameA=document.getElementById("frameA");
@@ -235,8 +237,9 @@
     if(which==="C"){clearTimeout(tC);tC=setTimeout(fn,ms);}
   }
 
-  /* ===== Quote fullscreen (langsung tampil, tanpa jeda kosong) ===== */
+  /* ===== Quote fullscreen ===== */
   function showQuoteFullscreen(item, durSec){
+    console.log("[Quote] show now:", item);
     showingQuote=true;
     clearTimeout(tA); clearTimeout(tB); clearTimeout(tC);
     board.style.display="none";
@@ -247,7 +250,7 @@
     quoteTimer=setTimeout(()=>{
       quoteOverlay.style.display="none";
       showingQuote=false;
-      if(overlay.style.display!=="flex" && imgs.length>0){
+      if(overlay.style.display!=="flex" && imgs.length>0 && !onlyQuote){
         board.style.display="grid";
         cycle("A"); setTimeout(()=>cycle("B"),400); setTimeout(()=>cycle("C"),800);
       }
@@ -267,7 +270,7 @@
 
   /* ===== Frames cycle ===== */
   function cycle(which){
-    if(showingQuote || imgs.length===0) return;
+    if(showingQuote || imgs.length===0 || onlyQuote) return;
     const item = nextFrom(imgs, which);
     if(!item) return;
     const dur = Number(item.durationSec||8);
@@ -376,7 +379,7 @@
     if(!wnd){
       overlay.style.display="none";
       if(!showingQuote){
-        if(imgs.length>0){ board.style.display="grid"; }
+        if(!onlyQuote && imgs.length>0){ board.style.display="grid"; }
         quoteOverlay.style.display="none";
       }
       updateNextHeader();
@@ -398,7 +401,7 @@
   async function fetchConfig(){
     if(!configUrl) return null;
     try{ const r=await fetch(configUrl,{cache:'no-store'}); if(!r.ok) return null; return await r.json(); }
-    catch(_){ return null; }
+    catch(e){ console.error("Config fetch error", e); return null; }
   }
   function applyConfig(cfg){
     if(cfg?.countdownMinutes){ DUR = Object.assign(DUR, cfg.countdownMinutes); }
@@ -424,24 +427,39 @@
     imgs   = slides.filter(isImg);
     quotes = slides.filter(isQuote);
 
-    /* === MODE TANPA GAMBAR → tampilkan quote langsung === */
-    if(imgs.length===0 && quotes.length>0){
+    console.log("[Init] imgs:", imgs.length, "quotes:", quotes.length, "onlyQuote:", onlyQuote);
+
+    /* === MODE QUOTE SAJA === */
+    if(onlyQuote){
       board.style.display="none";
-      const firstQ = quotes[0];
+      if(quotes.length>0){
+        const firstQ = quotes.shift(); quotes.push(firstQ);
+        showQuoteFullscreen(firstQ, Number(firstQ.durationSec||10));
+      }
+      // lanjut loop
+      queueNextQuote(12000);
+    }
+    else if(imgs.length===0 && quotes.length>0){
+      // tidak ada gambar → quote langsung
+      board.style.display="none";
+      const firstQ = quotes.shift(); quotes.push(firstQ);
       showQuoteFullscreen(firstQ, Number(firstQ.durationSec||10));
-      // queueNextQuote dipanggil dari showQuoteFullscreen
-    }else{
-      // gambar ada → hidupkan board dan mulai tiga frame berbeda
+      queueNextQuote(12000);
+    }
+    else{
+      // gambar ada → tampilkan frames
       board.style.display="grid";
       aPtr=0; bPtr=(imgs.length>1?1:0); cPtr=(imgs.length>2?2:(imgs.length>1?0:0));
       cycle("A"); setTimeout(()=>cycle("B"),400); setTimeout(()=>cycle("C"),800);
 
-      // === PATCH BARU: TAMPILKAN QUOTE PERTAMA LANGSUNG ===
+      // jika diminta paksa tampil sekarang, atau default tampilkan juga cepat
       if(quotes.length>0){
-        const firstQ = quotes.shift();
-        quotes.push(firstQ);
-        showQuoteFullscreen(firstQ, Number(firstQ.durationSec||10));
-        // setelah selesai, showQuoteFullscreen otomatis panggil queueNextQuote()
+        if(showQuoteNow){
+          const firstQ = quotes.shift(); quotes.push(firstQ);
+          showQuoteFullscreen(firstQ, Number(firstQ.durationSec||10));
+        }else{
+          queueNextQuote(1000); // cepat tapi tidak instan
+        }
       }
     }
 
