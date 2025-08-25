@@ -1,111 +1,407 @@
 <!doctype html>
 <html lang="id">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>TV Signage – Masjid</title>
 <style>
-  :root{--bg1:#E8FFF7;--bg2:#D9F7F0;--panel:#F4FBF8;--border:#B6E2D5;--gold:#C9A23C;--text:#102A27;--muted:#3A5F58;--shadow:0 12px 40px rgba(0,0,0,.16);--tickerBg:#0B1C53;--tickerText:#FFFFFF}
-  body.theme-gold{--bg1:#fff7e0;--bg2:#ffefc6;--panel:#fff8e8;--border:#f0db9a;--gold:#d5a921;--text:#2b240f;--muted:#5b4d1d;--shadow:0 16px 48px rgba(0,0,0,.18);--tickerBg:#7a5a12;--tickerText:#fffaf0}
-  body.theme-emerald{--bg1:#0d2d28;--bg2:#134238;--panel:#123a32;--border:#2f6b5e;--gold:#e8c15a;--text:#EAF7F3;--muted:#bfe4d8;--shadow:0 16px 48px rgba(0,0,0,.28);--tickerBg:#0f3b34;--tickerText:#fdfdfd}
+  :root{
+    --bg1:#E8FFF7; --bg2:#D9F7F0;
+    --panel:#F4FBF8; --border:#B6E2D5;
+    --gold:#C9A23C; --text:#102A27; --muted:#3A5F58;
+    --shadow:0 12px 40px rgba(0,0,0,.16);
+    --tickerBg:#0B1C53; --tickerText:#FFFFFF;
+  }
+  body.theme-emerald{
+    --bg1:#0d2d28; --bg2:#134238; --panel:#123a32; --border:#2f6b5e;
+    --gold:#e8c15a; --text:#EAF7F3; --muted:#bfe4d8;
+    --shadow:0 16px 48px rgba(0,0,0,.28);
+    --tickerBg:#0f3b34; --tickerText:#fdfdfd;
+  }
+  body.theme-gold{
+    --bg1:#fff7e0; --bg2:#ffefc6; --panel:#fff8e8; --border:#f0db9a;
+    --gold:#d5a921; --text:#2b240f; --muted:#5b4d1d;
+    --shadow:0 16px 48px rgba(0,0,0,.18);
+    --tickerBg:#7a5a12; --tickerText:#fffaf0;
+  }
+
   html,body{height:100%;margin:0;overflow:hidden;font-family:Inter,"Segoe UI",Roboto,system-ui,Arial,sans-serif}
-  body{background:linear-gradient(180deg, var(--bg1), var(--bg2));}
-  #stage{position:relative;margin:120px 16px 60px;border-radius:22px;box-shadow:var(--shadow);overflow:hidden;display:grid;place-items:center;min-height:min(70vh,820px)}
-  .board{display:grid;grid-template-columns:2fr 1fr;gap:22px;width:min(92vw,1680px);height:min(70vh,820px);padding:22px}
-  .frame{position:relative;border-radius:14px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.18)}
-  .frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s}
+  body{
+    background:
+      radial-gradient(1200px 700px at 10% 0%, rgba(36,198,174,.25), transparent 60%),
+      radial-gradient(1200px 700px at 90% 10%, rgba(0,184,148,.22), transparent 60%),
+      linear-gradient(180deg, var(--bg1), var(--bg2));
+  }
+
+  /* TOP BAR (opsional bisa di-hide) */
+  .topbar{position:fixed; top:14px; left:16px; right:16px;
+    display:grid; grid-template-columns:auto 1fr; gap:16px; z-index:5;}
+  .brand{
+    display:flex; gap:12px; align-items:center; padding:10px 14px;
+    background:linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.10));
+    border-radius:14px; box-shadow:var(--shadow);
+    border:1px solid var(--border); backdrop-filter: blur(6px);
+  }
+  .brand img{height:44px;width:auto;display:block}
+  .brand-text{display:flex; flex-direction:column; line-height:1.1}
+  .brand-name{color:var(--text); font-weight:900; font-size:18px}
+  .brand-sub{color:var(--muted); font-weight:700; font-size:13px}
+
+  /* STAGE + BOARD */
+  #stage{position:relative;margin:88px 16px 58px; border-radius:22px;
+    background:linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
+    box-shadow:var(--shadow); overflow:hidden; display:grid; place-items:center; border:1px solid var(--border);
+    min-height:min(70vh,820px)}
+  /* jika overlay aktif, paksa board hilang total */
+  #stage.overlay-active #board{display:none !important;}
+
+  .board{display:grid; grid-template-columns:2fr 1fr; gap:22px; width:min(92vw,1680px); height:min(70vh,820px);
+    background:linear-gradient(180deg, var(--panel), rgba(0,0,0,.06));
+    border-radius:20px; border:1px solid var(--border); box-shadow:inset 0 0 0 2px rgba(255,255,255,.20); padding:22px}
+  .frame{position:relative; background:linear-gradient(180deg, rgba(255,255,255,.06), var(--panel));
+    border-radius:14px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,.18), inset 0 0 0 2px rgba(255,255,255,.20); border:1px solid var(--border)}
+  .stack{display:grid; grid-template-rows:1fr 1fr; gap:22px}
+  .frame img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .6s}
   .frame img.show{opacity:1}
-  .caption{position:absolute;left:14px;right:14px;bottom:14px;padding:12px 14px;background:rgba(0,0,0,.4);color:#fff;border-radius:10px}
-  .cap-title{font-weight:900;font-size:clamp(18px,2vw,26px);margin:0 0 4px}
-  .cap-desc{font-weight:600;font-size:clamp(14px,1.4vw,18px);margin:0}
-  /* Overlays */
-  #quoteOverlay,#videoOverlay,#financeOverlay,#scheduleOverlay,#prayerOverlay{position:absolute;inset:0;display:none;align-items:center;justify-content:center;z-index:20}
-  .qwrap{max-width:80%;background:rgba(0,0,0,.65);border-radius:18px;padding:28px 34px;color:var(--gold)}
-  .qtext{font-weight:900;font-size:clamp(28px,3.4vw,64px);line-height:1.4;text-align:center;color:var(--gold);text-shadow:0 3px 8px rgba(0,0,0,.85)}
-  .qsrc{font-weight:700;font-size:clamp(18px,2vw,30px);text-align:center;color:#fff}
-  #videoOverlay video{max-width:92vw;max-height:70vh;border-radius:16px}
-  .fcard,.scard{padding:28px 34px;border-radius:22px;background:rgba(0,0,0,.6);color:#fff;text-align:center}
-  #finCanvas{width:min(86vw,1400px);height:min(48vh,520px)}
-  .slist{display:grid;gap:10px}
-  .srow{display:grid;grid-template-columns:120px 1fr 1fr;gap:14px;padding:12px 14px;background:rgba(255,255,255,.1);border-radius:12px}
-  .pCard{padding:30px 40px;border-radius:22px;background:rgba(0,0,0,.7);color:#fff;text-align:center}
-  #ticker{display:none;position:fixed;left:0;right:0;bottom:0;background:var(--tickerBg);color:var(--tickerText);min-height:48px;align-items:center;overflow:hidden}
-  #tickerInner{white-space:nowrap;will-change:transform;padding:0 100vw 0 0}
-  #tickerText{display:inline-block;padding:12px 28px;font-size:clamp(16px,1.6vw,22px);font-weight:800}
+  .caption{position:absolute; left:14px; right:14px; bottom:14px; padding:12px 14px;
+    background:linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.3)); color:#fff; border-radius:10px}
+  .cap-title{font-weight:900; font-size:clamp(18px,2vw,26px); margin:0 0 4px}
+  .cap-desc{font-weight:600; font-size:clamp(14px,1.4vw,18px); margin:0}
+
+  /* OVERLAYS — seluruh layar diberi latar pekat agar tak tembus ke board */
+  #quoteOverlay,#videoOverlay,#financeOverlay,#scheduleOverlay,#prayerOverlay{
+    position:absolute; inset:0; display:none; align-items:center; justify-content:center; z-index:30;
+    background:linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.85));
+  }
+  #videoOverlay{ background: rgba(0,0,0,.85); }
+
+  /* Quote fullscreen */
+  .qwrap{
+    max-width:84%; background:rgba(0,0,0,.45);
+    border:1px solid rgba(255,255,255,.22); border-radius:18px; padding:28px 34px; color:var(--gold);
+    box-shadow:0 16px 36px rgba(0,0,0,.55)
+  }
+  .qtext{font-weight:900; font-size:clamp(32px,3.6vw,72px); line-height:1.35; margin:0 0 12px; text-align:center; color:var(--gold); text-shadow:0 3px 8px rgba(0,0,0,.85)}
+  .qsrc{font-weight:800; font-size:clamp(18px,2.2vw,32px); margin:0; text-align:center; color:#fff; text-shadow:0 2px 6px rgba(0,0,0,.8)}
+
+  /* Video */
+  #videoOverlay video{max-width:92vw; max-height:72vh; border-radius:16px; box-shadow:0 16px 48px rgba(0,0,0,.5); outline:1px solid rgba(255,255,255,.2)}
+
+  /* Finance */
+  .fcard{display:grid; gap:12px; place-items:center; padding:28px 34px; border-radius:22px;
+    background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.08)); border:1px solid var(--border); box-shadow:var(--shadow); color:#fff; text-align:center; backdrop-filter:blur(6px)}
+  .ftitle{font-weight:900; font-size:clamp(24px,3vw,48px); color:var(--gold)}
+  #finCanvas{width:min(86vw,1400px); height:min(48vh,520px); background:rgba(0,0,0,.25); border-radius:14px; outline:1px solid rgba(255,255,255,.2)}
+
+  /* Schedule */
+  .scard{display:grid; gap:12px; place-items:stretch; padding:28px 34px; border-radius:22px;
+    background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.08)); border:1px solid var(--border); box-shadow:var(--shadow); color:#fff; text-align:left; backdrop-filter:blur(6px); width:min(92vw,1500px)}
+  .stitle{font-weight:900; font-size:clamp(24px,3vw,48px); color:var(--gold); text-align:center}
+  .slist{display:grid; gap:10px}
+  .srow{display:grid; grid-template-columns: 120px 1fr 1fr; gap:14px; padding:12px 14px; border-radius:12px; background:rgba(0,0,0,.25); border:1px solid rgba(255,255,255,.15)}
+  .srow .time{font-weight:900}
+  .srow .topic{font-weight:800}
+  .srow .ust{opacity:.95}
+
+  /* Ticker */
+  #ticker{display:none; position:fixed; left:0; right:0; bottom:0; background:var(--tickerBg); color:var(--tickerText); min-height:48px; align-items:center; overflow:hidden}
+  #tickerInner{white-space:nowrap; will-change:transform; padding:0 100vw 0 0}
+  #tickerText{display:inline-block; padding:12px 28px; font-size:clamp(16px,1.6vw,22px); font-weight:800}
 </style>
 </head>
 <body class="theme-gold">
-<div id="stage">
-  <div class="board" id="board">
-    <div class="frame" id="frameA"></div>
-    <div class="frame" id="frameB"></div>
-    <div class="frame" id="frameC"></div>
-  </div>
 
-  <div id="quoteOverlay"><div class="qwrap"><p id="qtext"></p><p id="qsrc"></p></div></div>
-  <div id="videoOverlay"><video id="vplayer" playsinline muted></video></div>
-  <div id="financeOverlay"><div class="fcard"><div id="ftitle">Laporan Keuangan</div><canvas id="finCanvas"></canvas></div></div>
-  <div id="scheduleOverlay"><div class="scard"><div>Jadwal Kajian</div><div class="slist" id="slist"></div></div></div>
-  <div id="prayerOverlay"><div class="pCard"><div id="pName"></div><div id="pTimer"></div></div></div>
+<!-- Opsional topbar logo -->
+<div class="topbar">
+  <div class="brand">
+    <img src="logo.png" alt="Logo">
+    <div class="brand-text">
+      <div class="brand-name">Masjid Baitussalam</div>
+      <div class="brand-sub">Premier Estate 3</div>
+    </div>
+  </div>
 </div>
 
+<div id="stage">
+  <!-- BOARD -->
+  <div class="board" id="board">
+    <div class="frame" id="frameA"></div>
+    <div class="stack">
+      <div class="frame" id="frameB"></div>
+      <div class="frame" id="frameC"></div>
+    </div>
+  </div>
+
+  <!-- OVERLAYS -->
+  <div id="quoteOverlay"><div class="qwrap"><p class="qtext" id="qtext"></p><p class="qsrc" id="qsrc"></p></div></div>
+  <div id="videoOverlay"><video id="vplayer" playsinline muted></video></div>
+  <div id="financeOverlay"><div class="fcard"><div class="ftitle" id="ftitle">Laporan Keuangan</div><canvas id="finCanvas"></canvas></div></div>
+  <div id="scheduleOverlay"><div class="scard"><div class="stitle">Jadwal Kajian</div><div class="slist" id="slist"></div></div></div>
+  <div id="prayerOverlay" style="display:none"></div>
+</div>
+
+<!-- TICKER -->
 <div id="ticker"><div id="tickerInner"><span id="tickerText"></span></div></div>
 
 <script>
 (function(){
   const qs=new URLSearchParams(location.search);
-  const configUrl=qs.get("config")||"signage.json";
+
+  /* ===== Theme ===== */
+  (function setTheme(){
+    const th=(qs.get("theme")||"emerald").toLowerCase();
+    document.body.className = `theme-${["emerald","gold"].includes(th)?th:"emerald"}`;
+  })();
+
+  /* ===== Params ===== */
+  const configUrl=qs.get("config") || "signage.json";
+  const refreshMin=parseFloat(qs.get("refreshMin")||"5");
+  const imagesParam=qs.get("images");
   const tickerParam=qs.get("ticker");
-  const showTicker=["1","true"].includes((qs.get("showTicker")||"").toLowerCase());
+  const showTickerQ=["1","true","yes","on"].includes((qs.get("showTicker")||"").toLowerCase());
+  const tickerPauseSec = parseFloat(qs.get("tickerPauseSec")||"2");
+  const tickerSpeed = parseFloat(qs.get("tickerSpeed")||"120");
+  const onlyQuoteQ = ["1","true","yes","on"].includes((qs.get("onlyQuote")||"").toLowerCase());
 
-  const board=_("board"),frameA=_("frameA"),frameB=_("frameB"),frameC=_("frameC");
-  const quoteOverlay=_("quoteOverlay"),qtext=_("qtext"),qsrc=_("qsrc");
-  const videoOverlay=_("videoOverlay"),vplayer=_("vplayer");
-  const financeOverlay=_("financeOverlay"),finCanvas=_("finCanvas"),ftitle=_("ftitle");
-  const scheduleOverlay=_("scheduleOverlay"),slist=_("slist");
-  const ticker=_("ticker"),tickerInner=_("tickerInner"),tickerText=_("tickerText");
-  function _(id){return document.getElementById(id)}
+  /* ===== Elements ===== */
+  const stage = document.getElementById("stage");
+  const frameA=document.getElementById("frameA");
+  const frameB=document.getElementById("frameB");
+  const frameC=document.getElementById("frameC");
+  const board=document.getElementById("board");
 
+  const quoteOverlay=document.getElementById("quoteOverlay");
+  const qtext=document.getElementById("qtext");
+  const qsrc=document.getElementById("qsrc");
+
+  const videoOverlay=document.getElementById("videoOverlay");
+  const vplayer=document.getElementById("vplayer");
+
+  const financeOverlay=document.getElementById("financeOverlay");
+  const finCanvas=document.getElementById("finCanvas");
+  const ftitle=document.getElementById("ftitle");
+
+  const scheduleOverlay=document.getElementById("scheduleOverlay");
+  const slist=document.getElementById("slist");
+
+  const ticker=document.getElementById("ticker");
+  const tickerInner=document.getElementById("tickerInner");
+  const tickerText=document.getElementById("tickerText");
+
+  /* ===== Data ===== */
   let slides=[],imgs=[],quotes=[],videos=[],finance=null,schedule=[];
-  const isImg=s=>!!s.url,isQuote=s=>!!s.quote,isVideo=s=>!!s.video;
-  function createImg(src){const i=new Image();i.src=src;return i}
-  function mountFrame(f,s){f.innerHTML="";const img=createImg(s.url);f.appendChild(img);
-    const cap=document.createElement("div");cap.className="caption";
-    cap.innerHTML=`<div class="cap-title">${s.title||""}</div><div class="cap-desc">${s.desc||""}</div>`;f.appendChild(cap);
-    requestAnimationFrame(()=>img.classList.add("show"));}
+  let settings={overlayRotationSec:60,overlayShowSec:12};
+  let aPtr=0,bPtr=1,cPtr=2,tA,tB,tC;
 
-  function showQuoteFullscreen(item,d){hideAllOverlays();board.style.display="none";
-    quoteOverlay.style.display="flex";qtext.textContent=item.quote;qsrc.textContent=item.source||"";
-    setTimeout(()=>{quoteOverlay.style.display="none";board.style.display="grid";},(d||10)*1000);}
-  function showVideoFullscreen(item){hideAllOverlays();board.style.display="none";
-    videoOverlay.style.display="flex";vplayer.src=item.video;vplayer.play();
-    vplayer.onended=()=>{videoOverlay.style.display="none";board.style.display="grid";};}
-  function showFinance(){if(!finance)return;hideAllOverlays();board.style.display="none";
-    financeOverlay.style.display="flex";drawFinance();
-    setTimeout(()=>{financeOverlay.style.display="none";board.style.display="grid";},(finance.durationSec||10)*1000);}
-  function showSchedule(){if(!schedule.length)return;hideAllOverlays();board.style.display="none";
-    scheduleOverlay.style.display="flex";slist.innerHTML="";schedule.forEach(it=>{
-      slist.innerHTML+=`<div class="srow"><div>${it.time}</div><div>${it.topic}</div><div>${it.ustadz}</div></div>`});
-    setTimeout(()=>{scheduleOverlay.style.display="none";board.style.display="grid";},10000);}
+  /* ===== Helpers ===== */
+  const isImg   = s => !!s.url;
+  const isQuote = s => !!s.quote;
+  const isVideo = s => !!s.video;
 
-  function hideAllOverlays(){quoteOverlay.style.display="none";videoOverlay.style.display="none";financeOverlay.style.display="none";scheduleOverlay.style.display="none";}
-
-  function drawFinance(){const c=finCanvas,w=c.clientWidth,h=c.clientHeight;const ctx=c.getContext("2d");ctx.clearRect(0,0,w,h);
-    if(!finance)return;const max=Math.max(...finance.data);const bw=w/finance.data.length*0.6;
-    finance.data.forEach((v,i)=>{const x=i*(bw*1.6)+20;const y=h-(v/max)*(h-40);ctx.fillStyle="#e8c15a";ctx.fillRect(x,y,bw,h-y-20);ctx.fillStyle="#fff";ctx.fillText(finance.labels[i],x+bw/2,h-5);});}
-
-  function startTicker(){tickerInner.style.transition="none";tickerInner.style.transform=`translateX(${window.innerWidth}px)`;
-    requestAnimationFrame(()=>{const width=tickerInner.getBoundingClientRect().width;const dur=(width+window.innerWidth)/80;
-      tickerInner.style.transition=`transform ${dur}s linear`;tickerInner.style.transform=`translateX(-${width}px)`;tickerInner.ontransitionend=()=>startTicker();});}
-
-  async function fetchConfig(){try{const r=await fetch(configUrl);return r.ok?await r.json():null}catch(_){return null}}
-  function applyConfig(cfg){
-    slides=cfg?.slides||[];imgs=slides.filter(isImg);quotes=slides.filter(isQuote);videos=slides.filter(isVideo);
-    finance=cfg?.finance||null;schedule=cfg?.schedule||[];
-    if(quotes.length) showQuoteFullscreen(quotes[0],quotes[0].durationSec);
-    if(cfg?.ticker || tickerParam){ticker.style.display="flex";tickerText.textContent=tickerParam||cfg.ticker;startTicker();}
+  function enterOverlay(){ // sembunyikan board total
+    stage.classList.add('overlay-active');
+    board.style.display="none";
+    hideAllOverlays();
   }
-  (async()=>{const cfg=await fetchConfig();if(cfg)applyConfig(cfg)})();
+  function exitOverlay(){ // tampilkan kembali board jika ada gambar
+    hideAllOverlays();
+    stage.classList.remove('overlay-active');
+    if(imgs.length>0){
+      board.style.display="grid";
+      cycle("A"); setTimeout(()=>cycle("B"),400); setTimeout(()=>cycle("C"),800);
+    }
+  }
+
+  function createImg(src){ const i=new Image(); i.src=src; i.decoding="async"; i.loading="eager"; return i; }
+  function mountFrame(frame, s){
+    frame.innerHTML="";
+    const img=createImg(s.url); frame.appendChild(img);
+    const cap=document.createElement("div"); cap.className="caption";
+    const h=document.createElement("h3"); h.className="cap-title"; h.textContent=s.title||"";
+    const p=document.createElement("p"); p.className="cap-desc"; p.textContent=s.desc||"";
+    cap.appendChild(h); cap.appendChild(p); frame.appendChild(cap);
+    requestAnimationFrame(()=>img.classList.add("show"));
+  }
+  function nextFrom(arr, ptr){
+    if(arr.length===0) return null;
+    const i=(ptr==="A"?aPtr:ptr==="B"?bPtr:cPtr)%arr.length;
+    const it=arr[i];
+    if(ptr==="A") aPtr=(aPtr+1)%arr.length; else if(ptr==="B") bPtr=(bPtr+1)%arr.length; else cPtr=(cPtr+1)%arr.length;
+    return it;
+  }
+  function scheduleFrame(which, dur){
+    const fn=()=>cycle(which); const ms=(dur||8)*1000;
+    if(which==="A"){clearTimeout(tA);tA=setTimeout(fn,ms);}
+    if(which==="B"){clearTimeout(tB);tB=setTimeout(fn,ms);}
+    if(which==="C"){clearTimeout(tC);tC=setTimeout(fn,ms);}
+  }
+
+  /* ===== Overlays ===== */
+  function showQuoteFullscreen(item, durSec){
+    enterOverlay();
+    quoteOverlay.style.display="flex";
+    qtext.textContent = item.quote || "";
+    qsrc.textContent  = item.source || "";
+    setTimeout(()=>{ quoteOverlay.style.display="none"; exitOverlay(); }, (durSec||settings.overlayShowSec)*1000);
+  }
+  async function showVideoFullscreen(item){
+    enterOverlay();
+    videoOverlay.style.display="flex";
+    vplayer.src = item.video; vplayer.loop=false; vplayer.muted=true;
+    try{ await vplayer.play(); }catch(_){}
+    vplayer.onended=()=>{ videoOverlay.style.display="none"; exitOverlay(); };
+  }
+  function drawFinance(){
+    if(!finance) return;
+    const c=finCanvas, dpr=window.devicePixelRatio||1, w=c.clientWidth, h=c.clientHeight;
+    c.width=Math.floor(w*dpr); c.height=Math.floor(h*dpr);
+    const ctx=c.getContext('2d'); ctx.scale(dpr,dpr); ctx.clearRect(0,0,w,h);
+    const pad=24, labels=finance.labels||[], data=finance.data||[];
+    const maxV=Math.max(1, ...data.map(v=>Math.abs(v)));
+    const barW=(w-pad*2)/(labels.length*1.6), gap=barW*0.6, baseY=h-pad-30, scale=(h-pad*2-40)/maxV;
+    ctx.strokeStyle="rgba(255,255,255,.2)"; ctx.lineWidth=1; ctx.beginPath();
+    for(let i=0;i<=4;i++){ const y=pad+i*((baseY-pad)/4); ctx.moveTo(pad,y); ctx.lineTo(w-pad,y); } ctx.stroke();
+    ctx.fillStyle="#e8c15a";
+    labels.forEach((lab,i)=>{ const v=data[i]||0, bh=v*scale, x=pad+i*(barW+gap), y=baseY-bh;
+      ctx.fillRect(x,y,barW,bh);
+      ctx.fillStyle="#fff"; ctx.font="12px Inter, Arial"; ctx.textAlign="center"; ctx.fillText(lab, x+barW/2, baseY+16);
+      ctx.fillStyle="#e8c15a"; ctx.font="bold 14px Inter, Arial"; ctx.fillText(formatRupiah(v), x+barW/2, y-6);
+    });
+  }
+  function showFinance(){
+    if(!finance) return;
+    enterOverlay();
+    financeOverlay.style.display="flex";
+    drawFinance();
+    setTimeout(()=>{ financeOverlay.style.display="none"; exitOverlay(); }, (finance.durationSec||settings.overlayShowSec)*1000);
+  }
+  function showSchedule(){
+    if(!schedule || schedule.length===0) return;
+    enterOverlay();
+    scheduleOverlay.style.display="flex";
+    slist.innerHTML="";
+    schedule.forEach(it=>{
+      const row=document.createElement('div'); row.className="srow";
+      row.innerHTML=`<div class="time">${it.time||""}</div><div class="topic">${it.topic||""}</div><div class="ust">${it.ustadz||""}</div>`;
+      slist.appendChild(row);
+    });
+    setTimeout(()=>{ scheduleOverlay.style.display="none"; exitOverlay(); }, (settings.overlayShowSec)*1000);
+  }
+  function hideAllOverlays(){
+    quoteOverlay.style.display="none"; videoOverlay.style.display="none";
+    financeOverlay.style.display="none"; scheduleOverlay.style.display="none";
+  }
+
+  /* ===== Ticker ===== */
+  function startTicker(){
+    tickerInner.style.transition="none";
+    tickerInner.style.transform=`translateX(${window.innerWidth}px)`;
+    requestAnimationFrame(()=>{
+      const width=tickerInner.getBoundingClientRect().width;
+      const total=width + window.innerWidth;
+      const dur= total / Math.max(60, tickerSpeed);
+      tickerInner.style.transition=`transform ${dur}s linear`;
+      tickerInner.style.transform=`translateX(-${width}px)`;
+      tickerInner.ontransitionend = ()=> setTimeout(startTicker, Math.max(0,tickerPauseSec)*1000);
+    });
+  }
+
+  /* ===== Frames cycle (gambar) ===== */
+  function cycle(which){
+    if(onlyQuoteQ || imgs.length===0) return;
+    const item = nextFrom(imgs, which);
+    if(!item) return;
+    const dur = Number(item.durationSec||8);
+    if(which==="A"){ mountFrame(frameA,item); scheduleFrame("A",dur); }
+    if(which==="B"){ mountFrame(frameB,item); scheduleFrame("B",dur); }
+    if(which==="C"){ mountFrame(frameC,item); scheduleFrame("C",dur); }
+  }
+
+  /* ===== Config ===== */
+  async function fetchConfig(){ try{ const r=await fetch(configUrl,{cache:'no-store'}); if(!r.ok) return null; return await r.json(); }catch(_){ return null; } }
+  function applyConfig(cfg){
+    if(cfg?.settings)  settings = Object.assign(settings, cfg.settings);
+
+    if(cfg && Array.isArray(cfg.slides)){
+      slides = cfg.slides.map(s=>{
+        const base={durationSec:Number(s.durationSec||8)};
+        if(s.quote){ return {...base, quote:String(s.quote), source:s.source||""}; }
+        if(s.video){ return {...base, video:String(s.video)}; }
+        if(s.url){  return {...base, url:String(s.url).trim(), title:s.title||"", desc:s.desc||""}; }
+        return null;
+      }).filter(Boolean);
+    }else if(imagesParam){
+      slides = imagesParam.split(",").map(u=>u.trim()).filter(Boolean)
+        .map(u=>({url:u,title:"",desc:"",durationSec:8}));
+    }else{
+      slides = [];
+    }
+
+    imgs   = slides.filter(isImg);
+    quotes = slides.filter(isQuote);
+    videos = slides.filter(isVideo);
+
+    // RESCUE jika kosong total
+    if(!slides || slides.length===0){
+      slides=[
+        {quote:"“Sebaik-baik kalian adalah yang mempelajari Al-Qur’an dan mengajarkannya.”", source:"HR. Bukhari", durationSec:12},
+        {url:"https://picsum.photos/seed/a/1600/900", title:"Kegiatan Masjid", desc:"Contoh 1", durationSec:8},
+        {url:"https://picsum.photos/seed/b/1600/900", title:"Kajian Rutin",  desc:"Contoh 2", durationSec:8}
+      ];
+      imgs=slides.filter(isImg); quotes=slides.filter(isQuote); videos=slides.filter(isVideo);
+    }
+
+    // Finance & Schedule
+    finance  = cfg?.finance || null;
+    if(finance && finance.title) ftitle.textContent = finance.title;
+    schedule = Array.isArray(cfg?.schedule) ? cfg.schedule : [];
+
+    // Mulai board
+    if(!onlyQuoteQ && imgs.length>0){
+      stage.classList.remove('overlay-active');
+      board.style.display="grid";
+      aPtr=0; bPtr=(imgs.length>1?1:0); cPtr=(imgs.length>2?2:(imgs.length>1?0:0));
+      cycle("A"); setTimeout(()=>cycle("B"),400); setTimeout(()=>cycle("C"),800);
+    }else{
+      board.style.display="none";
+    }
+
+    // Tampilkan satu quote awal (opsional agar terlihat)
+    if(quotes.length>0){
+      const q=quotes[0];
+      showQuoteFullscreen(q, Number(q.durationSec||settings.overlayShowSec));
+    }
+
+    // Rotasi overlay sederhana (video → finance → schedule → quote)
+    const order = (cfg?.overlaysOrder && cfg.overlaysOrder.length) ? cfg.overlaysOrder
+                  : ["video","finance","schedule","quote"];
+    let idx=0;
+    setInterval(()=>{
+      if(stage.classList.contains('overlay-active')) return; // tunggu overlay aktif selesai
+      const kind = order[idx%order.length]; idx++;
+      if(kind==="video"   && videos.length>0)   showVideoFullscreen(videos[0]);
+      else if(kind==="finance" && finance)      showFinance();
+      else if(kind==="schedule"&& schedule.length>0) showSchedule();
+      else if(kind==="quote"   && quotes.length>0)   showQuoteFullscreen(quotes[0], Number(quotes[0].durationSec||settings.overlayShowSec));
+    }, (settings.overlayRotationSec||60)*1000);
+
+    // Ticker
+    const t = tickerParam ?? cfg?.ticker;
+    const s = showTickerQ || !!cfg?.showTicker || !!t;
+    if (s && t) { ticker.style.display="flex"; tickerText.textContent=t; startTicker(); }
+    else { ticker.style.display="none"; }
+  }
+
+  /* ===== Utils ===== */
+  function formatRupiah(n){
+    try{ return new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(n); }
+    catch(_){ return "Rp " + (n||0).toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
+  }
+
+  /* ===== Init ===== */
+  (async function init(){
+    const cfg=await fetchConfig(); applyConfig(cfg||{});
+    if(refreshMin>0 && configUrl){ setInterval(async()=>{ const c=await fetchConfig(); if(c) applyConfig(c); }, refreshMin*60*1000); }
+  })();
 })();
 </script>
 </body>
