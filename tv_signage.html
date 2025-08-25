@@ -82,15 +82,38 @@
   .cap-title{font-weight:900; font-size:clamp(18px,2vw,26px); margin:0 0 4px}
   .cap-desc{font-weight:600; font-size:clamp(14px,1.4vw,18px); margin:0}
 
-  /* QUOTE FULLSCREEN (z-index tinggi) */
+  /* QUOTE FULLSCREEN (lebih gelap & teks kontras) */
   #quoteOverlay{position:absolute; inset:0; display:none; align-items:center; justify-content:center; z-index:20}
   .qcard{width:100%; height:100%; display:grid; place-items:center; padding:26px;
     background:
-      linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.55)),
+      linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.75)),
       url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiNlOGMxNWEiIHN0cm9rZS1vcGFjaXR5PSIwLjE0IiBzdHJva2Utd2lkdGg9IjEiPjxwYXRoIGQ9Ik0wLDMwSDYwIi8+PHBhdGggZD0iTTMwLDBWNjAiLz48cGF0aCBkPSJNMCwwbDYwLDYwIi8+PHBhdGggZD0iTTYwLDBMMCw2MCIvPjxjaXJjbGUgY3g9IjMwIiBjeT0iMzAiIHI9IjgiLz48L2c+PC9zdmc+") center/60px 60px repeat;}
-  .qwrap{max-width:84%; background:rgba(0,0,0,.38); border:1px solid rgba(255,255,255,.22); border-radius:18px; padding:28px 34px; color:#fff; box-shadow:0 12px 30px rgba(0,0,0,.35)}
-  .qtext{font-weight:900; font-size:clamp(22px,3.2vw,48px); line-height:1.35; margin:0 0 10px; text-align:center; text-shadow:0 2px 6px rgba(0,0,0,.45)}
-  .qsrc{font-weight:700; font-size:clamp(14px,1.6vw,22px); opacity:.95; margin:0; text-align:center}
+  .qwrap{
+    max-width:84%;
+    background:rgba(0,0,0,.50);
+    border:1px solid rgba(255,255,255,.22);
+    border-radius:18px;
+    padding:28px 34px;
+    color:var(--gold);
+    box-shadow:0 16px 36px rgba(0,0,0,.55)
+  }
+  .qtext{
+    font-weight:900;
+    font-size:clamp(28px,3.4vw,64px);
+    line-height:1.4;
+    margin:0 0 12px;
+    text-align:center;
+    color:var(--gold);
+    text-shadow:0 3px 8px rgba(0,0,0,.85), 0 1px 0 rgba(0,0,0,.5)
+  }
+  .qsrc{
+    font-weight:800;
+    font-size:clamp(18px,2vw,30px);
+    margin:0;
+    text-align:center;
+    color:#fff;
+    text-shadow:0 2px 6px rgba(0,0,0,.8)
+  }
 
   /* IQOMAH FULLSCREEN */
   #prayerOverlay{position:absolute; inset:0; display:none; align-items:center; justify-content:center;
@@ -239,7 +262,7 @@
 
   /* ===== Quote fullscreen ===== */
   function showQuoteFullscreen(item, durSec){
-    console.log("[Quote] show now:", item);
+    // console.log("[Quote] show now:", item);
     showingQuote=true;
     clearTimeout(tA); clearTimeout(tB); clearTimeout(tC);
     board.style.display="none";
@@ -323,7 +346,7 @@
   }
 
   function renderPrayerTable(){
-    if(!pTimes){ ptEl.innerHTML='<span style="opacity:.7">Jadwal salat tidak tersedia</span>'; return; }
+    if(!pTimes){ ptEl.innerHTML='<span style="opacity:.7)">Jadwal salat tidak tersedia</span>'; return; }
     const order=["Fajr","Syuruq","Dhuhr","Asr","Maghrib","Isha"];
     const nameMap={Fajr:"Subuh",Syuruq:"Syuruq",Dhuhr:"Zuhur",Asr:"Asar",Maghrib:"Maghrib",Isha:"Isya"};
     function fmt(d){ const hh=String(d.getHours()).padStart(2,"0"); const mm=String(d.getMinutes()).padStart(2,"0"); return `${hh}:${mm}`; }
@@ -401,7 +424,7 @@
   async function fetchConfig(){
     if(!configUrl) return null;
     try{ const r=await fetch(configUrl,{cache:'no-store'}); if(!r.ok) return null; return await r.json(); }
-    catch(e){ console.error("Config fetch error", e); return null; }
+    catch(e){ return null; }
   }
   function applyConfig(cfg){
     if(cfg?.countdownMinutes){ DUR = Object.assign(DUR, cfg.countdownMinutes); }
@@ -427,8 +450,6 @@
     imgs   = slides.filter(isImg);
     quotes = slides.filter(isQuote);
 
-    console.log("[Init] imgs:", imgs.length, "quotes:", quotes.length, "onlyQuote:", onlyQuote);
-
     /* === MODE QUOTE SAJA === */
     if(onlyQuote){
       board.style.display="none";
@@ -436,7 +457,6 @@
         const firstQ = quotes.shift(); quotes.push(firstQ);
         showQuoteFullscreen(firstQ, Number(firstQ.durationSec||10));
       }
-      // lanjut loop
       queueNextQuote(12000);
     }
     else if(imgs.length===0 && quotes.length>0){
@@ -452,14 +472,10 @@
       aPtr=0; bPtr=(imgs.length>1?1:0); cPtr=(imgs.length>2?2:(imgs.length>1?0:0));
       cycle("A"); setTimeout(()=>cycle("B"),400); setTimeout(()=>cycle("C"),800);
 
-      // jika diminta paksa tampil sekarang, atau default tampilkan juga cepat
+      // tampilkan quote pertama LANGSUNG agar pasti terlihat
       if(quotes.length>0){
-        if(showQuoteNow){
-          const firstQ = quotes.shift(); quotes.push(firstQ);
-          showQuoteFullscreen(firstQ, Number(firstQ.durationSec||10));
-        }else{
-          queueNextQuote(1000); // cepat tapi tidak instan
-        }
+        const firstQ = quotes.shift(); quotes.push(firstQ);
+        showQuoteFullscreen(firstQ, Number(firstQ.durationSec||10));
       }
     }
 
