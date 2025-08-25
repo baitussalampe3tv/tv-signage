@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin Panel – TV Signage Masjid</title>
+<style>
+  :root{ --bg:#0f1f1c; --card:#132823; --muted:#9fd3c6; --text:#eaf7f3; --accent:#e8c15a; --bad:#e55; --ok:#2bb673; }
+  html,body{margin:0;height:100%;background:linear-gradient(180deg,#0b1916,#142d26);font-family:Inter,system-ui,Segoe UI,Arial;color:var(--text)}
+  .wrap{max-width:1100px;margin:28px auto;padding:0 16px}
+  h1{margin:0 0 18px;font-size:28px}
+  .card{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:16px 16px 2px;box-shadow:0 10px 30px rgba(0,0,0,.25);margin-bottom:16px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  label{font-size:13px;color:var(--muted);display:block;margin:8px 0 6px}
+  input[type="text"],input[type="number"],textarea,select{
+    width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(0,0,0,.25);color:var(--text);outline:none
+  }
+  textarea{min-height:90px}
+  .btn{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:var(--text);
+    padding:10px 14px;border-radius:10px;cursor:pointer;text-decoration:none}
+  .btn:hover{background:rgba(255,255,255,.12)}
+  .btn.ok{border-color:transparent;background:linear-gradient(180deg,#2bb673,#1fa06b);color:#fff}
+  .btn.bad{background:linear-gradient(180deg,#f36,#d22);color:#fff;border-color:transparent}
+  .grid{display:grid;gap:10px}
+  .slide{border:1px dashed rgba(255,255,255,.18);border-radius:12px;padding:12px}
+  .titlebar{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .tag{font-size:12px;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18)}
+  .muted{color:var(--muted)}
+  .help{font-size:12px;color:var(--muted)}
+  .right{display:flex;gap:8px;align-items:center}
+  .sep{height:1px;background:rgba(255,255,255,.12);margin:10px 0}
+  .badge{font-size:12px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.14);padding:2px 8px;border-radius:999px}
+  .small{font-size:12px}
+  .danger{color:#ffb4b4}
+  .oktxt{color:#b8ffd7}
+  .flex{display:flex;gap:8px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Admin Panel – TV Signage Masjid</h1>
+
+  <div class="card">
+    <div class="row">
+      <div>
+        <label>Config URL (signage.json)</label>
+        <input id="configUrl" type="text" placeholder="https://.../signage.json">
+        <div class="flex" style="margin-top:8px">
+          <button class="btn" id="btnLoad">Load dari URL</button>
+          <button class="btn" id="btnExport">Export JSON (download)</button>
+          <a class="btn" target="_blank" id="btnPreview">Preview TV (tab baru)</a>
+        </div>
+        <p class="help">Tips: pakai file <code>signage.json</code> di GitHub Pages kamu.</p>
+      </div>
+      <div>
+        <label>GitHub Save (opsional)</label>
+        <div class="row">
+          <input id="ghOwner" type="text" placeholder="owner (contoh: baitussalampe3tv)">
+          <input id="ghRepo" type="text" placeholder="repo (contoh: tv-signage)">
+        </div>
+        <div class="row">
+          <input id="ghPath" type="text" placeholder="path (contoh: signage.json)">
+          <input id="ghBranch" type="text" placeholder="branch (contoh: main)">
+        </div>
+        <input id="ghToken" type="text" placeholder="GitHub Personal Access Token (scopes: repo)">
+        <div class="right" style="margin-top:8px">
+          <button class="btn ok" id="btnSaveGitHub">Save ke GitHub</button>
+          <span class="small muted">Token disimpan di memori sementara browser & tidak dikirim kemana-mana selain ke API GitHub.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <div>
+        <label>Overlay Rotation (detik)</label>
+        <input id="overlayRotationSec" type="number" value="60" min="5">
+      </div>
+      <div>
+        <label>Overlay Show (detik)</label>
+        <input id="overlayShowSec" type="number" value="12" min="3">
+      </div>
+    </div>
+    <div class="row-3">
+      <div>
+        <label>Countdown Subuh (menit)</label>
+        <input id="cFajr" type="number" value="20" min="0">
+      </div>
+      <div>
+        <label>Countdown Zuhur (menit)</label>
+        <input id="cDhuhr" type="number" value="15" min="0">
+      </div>
+      <div>
+        <label>Countdown Asar (menit)</label>
+        <input id="cAsr" type="number" value="15" min="0">
+      </div>
+    </div>
+    <div class="row-3">
+      <div>
+        <label>Countdown Maghrib (menit)</label>
+        <input id="cMaghrib" type="number" value="10" min="0">
+      </div>
+      <div>
+        <label>Countdown Isya (menit)</label>
+        <input id="cIsha" type="number" value="15" min="0">
+      </div>
+      <div>
+        <label>Urutan Overlay</label>
+        <select id="overlaysOrder" multiple size="4">
+          <option value="quote" selected>quote</option>
+          <option value="video" selected>video</option>
+          <option value="schedule" selected>schedule</option>
+          <option value="finance" selected>finance</option>
+        </select>
+        <div class="help">Gunakan Ctrl/Cmd + klik untuk memilih urutan (atas → bawah).</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="titlebar">
+      <div><span class="tag">Slides</span> <span class="muted small">Gambar / Quote / Video</span></div>
+      <div class="right"><button class="btn" id="btnAddImage">+ Gambar</button><button class="btn" id="btnAddQuote">+ Quote</button><button class="btn" id="btnAddVideo">+ Video</button></div>
+    </div>
+    <div id="slides" class="grid"></div>
+  </div>
+
+  <div class="card">
+    <div class="titlebar">
+      <div><span class="tag">Finance</span> <span class="muted small">Laporan Keuangan</span></div>
+    </div>
+    <div class="row">
+      <div>
+        <label>Judul</label>
+        <input id="finTitle" type="text" placeholder="Laporan Keuangan Kotak Aman – Pekan Ini">
+      </div>
+      <div>
+        <label>Durasi tampil (detik)</label>
+        <input id="finDur" type="number" value="14" min="3">
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label>Labels (pisahkan dengan koma)</label>
+        <input id="finLabels" type="text" placeholder="Infaq, Operasional, Sosial, Renovasi">
+      </div>
+      <div>
+        <label>Data nominal (pisahkan dengan koma)</label>
+        <input id="finData" type="text" placeholder="3200000, 1500000, 1200000, 2100000">
+      </div>
+    </div>
+    <p class="help">Kosongkan semua field finance jika tidak ingin ditampilkan.</p>
+  </div>
+
+  <div class="card">
+    <div class="titlebar">
+      <div><span class="tag">Schedule</span> <span class="muted small">Jadwal Kajian</span></div>
+      <div class="right"><button class="btn" id="btnAddSch">+ Tambah Jadwal</button></div>
+    </div>
+    <div id="schedule" class="grid"></div>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <div>
+        <label>Ticker Text</label>
+        <textarea id="ticker" placeholder="Pengumuman: ... | ..."></textarea>
+      </div>
+      <div>
+        <label>Tampilkan Ticker?</label>
+        <select id="showTicker">
+          <option value="true">Ya</option>
+          <option value="false">Tidak</option>
+        </select>
+        <div class="row">
+          <div>
+            <label>Pause antar loop (detik)</label>
+            <input id="tickerPauseSec" type="number" value="2" min="0">
+          </div>
+          <div>
+            <label>Kecepatan (px/detik)</label>
+            <input id="tickerSpeed" type="number" value="120" min="20">
+          </div>
+        </div>
+        <p class="help">Parameter ini terbaca di URL saat preview (opsional).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="right">
+      <button class="btn ok" id="btnExportBottom">Export JSON</button>
+      <span class="small muted">Pastikan setelah export, file <code>signage.json</code> diganti di GitHub Pages kamu.</span>
+    </div>
+  </div>
+
+  <p class="small muted">Versi panel: v1.0 • Semua proses dilakukan di browser Anda.</p>
+</div>
+
+<script>
+const slidesEl = document.getElementById('slides');
+const scheduleEl = document.getElementById('schedule');
+
+function el(html){ const t=document.createElement('template'); t.innerHTML=html.trim(); return t.content.firstChild; }
+
+function slideRow(type, data={}){
+  const baseDur = data.durationSec ?? 8;
+  if(type==='image'){
+    const node = el(`
+      <div class="slide">
+        <div class="titlebar">
+          <div><span class="badge">Gambar</span></div>
+          <div class="right"><button class="btn bad btnDel">Hapus</button></div>
+        </div>
+        <div class="row">
+          <div><label>URL Gambar</label><input class="s-url" type="text" placeholder="images/kegiatan-1.jpg" value="${data.url||''}"></div>
+          <div><label>Durasi (detik)</label><input class="s-dur" type="number" min="1" value="${baseDur}"></div>
+        </div>
+        <div class="row">
+          <div><label>Judul</label><input class="s-title" type="text" value="${data.title||''}"></div>
+          <div><label>Deskripsi</label><input class="s-desc" type="text" value="${data.desc||''}"></div>
+        </div>
+      </div>
+    `);
+    node.querySelector('.btnDel').onclick=()=>node.remove();
+    return node;
+  }
+  if(type==='quote'){
+    const node = el(`
+      <div class="slide">
+        <div class="titlebar">
+          <div><span class="badge">Quote</span></div>
+          <div class="right"><button class="btn bad btnDel">Hapus</button></div>
+        </div>
+        <div><label>Teks Quote</label><textarea class="q-text" placeholder="“...”">${data.quote||''}</textarea></div>
+        <div class="row">
+          <div><label>Sumber</label><input class="q-src" type="text" placeholder="HR. Bukhari" value="${data.source||''}"></div>
+          <div><label>Durasi (detik)</label><input class="q-dur" type="number" min="1" value="${data.durationSec ?? 12}"></div>
+        </div>
+      </div>
+    `);
+    node.querySelector('.btnDel').onclick=()=>node.remove();
+    return node;
+  }
+  if(type==='video'){
+    const node = el(`
+      <div class="slide">
+        <div class="titlebar">
+          <div><span class="badge">Video</span> <span class="small muted">(MP4 disarankan, tanpa audio)</span></div>
+          <div class="right"><button class="btn bad btnDel">Hapus</button></div>
+        </div>
+        <div class="row">
+          <div><label>URL Video</label><input class="v-url" type="text" placeholder="videos/potongan-kajian.mp4" value="${data.video||''}"></div>
+          <div><label>Durasi (opsional) – biarkan kosong untuk pakai durasi asli video</label><input class="v-dur" type="number" min="1" value="${data.durationSec||''}"></div>
+        </div>
+      </div>
+    `);
+    node.querySelector('.btnDel').onclick=()=>node.remove();
+    return node;
+  }
+}
+
+function scheduleRow(data={}){
+  const node = el(`
+    <div class="slide">
+      <div class="titlebar">
+        <div><span class="badge">Item Jadwal</span></div>
+        <div class="right"><button class="btn bad btnDel">Hapus</button></div>
+      </div>
+      <div class="row">
+        <div><label>Waktu</label><input class="sch-time" type="text" placeholder="Rabu 19:00" value="${data.time||''}"></div>
+        <div><label>Topik</label><input class="sch-topic" type="text" placeholder="Minhajul Muslim" value="${data.topic||''}"></div>
+      </div>
+      <div class="row">
+        <div><label>Ustadz</label><input class="sch-ust" type="text" placeholder="Ust. ..." value="${data.ustadz||''}"></div>
+      </div>
+    </div>
+  `);
+  node.querySelector('.btnDel').onclick=()=>node.remove();
+  return node;
+}
+
+function collectJSON(){
+  const settings = {
+    overlayRotationSec: Number(document.getElementById('overlayRotationSec').value||60),
+    overlayShowSec: Number(document.getElementById('overlayShowSec').value||12)
+  };
+  const countdownMinutes = {
+    Fajr: Number(document.getElementById('cFajr').value||20),
+    Dhuhr: Number(document.getElementById('cDhuhr').value||15),
+    Asr: Number(document.getElementById('cAsr').value||15),
+    Maghrib: Number(document.getElementById('cMaghrib').value||10),
+    Isha: Number(document.getElementById('cIsha').value||15)
+  };
+
+  const slides = [];
+  slidesEl.querySelectorAll('.slide').forEach(sl=>{
+    if(sl.querySelector('.s-url')){ // image
+      const url = sl.querySelector('.s-url').value.trim();
+      const durationSec = Number(sl.querySelector('.s-dur').value||8);
+      const title = sl.querySelector('.s-title').value;
+      const desc  = sl.querySelector('.s-desc').value;
+      if(url) slides.push({url, title, desc, durationSec});
+    }else if(sl.querySelector('.q-text')){ // quote
+      const quote = sl.querySelector('.q-text').value.trim();
+      const source = sl.querySelector('.q-src').value;
+      const durationSec = Number(sl.querySelector('.q-dur').value||12);
+      if(quote) slides.push({quote, source, durationSec});
+    }else if(sl.querySelector('.v-url')){ // video
+      const video = sl.querySelector('.v-url').value.trim();
+      const dur = sl.querySelector('.v-dur').value.trim();
+      const durationSec = dur ? Number(dur) : undefined;
+      if(video){
+        const v = {video};
+        if(durationSec) v.durationSec = durationSec;
+        slides.push(v);
+      }
+    }
+  });
+
+  let finance = null;
+  const finTitle = document.getElementById('finTitle').value.trim();
+  const finLabels = document.getElementById('finLabels').value.trim();
+  const finData   = document.getElementById('finData').value.trim();
+  const finDur    = Number(document.getElementById('finDur').value||14);
+  if(finTitle || finLabels || finData){
+    finance = {
+      title: finTitle || "Laporan Keuangan",
+      labels: finLabels ? finLabels.split(',').map(s=>s.trim()).filter(Boolean) : [],
+      data: finData ? finData.split(',').map(s=>Number(s.trim())||0) : [],
+      durationSec: finDur
+    };
+  }
+
+  const schedule = [];
+  scheduleEl.querySelectorAll('.slide').forEach(row=>{
+    const time  = row.querySelector('.sch-time').value.trim();
+    const topic = row.querySelector('.sch-topic').value.trim();
+    const ust   = row.querySelector('.sch-ust').value.trim();
+    if(time || topic || ust) schedule.push({time, topic, ustadz: ust});
+  });
+
+  // overlays order
+  const sel = document.getElementById('overlaysOrder');
+  const overlaysOrder = Array.from(sel.options).filter(o=>o.selected).map(o=>o.value);
+
+  const out = {
+    settings,
+    slides,
+    finance,
+    schedule,
+    overlaysOrder,
+    ticker: document.getElementById('ticker').value,
+    showTicker: document.getElementById('showTicker').value === 'true',
+    countdownMinutes
+  };
+  // bersihkan kunci null
+  if(!out.finance) delete out.finance;
+  if(!out.schedule || out.schedule.length===0) delete out.schedule;
+
+  return out;
+}
+
+function populateFromJSON(cfg){
+  // settings
+  document.getElementById('overlayRotationSec').value = cfg?.settings?.overlayRotationSec ?? 60;
+  document.getElementById('overlayShowSec').value     = cfg?.settings?.overlayShowSec ?? 12;
+
+  // slides
+  slidesEl.innerHTML='';
+  (cfg?.slides||[]).forEach(s=>{
+    if(s.url) slidesEl.appendChild(slideRow('image', s));
+    else if(s.quote) slidesEl.appendChild(slideRow('quote', s));
+    else if(s.video) slidesEl.appendChild(slideRow('video', s));
+  });
+
+  // finance
+  document.getElementById('finTitle').value  = cfg?.finance?.title || '';
+  document.getElementById('finLabels').value = (cfg?.finance?.labels||[]).join(', ');
+  document.getElementById('finData').value   = (cfg?.finance?.data||[]).join(', ');
+  document.getElementById('finDur').value    = cfg?.finance?.durationSec ?? 14;
+
+  // schedule
+  scheduleEl.innerHTML='';
+  (cfg?.schedule||[]).forEach(it=>scheduleEl.appendChild(scheduleRow(it)));
+
+  // overlays
+  const orderSel=document.getElementById('overlaysOrder');
+  const prefer = cfg?.overlaysOrder || ["quote","video","schedule","finance"];
+  Array.from(orderSel.options).forEach(o=>o.selected = prefer.includes(o.value));
+
+  // ticker
+  document.getElementById('ticker').value = cfg?.ticker || '';
+  document.getElementById('showTicker').value = String(!!cfg?.showTicker);
+
+  // countdown
+  document.getElementById('cFajr').value    = cfg?.countdownMinutes?.Fajr ?? 20;
+  document.getElementById('cDhuhr').value   = cfg?.countdownMinutes?.Dhuhr ?? 15;
+  document.getElementById('cAsr').value     = cfg?.countdownMinutes?.Asr ?? 15;
+  document.getElementById('cMaghrib').value = cfg?.countdownMinutes?.Maghrib ?? 10;
+  document.getElementById('cIsha').value    = cfg?.countdownMinutes?.Isha ?? 15;
+}
+
+async function loadFromUrl(u){
+  try{
+    const r = await fetch(u, {cache:'no-store'});
+    if(!r.ok) throw new Error("Gagal fetch: " + r.status);
+    const j = await r.json();
+    populateFromJSON(j);
+    alert('Berhasil load konfigurasi.');
+  }catch(e){
+    console.error(e);
+    alert('Gagal load JSON. Pastikan URL benar & CORS mengizinkan.');
+  }
+}
+
+function download(filename, text){
+  const blob = new Blob([text], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+}
+
+async function saveToGitHub({owner, repo, path, branch, token, content, message}){
+  const apiBase = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}`;
+  // 1) get current sha (if exists)
+  let sha=null;
+  try{
+    const r = await fetch(apiBase + `?ref=${encodeURIComponent(branch)}`);
+    if(r.ok){ const j=await r.json(); sha=j.sha; }
+  }catch(_){}
+
+  // 2) put new content
+  const body = {
+    message: message || `Update ${path} via admin panel`,
+    content: btoa(unescape(encodeURIComponent(content))), // base64
+    branch
+  };
+  if(sha) body.sha = sha;
+
+  const r2 = await fetch(apiBase, {
+    method:'PUT',
+    headers:{ 'Authorization': `token ${token}`, 'Content-Type':'application/json' },
+    body: JSON.stringify(body)
+  });
+  if(!r2.ok){
+    const t = await r2.text();
+    throw new Error("GitHub API error: " + t);
+  }
+  return await r2.json();
+}
+
+/* ==== Wiring ==== */
+document.getElementById('btnAddImage').onclick=()=>slidesEl.appendChild(slideRow('image',{}));
+document.getElementById('btnAddQuote').onclick=()=>slidesEl.appendChild(slideRow('quote',{}));
+document.getElementById('btnAddVideo').onclick=()=>slidesEl.appendChild(slideRow('video',{}));
+document.getElementById('btnAddSch').onclick=()=>scheduleEl.appendChild(scheduleRow({}));
+
+document.getElementById('btnLoad').onclick=()=>{
+  const u = document.getElementById('configUrl').value.trim();
+  if(!u) return alert('Isi Config URL terlebih dahulu.');
+  loadFromUrl(u);
+};
+function buildPreviewUrl(){
+  const u = document.getElementById('configUrl').value.trim();
+  const tickerPause = document.getElementById('tickerPauseSec').value || 2;
+  const tickerSpeed = document.getElementById('tickerSpeed').value || 120;
+  if(!u) return '#';
+  const base = location.origin + location.pathname.replace(/admin\.html$/,'') + 'tv_signage.html';
+  const q = new URLSearchParams({
+    config: u,
+    theme: 'gold',
+    tickerPauseSec: String(tickerPause),
+    tickerSpeed: String(tickerSpeed),
+    t: String(Date.now())
+  });
+  return `${base}?${q.toString()}`;
+}
+document.getElementById('btnPreview').onclick=(e)=>{
+  const href = buildPreviewUrl();
+  if(href==='#'){ e.preventDefault(); alert('Isi Config URL dulu.'); }
+  else document.getElementById('btnPreview').href = href;
+};
+
+function doExport(){
+  const json = JSON.stringify(collectJSON(), null, 2);
+  download('signage.json', json);
+}
+document.getElementById('btnExport').onclick=doExport;
+document.getElementById('btnExportBottom').onclick=doExport;
+
+document.getElementById('btnSaveGitHub').onclick=async()=>{
+  const owner = document.getElementById('ghOwner').value.trim();
+  const repo  = document.getElementById('ghRepo').value.trim();
+  const path  = document.getElementById('ghPath').value.trim() || 'signage.json';
+  const branch= document.getElementById('ghBranch').value.trim() || 'main';
+  const token = document.getElementById('ghToken').value.trim();
+  if(!owner||!repo||!token) return alert('Isi owner, repo, dan token terlebih dahulu.');
+  try{
+    const json = JSON.stringify(collectJSON(), null, 2);
+    await saveToGitHub({owner,repo,path,branch,token,content:json,message:`Update ${path} via Admin Panel`});
+    alert('Berhasil save ke GitHub. Tunggu 10–60 detik sampai GitHub Pages update.');
+  }catch(e){
+    console.error(e);
+    alert('Gagal save ke GitHub: ' + e.message);
+  }
+};
+</script>
+</body>
+</html>
