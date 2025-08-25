@@ -1,36 +1,30 @@
 {
   "settings": {
-    "overlayRotationSec": 60,   // tiap 60 detik tampilkan salah satu overlay
-    "overlayShowSec": 12        // durasi tampilan overlay (kecuali video & iqomah)
+    "overlayRotationSec": 60,
+    "overlayShowSec": 12
   },
-
   "slides": [
     { "url": "images/kegiatan-1.jpg", "title": "Kajian Rutin", "desc": "Kitab Minhajul Muslim — Rabu malam", "durationSec": 8 },
     { "quote": "“Sebaik-baik kalian adalah yang mempelajari Al-Qur’an dan mengajarkannya.”", "source": "HR. Bukhari", "durationSec": 12 },
     { "url": "images/kegiatan-2.jpg", "title": "Tausiyah Pekanan", "desc": "Ustadz Ibrahim Saleh — Ba'da Magrib", "durationSec": 8 },
-    { "video": "videos/potongan-kajian.mp4" },  // video fullscreen (muted)
+    { "video": "videos/potongan-kajian.mp4" },
     { "quote": "“Barangsiapa beriman kepada Allah dan hari akhir, hendaklah berkata baik atau diam.”", "source": "HR. Bukhari & Muslim", "durationSec": 12 },
     { "url": "images/kegiatan-3.jpg", "title": "Kerja Bakti", "desc": "Lingkungan Masjid Baitussalam", "durationSec": 8 }
   ],
-
   "finance": {
     "title": "Laporan Keuangan Kotak Aman – Pekan Ini",
     "labels": ["Infaq", "Operasional", "Sosial", "Renovasi"],
     "data": [3200000, 1500000, 1200000, 2100000],
     "durationSec": 14
   },
-
   "schedule": [
-    { "time": "Senin 19:00",  "topic": "Fiqih Ibadah",         "ustadz": "Ust. Ali Rahman" },
-    { "time": "Rabu 19:00",   "topic": "Minhajul Muslim",      "ustadz": "Ust. Ibrahim Saleh" },
-    { "time": "Jumat 12:45",  "topic": "Khutbah Jumat",        "ustadz": "Ust. Taufiq" },
-    { "time": "Ahad 08:00",   "topic": "Kajian Keluarga",      "ustadz": "Ust. Hafizh" }
+    { "time": "Senin 19:00", "topic": "Fiqih Ibadah", "ustadz": "Ust. Ali Rahman" },
+    { "time": "Rabu 19:00", "topic": "Minhajul Muslim", "ustadz": "Ust. Ibrahim Saleh" },
+    { "time": "Jumat 12:45", "topic": "Khutbah Jumat", "ustadz": "Ust. Taufiq" },
+    { "time": "Ahad 08:00", "topic": "Kajian Keluarga", "ustadz": "Ust. Hafizh" }
   ],
-
   "overlaysOrder": ["quote", "video", "schedule", "finance"],
-
   "ticker": "Pengumuman: Kajian malam ini pukul 19:00 | Donasi pembangunan masjid dibuka | Info: sekretariat ta'mir.",
   "showTicker": true,
-
   "countdownMinutes": { "Fajr": 20, "Dhuhr": 15, "Asr": 15, "Maghrib": 10, "Isha": 15 }
 }
