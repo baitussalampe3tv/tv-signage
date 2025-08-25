@@ -12,15 +12,13 @@
     --tickerBg:#0B1C53; --tickerText:#FFFFFF;
   }
   body.theme-emerald{
-    --bg1:#0d2d28; --bg2:#134238;
-    --panel:#123a32; --border:#2f6b5e;
+    --bg1:#0d2d28; --bg2:#134238; --panel:#123a32; --border:#2f6b5e;
     --gold:#e8c15a; --text:#EAF7F3; --muted:#bfe4d8;
     --shadow:0 16px 48px rgba(0,0,0,.28);
     --tickerBg:#0f3b34; --tickerText:#fdfdfd;
   }
   body.theme-gold{
-    --bg1:#fff7e0; --bg2:#ffefc6;
-    --panel:#fff8e8; --border:#f0db9a;
+    --bg1:#fff7e0; --bg2:#ffefc6; --panel:#fff8e8; --border:#f0db9a;
     --gold:#d5a921; --text:#2b240f; --muted:#5b4d1d;
     --shadow:0 16px 48px rgba(0,0,0,.18);
     --tickerBg:#7a5a12; --tickerText:#fffaf0;
@@ -35,10 +33,8 @@
   }
 
   /* TOP BAR */
-  .topbar{
-    position:fixed; top:14px; left:16px; right:16px;
-    display:grid; grid-template-columns:auto 1fr; gap:16px; z-index:5;
-  }
+  .topbar{position:fixed; top:14px; left:16px; right:16px;
+    display:grid; grid-template-columns:auto 1fr; gap:16px; z-index:5;}
   .brand{
     display:flex; gap:12px; align-items:center; padding:10px 14px;
     background:linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.10));
@@ -50,7 +46,6 @@
   .brand-name{color:var(--text); font-weight:900; font-size:18px}
   .brand-sub{color:var(--muted); font-weight:700; font-size:13px}
 
-  /* WAKTU SHOLAT */
   .pray-wrap{display:flex; justify-content:flex-end}
   .prayer{
     display:grid; grid-template-columns:auto 1fr auto auto; gap:14px; align-items:center;
@@ -70,8 +65,7 @@
     position:relative; margin:128px 16px 58px; border-radius:22px;
     background:linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
     box-shadow:var(--shadow); overflow:hidden; display:grid; place-items:center; border:1px solid var(--border);
-    /* FIX UTAMA: pastikan tinggi tetap ada saat .board disembunyikan */
-    min-height:min(70vh,820px);
+    min-height:min(70vh,820px); /* penting agar overlay tak kolaps */
   }
   .board{display:grid; grid-template-columns:2fr 1fr; gap:22px; width:min(92vw,1680px); height:min(70vh,820px);
     background:linear-gradient(180deg, var(--panel), rgba(0,0,0,.06));
@@ -86,38 +80,39 @@
   .cap-title{font-weight:900; font-size:clamp(18px,2vw,26px); margin:0 0 4px}
   .cap-desc{font-weight:600; font-size:clamp(14px,1.4vw,18px); margin:0}
 
-  /* QUOTE FULLSCREEN (lebih gelap & teks kontras) */
+  /* QUOTE FULLSCREEN */
   #quoteOverlay{position:absolute; inset:0; display:none; align-items:center; justify-content:center; z-index:20}
   .qcard{width:100%; height:100%; display:grid; place-items:center; padding:26px;
-    background:
-      linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.75)),
-      url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBzdHJva2U9IiNlOGMxNWEiIHN0cm9rZS1vcGFjaXR5PSIwLjE0IiBzdHJva2Utd2lkdGg9IjEiPjxwYXRoIGQ9Ik0wLDMwSDYwIi8+PHBhdGggZD0iTTMwLDBWNjAiLz48cGF0aCBkPSJNMCwwbDYwLDYwIi8+PHBhdGggZD0iTTYwLDBMMCw2MCIvPjxjaXJjbGUgY3g9IjMwIiBjeT0iMzAiIHI9IjgiLz48L2c+PC9zdmc+") center/60px 60px repeat;}
+    background:linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.75));}
   .qwrap{
-    max-width:84%;
-    background:rgba(0,0,0,.50);
-    border:1px solid rgba(255,255,255,.22);
-    border-radius:18px;
-    padding:28px 34px;
-    color:var(--gold);
+    max-width:84%; background:rgba(0,0,0,.50);
+    border:1px solid rgba(255,255,255,.22); border-radius:18px; padding:28px 34px; color:var(--gold);
     box-shadow:0 16px 36px rgba(0,0,0,.55)
   }
-  .qtext{
-    font-weight:900;
-    font-size:clamp(28px,3.4vw,64px);
-    line-height:1.4;
-    margin:0 0 12px;
-    text-align:center;
-    color:var(--gold);
-    text-shadow:0 3px 8px rgba(0,0,0,.85), 0 1px 0 rgba(0,0,0,.5)
-  }
-  .qsrc{
-    font-weight:800;
-    font-size:clamp(18px,2vw,30px);
-    margin:0;
-    text-align:center;
-    color:#fff;
-    text-shadow:0 2px 6px rgba(0,0,0,.8)
-  }
+  .qtext{font-weight:900; font-size:clamp(28px,3.4vw,64px); line-height:1.4; margin:0 0 12px; text-align:center; color:var(--gold); text-shadow:0 3px 8px rgba(0,0,0,.85), 0 1px 0 rgba(0,0,0,.5)}
+  .qsrc{font-weight:800; font-size:clamp(18px,2vw,30px); margin:0; text-align:center; color:#fff; text-shadow:0 2px 6px rgba(0,0,0,.8)}
+
+  /* VIDEO FULLSCREEN */
+  #videoOverlay{position:absolute; inset:0; display:none; align-items:center; justify-content:center; z-index:22; background:rgba(0,0,0,.8)}
+  #videoOverlay video{max-width:92vw; max-height:70vh; border-radius:16px; box-shadow:0 16px 48px rgba(0,0,0,.5); outline:1px solid rgba(255,255,255,.2)}
+
+  /* FINANCE FULLSCREEN */
+  #financeOverlay{position:absolute; inset:0; display:none; align-items:center; justify-content:center; z-index:21}
+  .fcard{display:grid; gap:12px; place-items:center; padding:28px 34px; border-radius:22px;
+    background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.08)); border:1px solid var(--border); box-shadow:var(--shadow); color:#fff; text-align:center; backdrop-filter:blur(6px)}
+  .ftitle{font-weight:900; font-size:clamp(24px,3vw,48px); color:var(--gold)}
+  #finCanvas{width:min(86vw,1400px); height:min(48vh,520px); background:rgba(0,0,0,.3); border-radius:14px; outline:1px solid rgba(255,255,255,.2)}
+
+  /* SCHEDULE FULLSCREEN */
+  #scheduleOverlay{position:absolute; inset:0; display:none; align-items:center; justify-content:center; z-index:21}
+  .scard{display:grid; gap:12px; place-items:stretch; padding:28px 34px; border-radius:22px;
+    background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.08)); border:1px solid var(--border); box-shadow:var(--shadow); color:#fff; text-align:left; backdrop-filter:blur(6px); width:min(92vw,1500px)}
+  .stitle{font-weight:900; font-size:clamp(24px,3vw,48px); color:var(--gold); text-align:center}
+  .slist{display:grid; gap:10px}
+  .srow{display:grid; grid-template-columns: 120px 1fr 1fr; gap:14px; padding:12px 14px; border-radius:12px; background:rgba(0,0,0,.25); border:1px solid rgba(255,255,255,.15)}
+  .srow .time{font-weight:900}
+  .srow .topic{font-weight:800}
+  .srow .ust{opacity:.95}
 
   /* IQOMAH FULLSCREEN */
   #prayerOverlay{position:absolute; inset:0; display:none; align-items:center; justify-content:center;
@@ -164,17 +159,34 @@
       </div>
     </div>
 
-    <!-- QUOTE FULLSCREEN -->
+    <!-- QUOTE -->
     <div id="quoteOverlay">
-      <div class="qcard">
-        <div class="qwrap">
-          <p class="qtext" id="qtext"></p>
-          <p class="qsrc" id="qsrc"></p>
-        </div>
+      <div class="qcard"><div class="qwrap">
+        <p class="qtext" id="qtext"></p>
+        <p class="qsrc" id="qsrc"></p>
+      </div></div>
+    </div>
+
+    <!-- VIDEO -->
+    <div id="videoOverlay"><video id="vplayer" playsinline muted></video></div>
+
+    <!-- FINANCE -->
+    <div id="financeOverlay">
+      <div class="fcard">
+        <div class="ftitle" id="ftitle">Laporan Keuangan Mingguan</div>
+        <canvas id="finCanvas"></canvas>
       </div>
     </div>
 
-    <!-- IQOMAH FULLSCREEN -->
+    <!-- SCHEDULE -->
+    <div id="scheduleOverlay">
+      <div class="scard">
+        <div class="stitle">Jadwal Kajian</div>
+        <div class="slist" id="slist"></div>
+      </div>
+    </div>
+
+    <!-- IQOMAH -->
     <div id="prayerOverlay">
       <div class="pCard">
         <div class="pTitle">Menuju Iqomah</div>
@@ -213,30 +225,53 @@
   const frameB=document.getElementById("frameB");
   const frameC=document.getElementById("frameC");
   const board=document.getElementById("board");
+
   const quoteOverlay=document.getElementById("quoteOverlay");
   const qtext=document.getElementById("qtext");
   const qsrc=document.getElementById("qsrc");
+
+  const videoOverlay=document.getElementById("videoOverlay");
+  const vplayer=document.getElementById("vplayer");
+
+  const financeOverlay=document.getElementById("financeOverlay");
+  const finCanvas=document.getElementById("finCanvas");
+  const ftitle=document.getElementById("ftitle");
+
+  const scheduleOverlay=document.getElementById("scheduleOverlay");
+  const slist=document.getElementById("slist");
+
   const overlay=document.getElementById("prayerOverlay");
   const pName=document.getElementById("pName");
   const pTimer=document.getElementById("pTimer");
+
   const ticker=document.getElementById("ticker");
   const tickerInner=document.getElementById("tickerInner");
   const tickerText=document.getElementById("tickerText");
+
   const ptEl=document.getElementById("pt");
   const nextEl=document.getElementById("next");
   const cdEl=document.getElementById("cd");
 
   /* ===== Data ===== */
-  let slides=[];     // campuran
-  let imgs=[];       // item gambar
-  let quotes=[];     // item quote
+  let slides=[];         // campuran: {url},{quote},{video}
+  let imgs=[];           // hanya gambar
+  let quotes=[];         // hanya quote
+  let videos=[];         // hanya video
+  let finance=null;      // {title, labels[], data[]}
+  let schedule=[];       // array jadwal kajian
+  let settings={         // overlay rotasi
+    overlayRotationSec: 60,  // setiap 60 detik tampilkan salah satu overlay (jika ada)
+    overlayShowSec: 12       // durasi tampil overlay (kecuali video dan iqomah)
+  };
+
   let aPtr=0, bPtr=1, cPtr=2;
-  let tA,tB,tC;
+  let tA,tB,tC, overlayTicker=null;
   let showingQuote=false, quoteTimer=null, quoteLoopTimer=null;
 
   /* ===== Helpers ===== */
-  const isImg = s => !!s.url;
+  const isImg   = s => !!s.url;
   const isQuote = s => !!s.quote;
+  const isVideo = s => !!s.video;
 
   function createImg(src){ const i=new Image(); i.src=src; i.decoding="async"; i.loading="eager"; return i; }
   function mountFrame(frame, s){
@@ -257,7 +292,7 @@
     else cPtr=(cPtr+1)%arr.length;
     return item;
   }
-  function schedule(which, dur){
+  function scheduleFrame(which, dur){
     const fn=()=>cycle(which); const ms=(dur||8)*1000;
     if(which==="A"){clearTimeout(tA);tA=setTimeout(fn,ms);}
     if(which==="B"){clearTimeout(tB);tB=setTimeout(fn,ms);}
@@ -268,6 +303,7 @@
   function showQuoteFullscreen(item, durSec){
     showingQuote=true;
     clearTimeout(tA); clearTimeout(tB); clearTimeout(tC);
+    hideAllOverlays();
     board.style.display="none";
     quoteOverlay.style.display="flex";
     qtext.textContent = item.quote || "";
@@ -276,36 +312,155 @@
     quoteTimer=setTimeout(()=>{
       quoteOverlay.style.display="none";
       showingQuote=false;
-      if(overlay.style.display!=="flex" && imgs.length>0 && !onlyQuote){
+      if(overlay.style.display!=="flex" && imgs.length>0){
         board.style.display="grid";
         cycle("A"); setTimeout(()=>cycle("B"),400); setTimeout(()=>cycle("C"),800);
       }
-      queueNextQuote(); // lanjut quote berikutnya
-    }, (durSec||10)*1000);
+    }, (durSec||settings.overlayShowSec)*1000);
   }
-  function queueNextQuote(delayMs){
+  function queueQuotesLoop(){
     clearTimeout(quoteLoopTimer);
     if(quotes.length===0) return;
-    const delay = typeof delayMs==="number" ? delayMs : 12000;
     quoteLoopTimer=setTimeout(()=>{
-      if(showingQuote){ queueNextQuote(1000); return; }
+      if(showingQuote || overlay.style.display==="flex" || videoOverlay.style.display==="flex") {
+        queueQuotesLoop(); return;
+      }
       const q = quotes.shift(); quotes.push(q);
-      showQuoteFullscreen(q, Number(q.durationSec||10));
-    }, Math.max(0,delay));
+      showQuoteFullscreen(q, Number(q.durationSec||settings.overlayShowSec));
+      queueQuotesLoop();
+    }, settings.overlayRotationSec*1000);
   }
 
-  /* ===== Frames cycle ===== */
+  /* ===== Video fullscreen ===== */
+  async function showVideoFullscreen(item){
+    hideAllOverlays();
+    board.style.display="none";
+    videoOverlay.style.display="flex";
+    vplayer.src = item.video;
+    vplayer.loop = false;
+    vplayer.muted = true;
+    try{ await vplayer.play(); }catch(_){}
+    vplayer.onended = ()=>{
+      videoOverlay.style.display="none";
+      if(imgs.length>0){ board.style.display="grid"; cycle("A"); setTimeout(()=>cycle("B"),400); setTimeout(()=>cycle("C"),800); }
+      queueOverlayRotation(); // lanjut rotasi
+    };
+  }
+
+  /* ===== Finance fullscreen (bar chart canvas) ===== */
+  function drawFinance(){
+    if(!finance) return;
+    const canvas = finCanvas;
+    const dpr = window.devicePixelRatio||1;
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    canvas.width = Math.floor(w*dpr); canvas.height = Math.floor(h*dpr);
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr,dpr);
+    ctx.clearRect(0,0,w,h);
+
+    const pad=24, titleH=0;
+    const labels=finance.labels||[];
+    const data=finance.data||[];
+    const maxV=Math.max(1, ...data.map(v=>Math.abs(v)));
+    const barW = (w - pad*2) / (labels.length*1.6);
+    const gap  = barW*0.6;
+    const baseY = h - pad - 30;
+    const scale = (h - pad*2 - 40) / maxV;
+
+    // grid
+    ctx.strokeStyle="rgba(255,255,255,.2)"; ctx.lineWidth=1;
+    ctx.beginPath();
+    for(let i=0;i<=4;i++){
+      const y = pad + titleH + i*( (baseY - (pad+titleH)) / 4 );
+      ctx.moveTo(pad,y); ctx.lineTo(w-pad,y);
+    }
+    ctx.stroke();
+
+    // bars
+    ctx.fillStyle="#e8c15a";
+    labels.forEach((lab,i)=>{
+      const v = data[i]||0;
+      const bh = v*scale;
+      const x = pad + i*(barW+gap);
+      const y = baseY - bh;
+      ctx.fillRect(x,y,barW,bh);
+      // label
+      ctx.fillStyle="#fff"; ctx.font="12px Inter, Arial";
+      ctx.textAlign="center"; ctx.fillText(lab, x+barW/2, baseY+16);
+      ctx.fillStyle="#e8c15a";
+      ctx.font="bold 14px Inter, Arial";
+      ctx.fillText(formatRupiah(v), x+barW/2, y-6);
+    });
+  }
+  function showFinance(){
+    if(!finance) return;
+    hideAllOverlays();
+    board.style.display="none";
+    financeOverlay.style.display="flex";
+    drawFinance();
+    setTimeout(()=>{
+      financeOverlay.style.display="none";
+      if(imgs.length>0){ board.style.display="grid"; cycle("A"); setTimeout(()=>cycle("B"),400); setTimeout(()=>cycle("C"),800); }
+      queueOverlayRotation();
+    }, (finance.durationSec||settings.overlayShowSec)*1000);
+  }
+
+  /* ===== Schedule fullscreen ===== */
+  function showSchedule(){
+    if(!schedule || schedule.length===0) return;
+    hideAllOverlays();
+    board.style.display="none";
+    scheduleOverlay.style.display="flex";
+    slist.innerHTML="";
+    schedule.forEach(it=>{
+      const row=document.createElement('div'); row.className="srow";
+      const t1=document.createElement('div'); t1.className="time";  t1.textContent=it.time||"-";
+      const t2=document.createElement('div'); t2.className="topic"; t2.textContent=it.topic||"";
+      const t3=document.createElement('div'); t3.className="ust";   t3.textContent=it.ustadz||"";
+      row.appendChild(t1); row.appendChild(t2); row.appendChild(t3);
+      slist.appendChild(row);
+    });
+    setTimeout(()=>{
+      scheduleOverlay.style.display="none";
+      if(imgs.length>0){ board.style.display="grid"; cycle("A"); setTimeout(()=>cycle("B"),400); setTimeout(()=>cycle("C"),800); }
+      queueOverlayRotation();
+    }, (settings.overlayShowSec)*1000);
+  }
+
+  /* ===== Overlay rotation manager ===== */
+  const overlayQueue = []; // diisi dari config: "quote","video","finance","schedule"
+  let overlayTimer=null;
+  function queueOverlayRotation(){
+    clearTimeout(overlayTimer);
+    if(overlayQueue.length===0) return;
+    overlayTimer=setTimeout(()=>{
+      if(overlay.style.display==="flex" || videoOverlay.style.display==="flex" ) { queueOverlayRotation(); return; }
+      const kind = overlayQueue.shift(); overlayQueue.push(kind);
+      if(kind==="quote"   && quotes.length>0) { const q=quotes.shift(); quotes.push(q); showQuoteFullscreen(q, Number(q.durationSec||settings.overlayShowSec)); }
+      else if(kind==="video" && videos.length>0){ const v=videos.shift(); videos.push(v); showVideoFullscreen(v); }
+      else if(kind==="finance" && finance){ showFinance(); }
+      else if(kind==="schedule" && schedule.length>0){ showSchedule(); }
+      else { queueOverlayRotation(); } // kalau tidak ada datanya, lewati
+    }, settings.overlayRotationSec*1000);
+  }
+  function hideAllOverlays(){
+    quoteOverlay.style.display="none";
+    videoOverlay.style.display="none";
+    financeOverlay.style.display="none";
+    scheduleOverlay.style.display="none";
+  }
+
+  /* ===== Frames cycle (gambar) ===== */
   function cycle(which){
-    if(showingQuote || imgs.length===0 || onlyQuote) return;
     const item = nextFrom(imgs, which);
     if(!item) return;
     const dur = Number(item.durationSec||8);
-    if(which==="A"){ mountFrame(frameA,item); schedule("A",dur); }
-    if(which==="B"){ mountFrame(frameB,item); schedule("B",dur); }
-    if(which==="C"){ mountFrame(frameC,item); schedule("C",dur); }
+    if(which==="A"){ mountFrame(frameA,item); scheduleFrame("A",dur); }
+    if(which==="B"){ mountFrame(frameB,item); scheduleFrame("B",dur); }
+    if(which==="C"){ mountFrame(frameC,item); scheduleFrame("C",dur); }
   }
 
-  /* ===== TICKER ===== */
+  /* ===== Ticker ===== */
   function startTicker(){
     tickerInner.style.transition="none";
     tickerInner.style.transform=`translateX(${window.innerWidth}px)`;
@@ -404,16 +559,15 @@
     const wnd = currentCountdownWindowTest() || currentCountdownWindow();
     if(!wnd){
       overlay.style.display="none";
-      if(!showingQuote){
-        if(!onlyQuote && imgs.length>0){ board.style.display="grid"; }
-        quoteOverlay.style.display="none";
-      }
-      updateNextHeader();
+      if(imgs.length>0){ board.style.display="grid"; }
       return;
     }
     overlay.style.display="flex";
     board.style.display="none";
     quoteOverlay.style.display="none";
+    videoOverlay.style.display="none";
+    financeOverlay.style.display="none";
+    scheduleOverlay.style.display="none";
     const mapName={Fajr:"Subuh",Dhuhr:"Zuhur",Asr:"Asar",Maghrib:"Maghrib",Isha:"Isya"};
     pName.textContent="Iqomah " + mapName[wnd.key];
     const now=new Date(new Date().toLocaleString('en-US',{timeZone:tz}));
@@ -431,56 +585,56 @@
   }
   function applyConfig(cfg){
     if(cfg?.countdownMinutes){ DUR = Object.assign(DUR, cfg.countdownMinutes); }
+    if(cfg?.settings){ settings = Object.assign(settings, cfg.settings); }
 
     if(cfg && Array.isArray(cfg.slides)){
       slides = cfg.slides.map(s=>{
         const base={ durationSec:Number(s.durationSec||8) };
         if(s.quote){ return { ...base, quote:String(s.quote), source:s.source||"" }; }
+        if(s.video){ return { ...base, video:String(s.video) }; }
         if(s.url){  return { ...base, url:String(s.url).trim(), title:s.title||"", desc:s.desc||"" }; }
         return null;
       }).filter(Boolean);
     }else if(imagesParam){
       slides = imagesParam.split(",").map(u=>u.trim()).filter(Boolean)
         .map(u=>({url:u,title:"",desc:"",durationSec:8}));
-    }else{
-      slides = [
-        {quote:"“Sebaik-baik kalian adalah yang mempelajari Al-Qur’an dan mengajarkannya.”", source:"HR. Bukhari", durationSec:12},
-        {url:"https://picsum.photos/seed/a/1600/900",title:"Kegiatan Masjid",desc:"Contoh 1",durationSec:8},
-        {url:"https://picsum.photos/seed/b/1600/900",title:"Kajian Rutin",desc:"Contoh 2",durationSec:8}
-      ];
     }
 
     imgs   = slides.filter(isImg);
     quotes = slides.filter(isQuote);
+    videos = slides.filter(isVideo);
 
-    /* === MODE QUOTE SAJA === */
-    if(onlyQuote){
-      board.style.display="none";
-      if(quotes.length>0){
-        const firstQ = quotes.shift(); quotes.push(firstQ);
-        showQuoteFullscreen(firstQ, Number(firstQ.durationSec||10));
-      }
-      queueNextQuote(12000);
-    }
-    else if(imgs.length===0 && quotes.length>0){
-      // tidak ada gambar → quote langsung
-      board.style.display="none";
-      const firstQ = quotes.shift(); quotes.push(firstQ);
-      showQuoteFullscreen(firstQ, Number(firstQ.durationSec||10));
-      queueNextQuote(12000);
-    }
-    else{
-      // gambar ada → tampilkan frames
+    // finance
+    finance = cfg?.finance || null; // {title, labels[], data[], durationSec}
+    if(finance && finance.title) ftitle.textContent=finance.title;
+
+    // schedule
+    schedule = Array.isArray(cfg?.schedule) ? cfg.schedule : [];
+
+    // overlay order
+    overlayQueue.length = 0;
+    (cfg?.overlaysOrder || ["quote","video","schedule","finance"]).forEach(k=>{
+      if(["quote","video","schedule","finance"].includes(k)) overlayQueue.push(k);
+    });
+
+    // Start board (images)
+    if(imgs.length>0){
       board.style.display="grid";
       aPtr=0; bPtr=(imgs.length>1?1:0); cPtr=(imgs.length>2?2:(imgs.length>1?0:0));
       cycle("A"); setTimeout(()=>cycle("B"),400); setTimeout(()=>cycle("C"),800);
-
-      // tampilkan quote pertama LANGSUNG agar pasti terlihat
-      if(quotes.length>0){
-        const firstQ = quotes.shift(); quotes.push(firstQ);
-        showQuoteFullscreen(firstQ, Number(firstQ.durationSec||10));
-      }
+    }else{
+      board.style.display="none";
     }
+
+    // Tampilkan satu quote pertama segera agar terlihat
+    if(quotes.length>0){
+      const firstQ = quotes.shift(); quotes.push(firstQ);
+      showQuoteFullscreen(firstQ, Number(firstQ.durationSec||settings.overlayShowSec));
+    }
+
+    // Mulai rotasi overlay
+    queueQuotesLoop();      // quote auto (fallback)
+    queueOverlayRotation(); // overlay campuran
 
     // Ticker
     const t=tickerParam ?? cfg?.ticker;
@@ -488,10 +642,19 @@
     if(s && t){ ticker.style.display="flex"; tickerText.textContent=t; startTicker(); } else { ticker.style.display="none"; }
   }
 
+  /* ===== Utils ===== */
+  function formatRupiah(n){
+    try{
+      return new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(n);
+    }catch(_){
+      return "Rp " + (n||0).toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+    }
+  }
+
   /* ===== Init ===== */
   (async function init(){
-    await loadPrayer(); renderPrayerTable();
-    const cfg=await fetchConfig(); applyConfig(cfg);
+    await loadPrayer(); renderPrayerTable(); setInterval(()=>{ renderPrayerTable(); updateNextHeader(); }, 1000);
+    const cfg=await fetchConfig(); applyConfig(cfg||{});
     if(refreshMin>0 && configUrl){ setInterval(async()=>{ const c=await fetchConfig(); if(c) applyConfig(c); }, refreshMin*60*1000); }
     setInterval(updateOverlay, 1000);
   })();
