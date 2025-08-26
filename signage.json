@@ -21,7 +21,7 @@
     { "time": "Ahad 31 Agustus 2025",  "topic": "Kajian Keluarga", "ustadz": "Ust. Bendri Djayusman" }
   ],
   "overlaysOrder": ["video", "finance", "schedule", "quote"],
-  "ticker": "TEST: Ticker seharusnya berjalan. | Video → Finance → Schedule → Quote harus muncul bergantian.",
+  "ticker": "Infaq Operasional : BCA Syariah 003131 0006 a/n Masjid Baitussalam Premier Estate 3",
   "showTicker": true,
   "countdownMinutes": { "Fajr": 20, "Dhuhr": 15, "Asr": 15, "Maghrib": 10, "Isha": 15 }
 }
