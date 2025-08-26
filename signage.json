@@ -1,23 +1,24 @@
 {
   "settings": { "overlayRotationSec": 8, "overlayShowSec": 10 },
   "slides": [
-    { "url": "images/kegiatan-1.jpg", "title": "Kajian Rutin", "desc": "Kitab Minhajul Muslim — Rabu malam", "durationSec": 6 },
+    { "url": "images/kegiatan-1.jpg", "title": "Kajian Rutin", "desc": "Kitab Minhajul Muslim — Ahad malam", "durationSec": 6 },
     { "url": "images/kegiatan-2.jpg", "title": "Tausiyah Pekanan", "desc": "Ustadz Ibrahim Saleh — Ba'da Magrib", "durationSec": 6 },
     { "url": "images/kegiatan-3.jpg", "title": "Kerja Bakti", "desc": "Lingkungan Masjid Baitussalam", "durationSec": 6 },
     { "video": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" },
     { "quote": "“Sebaik-baik kalian adalah yang mempelajari Al-Qur’an dan mengajarkannya.”", "source": "HR. Bukhari", "durationSec": 10 }
   ],
   "finance": {
-    "title": "Laporan Keuangan Kotak Aman – Pekan Ini",
-    "labels": ["Infaq", "Operasional", "Sosial", "Renovasi"],
-    "data":   [3200000, 1500000, 1200000, 2100000],
+    "title": "Laporan Keuangan Kotak Amal – Pekan ke-2 Agustus 2025",
+    "labels": ["Infaq Shodaqoh", "Operasional"],
+    "data":   [3200000, 1500000],
     "durationSec": 12
   },
   "schedule": [
-    { "time": "Senin 19:00", "topic": "Fiqih Ibadah", "ustadz": "Ust. Ali Rahman" },
-    { "time": "Rabu 19:00",  "topic": "Minhajul Muslim", "ustadz": "Ust. Ibrahim Saleh" },
-    { "time": "Jumat 12:45", "topic": "Khutbah Jumat", "ustadz": "Ust. Taufiq" },
-    { "time": "Ahad 08:00",  "topic": "Kajian Keluarga", "ustadz": "Ust. Hafizh" }
+    { "time": "Sabtu Pekan 1 & 3 - Ba'da Maghrib", "topic": "Kajian Kitab Adabul Mufrad", "ustadz": "Ust. Muhammad Azizan Lc. MSi" },
+    { "time": "Ahad Pekan 2 & 4 - Ba'da Subuh",  "topic": "Kajian Kitab Minhajul Muslim", "ustadz": "Ust. Ibrahim Saleh Lc. MKom" },
+    { "time": "Ahad Pekan 2 & 4 - Ba'da Maghrib", "topic": "Kajian Sirah Nabawiyyah", "ustadz": "Ust. Chamdan Subkhi" },
+    { "time": "Jumat 29 Agustus 2025",  "topic": "Khutbah Jumat", "ustadz": "Ust. Faturrizqan" },
+    { "time": "Ahad 31 Agustus 2025",  "topic": "Kajian Keluarga", "ustadz": "Ust. Bendri Djayusman" }
   ],
   "overlaysOrder": ["video", "finance", "schedule", "quote"],
   "ticker": "TEST: Ticker seharusnya berjalan. | Video → Finance → Schedule → Quote harus muncul bergantian.",
