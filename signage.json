@@ -1,44 +1,26 @@
 {
-  "settings": {
-    "overlayRotationSec": 20,   // tiap 20 detik ganti overlay
-    "overlayShowSec": 10        // durasi tampilan overlay (kecuali video & iqomah)
-  },
-
+  "settings": { "overlayRotationSec": 8, "overlayShowSec": 10 },
   "slides": [
-    { "url": "images/kegiatan-1.jpg", "title": "Kajian Rutin", "desc": "Kitab Minhajul Muslim — Rabu malam", "durationSec": 8 },
-    { "quote": "“Sebaik-baik kalian adalah yang mempelajari Al-Qur’an dan mengajarkannya.”", "source": "HR. Bukhari", "durationSec": 12 },
-    { "url": "images/kegiatan-2.jpg", "title": "Tausiyah Pekanan", "desc": "Ustadz Ibrahim Saleh — Ba'da Maghrib", "durationSec": 8 },
-    { "video": "videos/potongan-kajian.mp4" },
-    { "quote": "“Barangsiapa beriman kepada Allah dan hari akhir, hendaklah berkata baik atau diam.”", "source": "HR. Bukhari & Muslim", "durationSec": 12 },
-    { "url": "images/kegiatan-3.jpg", "title": "Kerja Bakti", "desc": "Lingkungan Masjid Baitussalam", "durationSec": 8 }
+    { "url": "images/kegiatan-1.jpg", "title": "Kajian Rutin", "desc": "Kitab Minhajul Muslim — Rabu malam", "durationSec": 6 },
+    { "url": "images/kegiatan-2.jpg", "title": "Tausiyah Pekanan", "desc": "Ustadz Ibrahim Saleh — Ba'da Magrib", "durationSec": 6 },
+    { "url": "images/kegiatan-3.jpg", "title": "Kerja Bakti", "desc": "Lingkungan Masjid Baitussalam", "durationSec": 6 },
+    { "video": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" },
+    { "quote": "“Sebaik-baik kalian adalah yang mempelajari Al-Qur’an dan mengajarkannya.”", "source": "HR. Bukhari", "durationSec": 10 }
   ],
-
   "finance": {
     "title": "Laporan Keuangan Kotak Aman – Pekan Ini",
     "labels": ["Infaq", "Operasional", "Sosial", "Renovasi"],
-    "data": [3200000, 1500000, 1200000, 2100000],
-    "durationSec": 14
+    "data":   [3200000, 1500000, 1200000, 2100000],
+    "durationSec": 12
   },
-
-  "financeSource": {
-    "type": "csv",
-    "url": "https://docs.google.com/spreadsheets/d/XXXXXXX/pub?gid=0&single=true&output=csv",
-    "labelCol": "Kategori",
-    "valueCol": "Jumlah",
-    "titleCol": "Judul"
-  },
-
   "schedule": [
-    { "time": "Senin 19:00",  "topic": "Fiqih Ibadah",    "ustadz": "Ust. Ali Rahman" },
-    { "time": "Rabu 19:00",   "topic": "Minhajul Muslim", "ustadz": "Ust. Ibrahim Saleh" },
-    { "time": "Jumat 12:45",  "topic": "Khutbah Jumat",   "ustadz": "Ust. Taufiq" },
-    { "time": "Ahad 08:00",   "topic": "Kajian Keluarga", "ustadz": "Ust. Hafizh" }
+    { "time": "Senin 19:00", "topic": "Fiqih Ibadah", "ustadz": "Ust. Ali Rahman" },
+    { "time": "Rabu 19:00",  "topic": "Minhajul Muslim", "ustadz": "Ust. Ibrahim Saleh" },
+    { "time": "Jumat 12:45", "topic": "Khutbah Jumat", "ustadz": "Ust. Taufiq" },
+    { "time": "Ahad 08:00",  "topic": "Kajian Keluarga", "ustadz": "Ust. Hafizh" }
   ],
-
-  "overlaysOrder": ["finance", "schedule", "quote", "video"],
-
-  "ticker": "Pengumuman: Kajian malam ini pukul 19:00 | Donasi pembangunan masjid dibuka | Info: sekretariat ta'mir.",
+  "overlaysOrder": ["video", "finance", "schedule", "quote"],
+  "ticker": "TEST: Ticker seharusnya berjalan. | Video → Finance → Schedule → Quote harus muncul bergantian.",
   "showTicker": true,
-
   "countdownMinutes": { "Fajr": 20, "Dhuhr": 15, "Asr": 15, "Maghrib": 10, "Isha": 15 }
 }
