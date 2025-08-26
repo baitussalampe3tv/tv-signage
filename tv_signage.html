@@ -63,6 +63,7 @@
     background:linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
     box-shadow:var(--shadow); overflow:hidden; display:grid; place-items:center; border:1px solid var(--border);
     min-height:min(70vh,820px)}
+  /* Saat overlay aktif, board hilang total */
   #stage.overlay-active #board{display:none !important;}
 
   .board{display:grid; grid-template-columns:2fr 1fr; gap:22px; width:min(92vw,1680px); height:min(70vh,820px);
@@ -117,6 +118,7 @@
   .pName{font-weight:900;font-size:clamp(34px,4vw,72px);color:var(--gold)}
   .pTimer{font-weight:900;font-size:clamp(48px,7vw,120px);letter-spacing:1px}
 
+  /* TICKER */
   #ticker{display:none; position:fixed; left:0; right:0; bottom:0; background:var(--tickerBg); color:var(--tickerText); min-height:48px; align-items:center; overflow:hidden}
   #tickerInner{white-space:nowrap; will-change:transform; padding:0 100vw 0 0}
   #tickerText{display:inline-block; padding:12px 28px; font-size:clamp(16px,1.6vw,22px); font-weight:800}
@@ -124,6 +126,7 @@
 </head>
 <body class="theme-gold">
 
+<!-- TOP BAR -->
 <div class="topbar">
   <div class="brand">
     <img src="logo.png" alt="Logo">
@@ -144,6 +147,7 @@
 </div>
 
 <div id="stage">
+  <!-- BOARD -->
   <div class="board" id="board">
     <div class="frame" id="frameA"></div>
     <div class="stack">
@@ -152,6 +156,7 @@
     </div>
   </div>
 
+  <!-- OVERLAYS -->
   <div id="quoteOverlay"><div class="qwrap"><p class="qtext" id="qtext"></p><p class="qsrc" id="qsrc"></p></div></div>
   <div id="videoOverlay"><video id="vplayer" playsinline muted></video></div>
   <div id="financeOverlay"><div class="fcard"><div class="ftitle" id="ftitle">Laporan Keuangan</div><canvas id="finCanvas"></canvas></div></div>
@@ -165,17 +170,20 @@
   </div>
 </div>
 
+<!-- TICKER -->
 <div id="ticker"><div id="tickerInner"><span id="tickerText"></span></div></div>
 
 <script>
 (function(){
   const qs=new URLSearchParams(location.search);
 
+  /* ===== Theme ===== */
   (function setTheme(){
     const th=(qs.get("theme")||"emerald").toLowerCase();
     document.body.className = `theme-${["emerald","gold"].includes(th)?th:"emerald"}`;
   })();
 
+  /* ===== Params ===== */
   const configUrl=qs.get("config") || "signage.json";
   const refreshMin=parseFloat(qs.get("refreshMin")||"5");
   const imagesParam=qs.get("images");
@@ -184,10 +192,12 @@
   const tickerPauseSec = parseFloat(qs.get("tickerPauseSec")||"2");
   const tickerSpeed = parseFloat(qs.get("tickerSpeed")||"120");
   const onlyQuoteQ = ["1","true","yes","on"].includes((qs.get("onlyQuote")||"").toLowerCase());
+  // test iqomah
   const testPrayer=(qs.get("testPrayer")||"").toLowerCase();
   const testDurationSec=parseInt(qs.get("testDurationSec")||"0",10);
   const keyMap={fajr:"Fajr",subuh:"Fajr",dhuhr:"Dhuhr",zuhur:"Dhuhr",dzuhur:"Dhuhr",asr:"Asr",ashar:"Asr",maghrib:"Maghrib",isya:"Isha",isha:"Isha"};
 
+  /* ===== Elements ===== */
   const stage = document.getElementById("stage");
   const frameA=document.getElementById("frameA");
   const frameB=document.getElementById("frameB");
@@ -220,12 +230,14 @@
   const pName = document.getElementById("pName");
   const pTimer = document.getElementById("pTimer");
 
+  /* ===== Data ===== */
   let slides=[],imgs=[],quotes=[],videos=[],finance=null,schedule=[];
   let settings={overlayRotationSec:60,overlayShowSec:12};
   let DUR = { Fajr:20, Dhuhr:15, Asr:15, Maghrib:10, Isha:15 };
   let aPtr=0,bPtr=1,cPtr=2,tA,tB,tC;
   let rotationTimer=null, tickerRunning=false;
 
+  /* ===== Helpers ===== */
   const isImg   = s => !!s.url;
   const isQuote = s => !!s.quote;
   const isVideo = s => !!s.video;
@@ -375,7 +387,7 @@
 
   /* ===== Ticker ===== */
   function startTicker(){
-    if(tickerRunning) return;
+    if(tickerRunning) return; // cegah multi loop
     tickerRunning=true;
     const run=()=>{
       tickerInner.style.transition="none";
@@ -405,7 +417,7 @@
 
   /* ===== Jadwal Sholat & Iqomah ===== */
   const tz="Asia/Jakarta";
-  let pTimes=null;
+  let pTimes=null; // {Fajr, Syuruq, Dhuhr, Asr, Maghrib, Isha}
 
   function parseLcl(hhmm){
     const [H,M]=hhmm.split(":").map(Number);
@@ -531,6 +543,7 @@
     quotes = slides.filter(isQuote);
     videos = slides.filter(isVideo);
 
+    // Rescue jika kosong total
     if(!slides || slides.length===0){
       slides=[
         {quote:"“Sebaik-baik kalian adalah yang mempelajari Al-Qur’an dan mengajarkannya.”", source:"HR. Bukhari", durationSec:12},
@@ -540,10 +553,12 @@
       imgs=slides.filter(isImg); quotes=slides.filter(isQuote); videos=slides.filter(isVideo);
     }
 
+    // Finance & Schedule (statis)
     finance  = cfg?.finance || null;
     if(finance && finance.title) ftitle.textContent = finance.title;
     schedule = Array.isArray(cfg?.schedule) ? cfg.schedule : [];
 
+    // Finance dari Google Sheet → override jika sukses
     (async ()=>{
       if(cfg?.financeSource){
         const fin = await loadFinanceFromSource(cfg.financeSource);
@@ -555,6 +570,7 @@
       }
     })();
 
+    // Board gambar
     if(!onlyQuoteQ && imgs.length>0){
       stage.classList.remove('overlay-active');
       board.style.display="grid";
@@ -564,18 +580,14 @@
       board.style.display="none";
     }
 
-    if(quotes.length>0){
-      const q=quotes[0];
-      showQuoteFullscreen(q, Number(q.durationSec||settings.overlayShowSec));
-    }
-
+    // Rotasi overlay
     if(rotationTimer){ clearInterval(rotationTimer); rotationTimer=null; }
     const order = (cfg?.overlaysOrder && cfg.overlaysOrder.length) ? cfg.overlaysOrder
                   : ["video","finance","schedule","quote"];
     const rotSec = Math.max(6, Number(settings.overlayRotationSec||60));
     let idx=0;
     rotationTimer=setInterval(()=>{
-      if(stage.classList.contains('overlay-active')) return;
+      if(stage.classList.contains('overlay-active')) return; // jangan ganggu overlay aktif (termasuk Iqomah)
       const kind = order[idx%order.length]; idx++;
       if(kind==="video"   && videos.length>0)   showVideoFullscreen(videos[0]);
       else if(kind==="finance" && finance)      showFinance();
@@ -583,17 +595,26 @@
       else if(kind==="quote"   && quotes.length>0)   showQuoteFullscreen(quotes[0], Number(quotes[0].durationSec||settings.overlayShowSec));
     }, rotSec*1000);
 
+    // Ticker (reset loop supaya pasti jalan)
     const t = tickerParam ?? cfg?.ticker;
     const s = showTickerQ || !!cfg?.showTicker || !!t;
-    if (s && t) { ticker.style.display="flex"; tickerText.textContent=t; startTicker(); }
-    else { ticker.style.display="none"; }
+    if (s && t) {
+      ticker.style.display="flex";
+      tickerText.textContent=t;
+      tickerRunning=false; // penting: reset sebelum start
+      startTicker();
+    } else {
+      ticker.style.display="none";
+    }
   }
 
+  /* ===== Utils ===== */
   function formatRupiah(n){
     try{ return new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(n); }
     catch(_){ return "Rp " + (n||0).toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
   }
 
+  /* ===== Init ===== */
   (async function init(){
     await loadPrayer();
     renderPrayerTable();
