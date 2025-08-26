@@ -292,7 +292,55 @@
     if(which==="B"){clearTimeout(tB);tB=setTimeout(fn,ms);}
     if(which==="C"){clearTimeout(tC);tC=setTimeout(fn,ms);}
   }
+  // === FinanceSource (Google Sheet) helpers ===
+async function fetchText(url){ const r=await fetch(url,{cache:'no-store'}); if(!r.ok) throw new Error('fetch fail'); return await r.text(); }
+function parseCSV(text){
+  const rows = text.split(/\r?\n/).filter(l=>l.trim().length>0).map(l=>{
+    return l.split(',').map(s=>s.replace(/^"|"$/g,'').trim());
+  });
+  const header = rows.shift();
+  return rows.map(r=>{
+    const o={}; header.forEach((h,i)=>o[header[i]]=r[i]); return o;
+  });
+}
+function parseGVizJSON(text){
+  const m = text.match(/setResponse\(([\s\S]+)\);?$/);
+  if(!m) throw new Error('bad gviz');
+  const j = JSON.parse(m[1]);
+  const cols = j.table.cols.map(c=>c.label || c.id);
+  return j.table.rows.map(row=>{
+    const o={}; row.c.forEach((c,i)=>{ o[cols[i]] = c ? (c.f ?? c.v) : ""; }); return o;
+  });
+}
+async function loadFinanceFromSource(financeSource){
+  try{
+    if(!financeSource || !financeSource.url) return null;
+    const type = (financeSource.type||'csv').toLowerCase();
+    const raw = await fetchText(financeSource.url);
+    const rows = type==='gviz' ? parseGVizJSON(raw) : parseCSV(raw);
 
+    const labelKey = financeSource.labelCol || 'Kategori';
+    const valueKey = financeSource.valueCol || 'Jumlah';
+    const titleKey = financeSource.titleCol || 'Judul';
+
+    const labels=[], data=[];
+    let title = 'Laporan Keuangan';
+    rows.forEach((r,i)=>{
+      const lab = r[labelKey];
+      const val = Number(String(r[valueKey]||'').replace(/[^\d.-]/g,''));
+      if(!isNaN(val) && lab){ labels.push(lab); data.push(val); }
+      if(i===0 && r[titleKey]) title = r[titleKey];
+    });
+    if(labels.length===0) throw new Error('no data rows');
+
+    return { title, labels, data, durationSec: (window.finance?.durationSec||12) };
+  }catch(e){
+    console.warn('[FinanceSource] gagal:', e);
+    return null;
+  }
+}
+
+  
   /* ===== Overlays ===== */
   function showQuoteFullscreen(item, durSec){
     enterOverlay();
@@ -507,6 +555,24 @@
     finance  = cfg?.finance || null;
     if(finance && finance.title) ftitle.textContent = finance.title;
     schedule = Array.isArray(cfg?.schedule) ? cfg.schedule : [];
+     
+    // Finance (static dari JSON)
+  finance  = cfg?.finance || null;
+  if(finance && finance.title) ftitle.textContent = finance.title;
+  schedule = Array.isArray(cfg?.schedule) ? cfg.schedule : [];
+
+  // === Finance dari Google Sheet (financeSource) ===
+  (async ()=>{
+    if(cfg?.financeSource){
+      const fin = await loadFinanceFromSource(cfg.financeSource);
+      if(fin){
+        finance = fin;              // override data finance
+        ftitle.textContent = fin.title || 'Laporan Keuangan';
+        // kalau overlay finance sedang aktif, redraw
+        if(financeOverlay.style.display==='flex'){ drawFinance(); }
+      }
+    }
+  })();
 
     // Mulai board
     if(!onlyQuoteQ && imgs.length>0){
