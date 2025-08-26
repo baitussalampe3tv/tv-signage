@@ -7,8 +7,22 @@
     { "video": "videos/potongan-kajian.mp4" },
     { "quote": "“Sebaik-baik kalian adalah yang mempelajari Al-Qur’an dan mengajarkannya.”", "source": "HR. Bukhari", "durationSec": 10 }
   ],
+  {
+  "financeSource": {
+    "type": "csv",
+    "url": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQh8r6bSZuhKBRaBp1Y3D3AMgZsctAhIPOpWyuoTlxcCtwDlP8B37PvHEnV7vpd-Rimx5dgOztQTJBu/pub?gid=0&single=true&output=csv",
+    "labelCol": "Kategori",
+    "valueCol": "Jumlah",
+    "titleCol": "Judul"
+  },
+  "settings": { "overlayRotationSec": 8, "overlayShowSec": 10 },
+  "overlaysOrder": ["video","finance","schedule","quote"],
+  "ticker": "Pengumuman…",
+  "showTicker": true
+},
+
   "finance": {
-    "title": "Laporan Keuangan Kotak Aman – Pekan Ini",
+    "title": "Laporan Keuangan Kotak Amal – Pekan Ini",
     "labels": ["Infaq", "Operasional", "Sosial", "Renovasi"],
     "data":   [3200000, 1500000, 1200000, 2100000],
     "durationSec": 12
