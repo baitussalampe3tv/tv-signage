@@ -101,18 +101,22 @@
   /* Finance */
   .fcard{display:grid; gap:12px; place-items:center; padding:28px 34px; border-radius:22px;
     background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.08)); border:1px solid var(--border); box-shadow:var(--shadow); color:#fff; text-align:center; backdrop-filter:blur(6px)}
-  .ftitle{font-weight:900; font-size:clamp(24px,3vw,48px); color:var(--gold)}
+  .ftitle{font-weight:900; font-size:clamp(26px,3.4vw,54px); color:var(--gold)}
   #finCanvas{width:min(86vw,1400px); height:min(48vh,520px); background:rgba(0,0,0,.25); border-radius:14px; outline:1px solid rgba(255,255,255,.2)}
 
-  /* Schedule */
+  /* Schedule (dilebarkan kolom time + font dibesarkan) */
   .scard{display:grid; gap:12px; place-items:stretch; padding:28px 34px; border-radius:22px;
     background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.08)); border:1px solid var(--border); box-shadow:var(--shadow); color:#fff; text-align:left; backdrop-filter:blur(6px); width:min(92vw,1500px)}
-  .stitle{font-weight:900; font-size:clamp(24px,3vw,48px); color:var(--gold); text-align:center}
-  .slist{display:grid; gap:10px}
-  .srow{display:grid; grid-template-columns: 120px 1fr 1fr; gap:14px; padding:12px 14px; border-radius:12px; background:rgba(0,0,0,.25); border:1px solid rgba(255,255,255,.15)}
-  .srow .time{font-weight:900}
-  .srow .topic{font-weight:800}
-  .srow .ust{opacity:.95}
+  .stitle{font-weight:900; font-size:clamp(26px,3.2vw,52px); color:var(--gold); text-align:center}
+  .slist{display:grid; gap:12px}
+  .srow{
+    display:grid;
+    grid-template-columns: minmax(260px, 380px) 1fr 1fr; /* kolom time lebih lega */
+    gap:16px; padding:14px 16px; border-radius:12px; background:rgba(0,0,0,.25); border:1px solid rgba(255,255,255,.15)
+  }
+  .srow .time{  font-weight:900; font-size:clamp(16px,1.9vw,24px) }
+  .srow .topic{ font-weight:800; font-size:clamp(16px,1.8vw,22px) }
+  .srow .ust{   font-weight:700; font-size:clamp(15px,1.7vw,20px); opacity:.95 }
 
   /* Iqomah overlay */
   #prayerOverlay{z-index:40; background:linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.65))}
@@ -127,6 +131,55 @@
   #ticker{display:none; position:fixed; left:0; right:0; bottom:0; background:var(--tickerBg); color:var(--tickerText); min-height:48px; align-items:center; overflow:hidden}
   #tickerInner{white-space:nowrap; will-change:transform; padding:0 100vw 0 0}
   #tickerText{display:inline-block; padding:12px 28px; font-size:clamp(16px,1.6vw,22px); font-weight:800}
+
+  /* ========== RESPONSIVE: <= 1024px (tablet & small laptop) ========== */
+  @media (max-width: 1024px){
+    .topbar{ grid-template-columns: 1fr; gap:12px }
+    .prayer{ min-width:auto }
+    #stage{ margin:84px 12px 56px }
+    .board{
+      grid-template-columns: 1fr;      /* grid jadi satu kolom */
+      width: 96vw; height: auto;       /* tinggi auto biar muat */
+      padding:16px; gap:16px
+    }
+    .stack{ grid-template-rows: 1fr; grid-template-columns: 1fr; gap:16px }
+    .frame{ min-height: 28vh }
+    .caption{ left:10px; right:10px; bottom:10px; padding:10px 12px }
+  }
+
+  /* ========== RESPONSIVE: <= 600px (smartphone) ========== */
+  @media (max-width: 600px){
+    .brand{ padding:8px 10px }
+    .brand img{ height:36px }
+    .brand-name{ font-size:16px }
+    .brand-sub{ font-size:12px }
+
+    .prayer{
+      grid-template-columns: 1fr;
+      gap:8px;
+      padding:8px 10px
+    }
+    .pt{
+      grid-template-columns: repeat(3, auto auto); /* 3 kolom pasangan (nama, waktu) */
+      gap:6px 12px
+    }
+    .next,.cd{ justify-self: start }
+
+    #stage{ margin:74px 10px 52px }
+    .board{ width: 98vw; padding:12px; gap:12px }
+    .frame{ min-height: 26vh }
+    .cap-title{ font-size:clamp(16px,4.2vw,22px) }
+    .cap-desc{  font-size:clamp(13px,3.5vw,18px) }
+
+    .scard{ padding:18px 16px }
+    .srow{
+      grid-template-columns: 1fr;     /* jadikan 1 kolom */
+      gap:8px
+    }
+    .srow .time{ font-size:clamp(16px,4.3vw,22px) }
+    .srow .topic{font-size:clamp(15px,4vw,20px) }
+    .srow .ust{  font-size:clamp(14px,3.8vw,18px) }
+  }
 </style>
 </head>
 <body class="theme-gold">
@@ -316,13 +369,27 @@
     const pad=24, labels=finance.labels||[], data=finance.data||[];
     const maxV=Math.max(1, ...data.map(v=>Math.abs(v)));
     const barW=(w-pad*2)/(labels.length*1.6), gap=barW*0.6, baseY=h-pad-30, scale=(h-pad*2-40)/maxV;
+
+    /* grid tipis */
     ctx.strokeStyle="rgba(255,255,255,.2)"; ctx.lineWidth=1; ctx.beginPath();
     for(let i=0;i<=4;i++){ const y=pad+i*((baseY-pad)/4); ctx.moveTo(pad,y); ctx.lineTo(w-pad,y); } ctx.stroke();
-    ctx.fillStyle="#e8c15a";
-    labels.forEach((lab,i)=>{ const v=data[i]||0, bh=v*scale, x=pad+i*(barW+gap), y=baseY-bh;
+
+    /* batang + label (font dibesarkan otomatis) */
+    labels.forEach((lab,i)=>{
+      const v=data[i]||0, bh=v*scale, x=pad+i*(barW+gap), y=baseY-bh;
+
+      ctx.fillStyle="#e8c15a";
       ctx.fillRect(x,y,barW,bh);
-      ctx.fillStyle="#fff"; ctx.font="12px Inter, Arial"; ctx.textAlign="center"; ctx.fillText(lab, x+barW/2, baseY+16);
-      ctx.fillStyle="#e8c15a"; ctx.font="bold 14px Inter, Arial"; ctx.fillText(formatRupiah(v), x+barW/2, y-6);
+
+      /* label kategori (bawah) */
+      const labelFont = Math.max(12, Math.round(w/60)); // contoh: 1200px → 20px
+      ctx.fillStyle="#fff"; ctx.font = `${labelFont}px Inter, Arial`; ctx.textAlign="center";
+      ctx.fillText(lab, x+barW/2, baseY+16);
+
+      /* nilai (atas batang) */
+      const valueFont = Math.max(14, Math.round(w/50));
+      ctx.fillStyle="#e8c15a"; ctx.font = `bold ${valueFont}px Inter, Arial`;
+      ctx.fillText(formatRupiah(v), x+barW/2, y-6);
     });
   }
   function showFinance(){
@@ -518,12 +585,6 @@
       board.style.display="none";
     }
 
-    // Tampilkan satu quote awal (opsional)
-    if(quotes.length>0){
-      const q=quotes[0];
-      showQuoteFullscreen(q, Number(q.durationSec||settings.overlayShowSec));
-    }
-
     // Rotasi overlay (video → finance → schedule → quote) — clear timer lama dulu
     if(rotationTimer){ clearInterval(rotationTimer); rotationTimer=null; }
     const order = (cfg?.overlaysOrder && cfg.overlaysOrder.length) ? cfg.overlaysOrder
@@ -540,11 +601,17 @@
       else if(kind==="quote"   && quotes.length>0)   showQuoteFullscreen(quotes[0], Number(quotes[0].durationSec||settings.overlayShowSec));
     }, rotSec*1000);
 
-    // Ticker
+    // Ticker — reset loop agar pasti jalan
     const t = tickerParam ?? cfg?.ticker;
     const s = showTickerQ || !!cfg?.showTicker || !!t;
-    if (s && t) { ticker.style.display="flex"; tickerText.textContent=t; startTicker(); }
-    else { ticker.style.display="none"; }
+    if (s && t) {
+      ticker.style.display="flex";
+      tickerText.textContent=t;
+      tickerRunning=false;   // reset sebelum start
+      startTicker();
+    } else {
+      ticker.style.display="none";
+    }
   }
 
   /* ===== Utils ===== */
