@@ -63,7 +63,7 @@
     background:linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
     box-shadow:var(--shadow); overflow:hidden; display:grid; place-items:center; border:1px solid var(--border);
     min-height:min(70vh,820px)}
-  /* Saat overlay aktif, board hilang total */
+  /* jika overlay aktif, paksa board hilang total */
   #stage.overlay-active #board{display:none !important;}
 
   .board{display:grid; grid-template-columns:2fr 1fr; gap:22px; width:min(92vw,1680px); height:min(70vh,820px);
@@ -79,13 +79,14 @@
   .cap-title{font-weight:900; font-size:clamp(18px,2vw,26px); margin:0 0 4px}
   .cap-desc{font-weight:600; font-size:clamp(14px,1.4vw,18px); margin:0}
 
-  /* OVERLAYS */
+  /* OVERLAYS — seluruh layar diberi latar pekat agar tak tembus ke board */
   #quoteOverlay,#videoOverlay,#financeOverlay,#scheduleOverlay,#prayerOverlay{
     position:absolute; inset:0; display:none; align-items:center; justify-content:center; z-index:30;
     background:linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.85));
   }
   #videoOverlay{ background: rgba(0,0,0,.85); }
 
+  /* Quote fullscreen */
   .qwrap{
     max-width:84%; background:rgba(0,0,0,.45);
     border:1px solid rgba(255,255,255,.22); border-radius:18px; padding:28px 34px; color:var(--gold);
@@ -94,13 +95,16 @@
   .qtext{font-weight:900; font-size:clamp(32px,3.6vw,72px); line-height:1.35; margin:0 0 12px; text-align:center; color:var(--gold); text-shadow:0 3px 8px rgba(0,0,0,.85)}
   .qsrc{font-weight:800; font-size:clamp(18px,2.2vw,32px); margin:0; text-align:center; color:#fff; text-shadow:0 2px 6px rgba(0,0,0,.8)}
 
+  /* Video */
   #videoOverlay video{max-width:92vw; max-height:72vh; border-radius:16px; box-shadow:0 16px 48px rgba(0,0,0,.5); outline:1px solid rgba(255,255,255,.2)}
 
+  /* Finance */
   .fcard{display:grid; gap:12px; place-items:center; padding:28px 34px; border-radius:22px;
     background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.08)); border:1px solid var(--border); box-shadow:var(--shadow); color:#fff; text-align:center; backdrop-filter:blur(6px)}
   .ftitle{font-weight:900; font-size:clamp(24px,3vw,48px); color:var(--gold)}
   #finCanvas{width:min(86vw,1400px); height:min(48vh,520px); background:rgba(0,0,0,.25); border-radius:14px; outline:1px solid rgba(255,255,255,.2)}
 
+  /* Schedule */
   .scard{display:grid; gap:12px; place-items:stretch; padding:28px 34px; border-radius:22px;
     background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.08)); border:1px solid var(--border); box-shadow:var(--shadow); color:#fff; text-align:left; backdrop-filter:blur(6px); width:min(92vw,1500px)}
   .stitle{font-weight:900; font-size:clamp(24px,3vw,48px); color:var(--gold); text-align:center}
@@ -110,6 +114,7 @@
   .srow .topic{font-weight:800}
   .srow .ust{opacity:.95}
 
+  /* Iqomah overlay */
   #prayerOverlay{z-index:40; background:linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.65))}
   .pCard{display:grid;gap:12px;place-items:center;padding:30px 40px;border-radius:22px;
     background:linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.10));
@@ -118,7 +123,7 @@
   .pName{font-weight:900;font-size:clamp(34px,4vw,72px);color:var(--gold)}
   .pTimer{font-weight:900;font-size:clamp(48px,7vw,120px);letter-spacing:1px}
 
-  /* TICKER */
+  /* Ticker */
   #ticker{display:none; position:fixed; left:0; right:0; bottom:0; background:var(--tickerBg); color:var(--tickerText); min-height:48px; align-items:center; overflow:hidden}
   #tickerInner{white-space:nowrap; will-change:transform; padding:0 100vw 0 0}
   #tickerText{display:inline-block; padding:12px 28px; font-size:clamp(16px,1.6vw,22px); font-weight:800}
@@ -192,7 +197,8 @@
   const tickerPauseSec = parseFloat(qs.get("tickerPauseSec")||"2");
   const tickerSpeed = parseFloat(qs.get("tickerSpeed")||"120");
   const onlyQuoteQ = ["1","true","yes","on"].includes((qs.get("onlyQuote")||"").toLowerCase());
-  // test iqomah
+
+  // test iqomah (opsional)
   const testPrayer=(qs.get("testPrayer")||"").toLowerCase();
   const testDurationSec=parseInt(qs.get("testDurationSec")||"0",10);
   const keyMap={fajr:"Fajr",subuh:"Fajr",dhuhr:"Dhuhr",zuhur:"Dhuhr",dzuhur:"Dhuhr",asr:"Asr",ashar:"Asr",maghrib:"Maghrib",isya:"Isha",isha:"Isha"};
@@ -222,10 +228,12 @@
   const tickerInner=document.getElementById("tickerInner");
   const tickerText=document.getElementById("tickerText");
 
+  // Topbar sholat
   const ptEl   = document.getElementById("pt");
   const nextEl = document.getElementById("next");
   const cdEl   = document.getElementById("cd");
 
+  // Overlay iqomah
   const prayerOverlay = document.getElementById("prayerOverlay");
   const pName = document.getElementById("pName");
   const pTimer = document.getElementById("pTimer");
@@ -245,14 +253,14 @@
   function hideAllOverlays(){
     quoteOverlay.style.display="none"; videoOverlay.style.display="none";
     financeOverlay.style.display="none"; scheduleOverlay.style.display="none";
-    // prayerOverlay dikontrol sendiri
+    prayerOverlay.style.display="none";
   }
-  function enterOverlay(){
+  function enterOverlay(){ // sembunyikan board total
     stage.classList.add('overlay-active');
     board.style.display="none";
     hideAllOverlays();
   }
-  function exitOverlay(){
+  function exitOverlay(){ // tampilkan kembali board jika ada gambar
     hideAllOverlays();
     stage.classList.remove('overlay-active');
     if(imgs.length>0){
@@ -283,54 +291,6 @@
     if(which==="A"){clearTimeout(tA);tA=setTimeout(fn,ms);}
     if(which==="B"){clearTimeout(tB);tB=setTimeout(fn,ms);}
     if(which==="C"){clearTimeout(tC);tC=setTimeout(fn,ms);}
-  }
-
-  /* === FinanceSource (Google Sheet) helpers === */
-  async function fetchText(url){ const r=await fetch(url,{cache:'no-store'}); if(!r.ok) throw new Error('fetch fail'); return await r.text(); }
-  function parseCSV(text){
-    const rows = text.split(/\r?\n/).filter(l=>l.trim().length>0).map(l=>{
-      return l.split(',').map(s=>s.replace(/^"|"$/g,'').trim());
-    });
-    const header = rows.shift();
-    return rows.map(r=>{
-      const o={}; header.forEach((h,i)=>o[header[i]]=r[i]); return o;
-    });
-  }
-  function parseGVizJSON(text){
-    const m = text.match(/setResponse\(([\s\S]+)\);?$/);
-    if(!m) throw new Error('bad gviz');
-    const j = JSON.parse(m[1]);
-    const cols = j.table.cols.map(c=>c.label || c.id);
-    return j.table.rows.map(row=>{
-      const o={}; row.c.forEach((c,i)=>{ o[cols[i]] = c ? (c.f ?? c.v) : ""; }); return o;
-    });
-  }
-  async function loadFinanceFromSource(financeSource){
-    try{
-      if(!financeSource || !financeSource.url) return null;
-      const type = (financeSource.type||'csv').toLowerCase();
-      const raw = await fetchText(financeSource.url);
-      const rows = type==='gviz' ? parseGVizJSON(raw) : parseCSV(raw);
-
-      const labelKey = financeSource.labelCol || 'Kategori';
-      const valueKey = financeSource.valueCol || 'Jumlah';
-      const titleKey = financeSource.titleCol || 'Judul';
-
-      const labels=[], data=[];
-      let title = 'Laporan Keuangan';
-      rows.forEach((r,i)=>{
-        const lab = r[labelKey];
-        const val = Number(String(r[valueKey]||'').replace(/[^\d.-]/g,''));
-        if(!isNaN(val) && lab){ labels.push(lab); data.push(val); }
-        if(i===0 && r[titleKey]) title = r[titleKey];
-      });
-      if(labels.length===0) throw new Error('no data rows');
-
-      return { title, labels, data, durationSec: (window.finance?.durationSec||12) };
-    }catch(e){
-      console.warn('[FinanceSource] gagal:', e);
-      return null;
-    }
   }
 
   /* ===== Overlays ===== */
@@ -387,7 +347,7 @@
 
   /* ===== Ticker ===== */
   function startTicker(){
-    if(tickerRunning) return; // cegah multi loop
+    if(tickerRunning) return; // cegah multiple loop
     tickerRunning=true;
     const run=()=>{
       tickerInner.style.transition="none";
@@ -417,7 +377,7 @@
 
   /* ===== Jadwal Sholat & Iqomah ===== */
   const tz="Asia/Jakarta";
-  let pTimes=null; // {Fajr, Syuruq, Dhuhr, Asr, Maghrib, Isha}
+  let pTimes=null; // {Fajr, Syuruq, Dhuhr, Asr, Maghrib, Isha: Date}
 
   function parseLcl(hhmm){
     const [H,M]=hhmm.split(":").map(Number);
@@ -431,15 +391,13 @@
     const d=today.toLocaleString('en-CA',{day:'2-digit',timeZone:tz});
     try{
       const r=await fetch(`https://api.myquran.com/v2/sholat/jadwal/1301/${y}/${m}/${d}`,{cache:'no-store'});
-      if(r.ok){
-        const j=await r.json(); const t=j?.data?.jadwal;
+      if(r.ok){ const j=await r.json(); const t=j?.data?.jadwal;
         if(t){ pTimes={Fajr:parseLcl(t.subuh), Syuruq:parseLcl(t.terbit), Dhuhr:parseLcl(t.dzuhur), Asr:parseLcl(t.ashar), Maghrib:parseLcl(t.maghrib), Isha:parseLcl(t.isya)}; return true; }
       }
     }catch(_){}
     try{
       const r=await fetch(`https://api.aladhan.com/v1/timingsByCity?city=Jakarta&country=Indonesia&method=3`,{cache:'no-store'});
-      if(r.ok){
-        const j=await r.json(); const t=j?.data?.timings;
+      if(r.ok){ const j=await r.json(); const t=j?.data?.timings;
         if(t){ pTimes={Fajr:parseLcl(t.Fajr), Syuruq:parseLcl(t.Sunrise), Dhuhr:parseLcl(t.Dhuhr), Asr:parseLcl(t.Asr), Maghrib:parseLcl(t.Maghrib), Isha:parseLcl(t.Isha)}; return true; }
       }
     }catch(_){}
@@ -463,15 +421,15 @@
     const nameMap={Fajr:"Subuh",Syuruq:"Syuruq",Dhuhr:"Zuhur",Asr:"Asar",Maghrib:"Maghrib",Isha:"Isya"};
     const now=new Date(new Date().toLocaleString('en-US',{timeZone:tz}));
     let nextKey=null;
-    for(const k of order){ if(now < pTimes[k]) { nextKey=k; break; } }
+    for(const k of order){ if(now < pTimes[k]){ nextKey=k; break; } }
     if(!nextKey) nextKey="Fajr";
     const target = pTimes[nextKey] < now ? new Date(pTimes[nextKey].getTime()+86400000) : pTimes[nextKey];
-    const diff = target - now;
+    const diff=target-now;
     const h=String(Math.floor(diff/3600000)).padStart(2,'0');
     const m=String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
     const s=String(Math.floor((diff%60000)/1000)).padStart(2,'0');
-    nextEl.textContent = "Selanjutnya: " + nameMap[nextKey];
-    cdEl.textContent   = `${h}:${m}:${s}`;
+    nextEl.textContent="Selanjutnya: "+nameMap[nextKey];
+    cdEl.textContent=`${h}:${m}:${s}`;
     Array.from(ptEl.children).forEach((el,i)=>{const key=order[Math.floor(i/2)]; el.style.color=(key===nextKey)?'var(--gold)':''});
   }
   function currentIqomahWindow(){
@@ -482,33 +440,28 @@
     }
     if(!pTimes) return null;
     const order=["Fajr","Dhuhr","Asr","Maghrib","Isha"];
-    const now = new Date(new Date().toLocaleString('en-US',{timeZone:tz}));
+    const now=new Date(new Date().toLocaleString('en-US',{timeZone:tz}));
     for(const k of order){
-      const start = pTimes[k];
-      const end   = new Date(start.getTime() + (DUR[k]||10)*60*1000);
-      if(now >= start && now < end){
-        return { key:k, start, end };
-      }
+      const start=pTimes[k];
+      const end=new Date(start.getTime() + (DUR[k]||10)*60*1000);
+      if(now>=start && now<end){ return { key:k, start, end }; }
     }
     return null;
   }
   function updateIqomahOverlay(){
-    const wnd = currentIqomahWindow();
+    const wnd=currentIqomahWindow();
     if(!wnd){
-      if(prayerOverlay.style.display!=="none"){
-        prayerOverlay.style.display="none";
-        stage.classList.remove('overlay-active');
-        if(imgs.length>0) board.style.display="grid";
-      }
+      if(prayerOverlay.style.display!=="none"){ prayerOverlay.style.display="none"; stage.classList.remove('overlay-active'); }
       return;
     }
+    // tampilkan overlay iqomah penuh
     stage.classList.add('overlay-active');
     hideAllOverlays();
     prayerOverlay.style.display="flex";
     board.style.display="none";
-    const nameMap={Fajr:"Subuh",Dhuhr:"Zuhur",Asr:"Asar",Maghrib:"Maghrib",Isha:"Isya"};
-    pName.textContent = "Iqomah " + nameMap[wnd.key];
-    const now = new Date(new Date().toLocaleString('en-US',{timeZone:tz}));
+    const mapName={Fajr:"Subuh",Dhuhr:"Zuhur",Asr:"Asar",Maghrib:"Maghrib",Isha:"Isya"};
+    pName.textContent="Iqomah "+mapName[wnd.key];
+    const now=new Date(new Date().toLocaleString('en-US',{timeZone:tz}));
     const rem = Math.max(0, wnd.end - now);
     const mm  = String(Math.floor(rem/60000)).padStart(2,'0');
     const ss  = String(Math.floor((rem%60000)/1000)).padStart(2,'0');
@@ -516,10 +469,7 @@
   }
 
   /* ===== Config ===== */
-  async function fetchConfig(){
-    try{ const r=await fetch(configUrl,{cache:'no-store'}); if(!r.ok) return null; return await r.json(); }
-    catch(_){ return null; }
-  }
+  async function fetchConfig(){ try{ const r=await fetch(configUrl,{cache:'no-store'}); if(!r.ok) return null; return await r.json(); }catch(_){ return null; } }
   function applyConfig(cfg){
     if(cfg?.settings)  settings = Object.assign(settings, cfg.settings);
     if(cfg?.countdownMinutes) DUR = Object.assign(DUR, cfg.countdownMinutes);
@@ -543,7 +493,7 @@
     quotes = slides.filter(isQuote);
     videos = slides.filter(isVideo);
 
-    // Rescue jika kosong total
+    // RESCUE jika kosong total
     if(!slides || slides.length===0){
       slides=[
         {quote:"“Sebaik-baik kalian adalah yang mempelajari Al-Qur’an dan mengajarkannya.”", source:"HR. Bukhari", durationSec:12},
@@ -553,24 +503,12 @@
       imgs=slides.filter(isImg); quotes=slides.filter(isQuote); videos=slides.filter(isVideo);
     }
 
-    // Finance & Schedule (statis)
+    // Finance & Schedule
     finance  = cfg?.finance || null;
     if(finance && finance.title) ftitle.textContent = finance.title;
     schedule = Array.isArray(cfg?.schedule) ? cfg.schedule : [];
 
-    // Finance dari Google Sheet → override jika sukses
-    (async ()=>{
-      if(cfg?.financeSource){
-        const fin = await loadFinanceFromSource(cfg.financeSource);
-        if(fin){
-          finance = fin;
-          ftitle.textContent = fin.title || 'Laporan Keuangan';
-          if(financeOverlay.style.display==='flex'){ drawFinance(); }
-        }
-      }
-    })();
-
-    // Board gambar
+    // Mulai board
     if(!onlyQuoteQ && imgs.length>0){
       stage.classList.remove('overlay-active');
       board.style.display="grid";
@@ -580,14 +518,21 @@
       board.style.display="none";
     }
 
-    // Rotasi overlay
+    // Tampilkan satu quote awal (opsional)
+    if(quotes.length>0){
+      const q=quotes[0];
+      showQuoteFullscreen(q, Number(q.durationSec||settings.overlayShowSec));
+    }
+
+    // Rotasi overlay (video → finance → schedule → quote) — clear timer lama dulu
     if(rotationTimer){ clearInterval(rotationTimer); rotationTimer=null; }
     const order = (cfg?.overlaysOrder && cfg.overlaysOrder.length) ? cfg.overlaysOrder
                   : ["video","finance","schedule","quote"];
     const rotSec = Math.max(6, Number(settings.overlayRotationSec||60));
     let idx=0;
     rotationTimer=setInterval(()=>{
-      if(stage.classList.contains('overlay-active')) return; // jangan ganggu overlay aktif (termasuk Iqomah)
+      // Jangan ganggu saat overlay iqomah/overlay lain aktif
+      if(stage.classList.contains('overlay-active')) return;
       const kind = order[idx%order.length]; idx++;
       if(kind==="video"   && videos.length>0)   showVideoFullscreen(videos[0]);
       else if(kind==="finance" && finance)      showFinance();
@@ -595,17 +540,11 @@
       else if(kind==="quote"   && quotes.length>0)   showQuoteFullscreen(quotes[0], Number(quotes[0].durationSec||settings.overlayShowSec));
     }, rotSec*1000);
 
-    // Ticker (reset loop supaya pasti jalan)
+    // Ticker
     const t = tickerParam ?? cfg?.ticker;
     const s = showTickerQ || !!cfg?.showTicker || !!t;
-    if (s && t) {
-      ticker.style.display="flex";
-      tickerText.textContent=t;
-      tickerRunning=false; // penting: reset sebelum start
-      startTicker();
-    } else {
-      ticker.style.display="none";
-    }
+    if (s && t) { ticker.style.display="flex"; tickerText.textContent=t; startTicker(); }
+    else { ticker.style.display="none"; }
   }
 
   /* ===== Utils ===== */
@@ -616,10 +555,13 @@
 
   /* ===== Init ===== */
   (async function init(){
+    // Jadwal sholat
     await loadPrayer();
     renderPrayerTable();
+    // Header & iqomah update tiap detik
     setInterval(()=>{ renderPrayerTable(); updateNextHeader(); updateIqomahOverlay(); }, 1000);
 
+    // muat config & apply
     const cfg=await fetchConfig(); applyConfig(cfg||{});
     if(refreshMin>0 && configUrl){
       setInterval(async()=>{ const c=await fetchConfig(); if(c) applyConfig(c); }, refreshMin*60*1000);
