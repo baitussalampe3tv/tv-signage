@@ -15,7 +15,7 @@
 
   "financeSource": {
     "type": "csv",
-    "url": "https://docs.google.com/spreadsheets/d/XXXXXXX/pub?gid=0&single=true&output=csv",
+    "url": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQh8r6bSZuhKBRaBp1Y3D3AMgZsctAhIPOpWyuoTlxcCtwDlP8B37PvHEnV7vpd-Rimx5dgOztQTJBu/pub?gid=0&single=true&output=csv",
     "labelCol": "Kategori",
     "valueCol": "Jumlah",
     "titleCol": "Judul"
