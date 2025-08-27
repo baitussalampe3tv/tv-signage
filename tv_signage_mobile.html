@@ -1,1 +1,455 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>TV Signage – Mobile</title>
+<style>
+  :root{
+    --bg1:#E8FFF7; --bg2:#D9F7F0;
+    --panel:#F4FBF8; --border:#B6E2D5;
+    --gold:#C9A23C; --text:#102A27; --muted:#3A5F58;
+    --shadow:0 10px 30px rgba(0,0,0,.12);
+    --tickerBg:#0B1C53; --tickerText:#FFFFFF;
+    --sectionPad: 16px;
+    --maxW: 680px;
+  }
+  body.theme-emerald{
+    --bg1:#0d2d28; --bg2:#134238; --panel:#123a32; --border:#2f6b5e;
+    --gold:#e8c15a; --text:#EAF7F3; --muted:#bfe4d8;
+    --shadow:0 12px 36px rgba(0,0,0,.25);
+    --tickerBg:#0f3b34; --tickerText:#fdfdfd;
+  }
+  body.theme-gold{
+    --bg1:#fff7e0; --bg2:#ffefc6; --panel:#fff8e8; --border:#f0db9a;
+    --gold:#d5a921; --text:#2b240f; --muted:#5b4d1d;
+    --shadow:0 12px 36px rgba(0,0,0,.16);
+    --tickerBg:#7a5a12; --tickerText:#fffaf0;
+  }
+
+  html,body{height:100%;margin:0;font-family:Inter,"Segoe UI",Roboto,system-ui,Arial,sans-serif;color:var(--text);background:linear-gradient(180deg,var(--bg1),var(--bg2))}
+  *{box-sizing:border-box}
+
+  .wrap{min-height:100vh; padding-bottom:62px;} /* space for sticky ticker */
+  .container{max-width:var(--maxW); margin:0 auto; padding:0 var(--sectionPad)}
+  .section{padding:18px 0}
+
+  /* Brand + Prayer card */
+  .brandCard{
+    display:flex; gap:12px; align-items:center;
+    padding:12px; border:1px solid var(--border); border-radius:14px; background:linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.10)); box-shadow:var(--shadow)
+  }
+  .brandCard img{height:44px;width:auto}
+  .brandText{line-height:1.1}
+  .brandName{font-weight:900; font-size:18px}
+  .brandSub{font-weight:700; color:var(--muted); font-size:13px}
+
+  .prayCard{
+    margin-top:12px; padding:12px; border:1px solid var(--border); border-radius:14px; background:linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.10)); box-shadow:var(--shadow)
+  }
+  .prayHead{display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px}
+  .prayTitle{font-weight:900}
+  .prayNext{font-weight:900; color:var(--gold)}
+  .prayCnt{display:grid; grid-template-columns: repeat(3, auto auto); gap:8px 14px}
+  .prayCnt .name{color:var(--muted); font-weight:800}
+  .prayCnt .time{font-weight:900}
+
+  .countdown{margin-top:6px; font-weight:900}
+
+  /* Slideshow (single frame) */
+  .slideCard{
+    padding:0; border:1px solid var(--border); border-radius:16px; overflow:hidden; background:var(--panel); box-shadow:var(--shadow)
+  }
+  .slideImg{width:100%; aspect-ratio:16/9; object-fit:cover; display:block; background:#000}
+  .slideCaption{padding:10px 12px; color:#fff; background:linear-gradient(180deg, rgba(0,0,0,.0), rgba(0,0,0,.35))}
+  .capT{font-weight:900; font-size:clamp(16px,5vw,20px); margin:0 0 4px}
+  .capD{font-weight:600; font-size:clamp(13px,4.5vw,16px); margin:0}
+
+  /* Video */
+  .videoCard{
+    padding:12px; border:1px solid var(--border); border-radius:16px; background:var(--panel); box-shadow:var(--shadow)
+  }
+  .videoCard video{width:100%; height:auto; border-radius:10px; display:block; background:#000}
+
+  /* Quote */
+  .quoteCard{
+    padding:16px; border:1px solid var(--border); border-radius:16px; background:linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.35)); color:#fff; box-shadow:var(--shadow)
+  }
+  .qText{font-weight:900; font-size:clamp(18px,6vw,22px); line-height:1.4; margin:0 0 8px; color:var(--gold)}
+  .qSrc{font-weight:700; font-size:clamp(14px,4.5vw,16px); margin:0; opacity:.95}
+
+  /* Schedule */
+  .schedCard{
+    padding:14px; border:1px solid var(--border); border-radius:16px; background:linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.10)); box-shadow:var(--shadow)
+  }
+  .sTitle{font-weight:900; font-size:clamp(18px,6vw,22px); color:var(--gold); margin:0 0 10px; text-align:center}
+  .sList{display:grid; gap:10px}
+  .sRow{
+    display:grid; grid-template-columns: 1fr; gap:6px; padding:10px; border-radius:12px;
+    background:rgba(0,0,0,.08); border:1px solid rgba(0,0,0,.06)
+  }
+  .sTime{font-weight:900; font-size:clamp(15px,4.8vw,18px)}
+  .sTopic{font-weight:800; font-size:clamp(15px,4.6vw,18px)}
+  .sUst{font-weight:700; font-size:clamp(14px,4.4vw,17px); opacity:.95}
+
+  /* Finance */
+  .finCard{
+    padding:14px; border:1px solid var(--border); border-radius:16px; background:linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.10)); box-shadow:var(--shadow)
+  }
+  .finTitle{font-weight:900; font-size:clamp(18px,6vw,22px); color:var(--gold); text-align:center; margin:0 0 10px}
+  #finCanvas{width:100%; height:320px; background:rgba(0,0,0,.10); border-radius:12px; display:block}
+
+  /* Ticker (sticky bottom) */
+  #tickerWrap{position:sticky; bottom:0; left:0; right:0; background:var(--tickerBg); color:var(--tickerText); min-height:48px; display:none; align-items:center; overflow:hidden; z-index:5}
+  #tickerInner{white-space:nowrap; will-change:transform; padding:0 100vw 0 0}
+  #tickerText{display:inline-block; padding:12px 20px; font-size:clamp(14px,4.4vw,18px); font-weight:800}
+</style>
+</head>
+<body class="theme-gold">
+<div class="wrap">
+
+  <!-- Brand + Prayer -->
+  <section class="section">
+    <div class="container">
+      <div class="brandCard">
+        <img src="logo.png" alt="Logo">
+        <div class="brandText">
+          <div class="brandName">Masjid Baitussalam</div>
+          <div class="brandSub">Premier Estate 3</div>
+        </div>
+      </div>
+
+      <div class="prayCard">
+        <div class="prayHead">
+          <div class="prayTitle">Waktu Sholat</div>
+          <div class="prayNext" id="next">Selanjutnya: -</div>
+        </div>
+        <div class="prayCnt" id="pt"></div>
+        <div class="countdown" id="cd">--:--:--</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slideshow -->
+  <section class="section">
+    <div class="container">
+      <div class="slideCard">
+        <img id="slideImg" class="slideImg" alt="slide">
+        <div class="slideCaption">
+          <h3 id="capT" class="capT"></h3>
+          <p id="capD" class="capD"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Video (pertama saja) -->
+  <section class="section" id="videoSec" style="display:none">
+    <div class="container">
+      <div class="videoCard">
+        <video id="vplayer" playsinline controls muted></video>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quote (auto-rotate) -->
+  <section class="section" id="quoteSec" style="display:none">
+    <div class="container">
+      <div class="quoteCard">
+        <p class="qText" id="qtext"></p>
+        <p class="qSrc" id="qsrc"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Schedule -->
+  <section class="section" id="schedSec" style="display:none">
+    <div class="container">
+      <div class="schedCard">
+        <h3 class="sTitle">Jadwal Kajian</h3>
+        <div class="sList" id="slist"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Finance -->
+  <section class="section" id="finSec" style="display:none">
+    <div class="container">
+      <div class="finCard">
+        <h3 class="finTitle" id="ftitle">Laporan Keuangan</h3>
+        <canvas id="finCanvas"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ticker sticky -->
+  <div id="tickerWrap"><div id="tickerInner"><span id="tickerText"></span></div></div>
+
+</div>
+
+<script>
+(function(){
+  const qs=new URLSearchParams(location.search);
+
+  /* Theme */
+  (function setTheme(){
+    const th=(qs.get("theme")||"emerald").toLowerCase();
+    document.body.className = `theme-${["emerald","gold"].includes(th)?th:"emerald"}`;
+  })();
+
+  /* Params */
+  const configUrl = qs.get("config") || "signage.json";
+  const tickerParam = qs.get("ticker");
+  const showTickerQ = ["1","true","yes","on"].includes((qs.get("showTicker")||"").toLowerCase());
+  const tickerPauseSec = parseFloat(qs.get("tickerPauseSec")||"2");
+  const tickerSpeed = parseFloat(qs.get("tickerSpeed")||"100");
+
+  /* Elements */
+  const slideImg = document.getElementById("slideImg");
+  const capT = document.getElementById("capT");
+  const capD = document.getElementById("capD");
+  const qtext=document.getElementById("qtext");
+  const qsrc=document.getElementById("qsrc");
+  const vplayer=document.getElementById("vplayer");
+  const videoSec=document.getElementById("videoSec");
+  const quoteSec=document.getElementById("quoteSec");
+  const slist=document.getElementById("slist");
+  const schedSec=document.getElementById("schedSec");
+  const finSec=document.getElementById("finSec");
+  const ftitle=document.getElementById("ftitle");
+  const finCanvas=document.getElementById("finCanvas");
+  const tickerWrap=document.getElementById("tickerWrap");
+  const tickerInner=document.getElementById("tickerInner");
+  const tickerText=document.getElementById("tickerText");
+  const ptEl=document.getElementById("pt");
+  const nextEl=document.getElementById("next");
+  const cdEl=document.getElementById("cd");
+
+  /* Data */
+  let slides=[], imgs=[], quotes=[], videos=[], finance=null, schedule=[];
+  let slidePtr=0, quotePtr=0;
+  let slideTimer=null, quoteTimer=null;
+
+  /* Helpers */
+  const isImg = s=>!!s.url;
+  const isQuote = s=>!!s.quote;
+  const isVideo = s=>!!s.video;
+
+  function mountSlide(it){
+    if(!it) return;
+    slideImg.src = it.url;
+    capT.textContent = it.title||"";
+    capD.textContent = it.desc||"";
+  }
+  function runSlide(){
+    if(imgs.length===0) return;
+    const it = imgs[slidePtr % imgs.length];
+    mountSlide(it);
+    slidePtr = (slidePtr+1)%imgs.length;
+    clearTimeout(slideTimer);
+    slideTimer = setTimeout(runSlide, Math.max(4, Number(it.durationSec||6))*1000);
+  }
+
+  function runQuote(){
+    if(quotes.length===0) return;
+    const it = quotes[quotePtr % quotes.length];
+    qtext.textContent = it.quote || "";
+    qsrc.textContent  = it.source || "";
+    quotePtr = (quotePtr+1) % quotes.length;
+    clearTimeout(quoteTimer);
+    const dur = Math.max(6, Number(it.durationSec||10))*1000;
+    quoteTimer = setTimeout(runQuote, dur);
+  }
+
+  function drawFinance(){
+    if(!finance) return;
+    const c=finCanvas, dpr=window.devicePixelRatio||1, w=c.clientWidth, h=c.clientHeight;
+    c.width=Math.floor(w*dpr); c.height=Math.floor(h*dpr);
+    const ctx=c.getContext('2d'); ctx.scale(dpr,dpr); ctx.clearRect(0,0,w,h);
+    const pad=16, labels=finance.labels||[], data=finance.data||[];
+    const maxV=Math.max(1, ...data.map(v=>Math.abs(v)));
+    const barW=(w-pad*2)/(labels.length*1.6), gap=barW*0.6, baseY=h-pad-28, scale=(h-pad*2-40)/maxV;
+
+    ctx.strokeStyle="rgba(0,0,0,.12)"; ctx.lineWidth=1; ctx.beginPath();
+    for(let i=0;i<=3;i++){ const y=pad+i*((baseY-pad)/3); ctx.moveTo(pad,y); ctx.lineTo(w-pad,y); } ctx.stroke();
+
+    labels.forEach((lab,i)=>{
+      const v=data[i]||0, bh=v*scale, x=pad+i*(barW+gap), y=baseY-bh;
+
+      ctx.fillStyle="#d5a921";
+      ctx.fillRect(x,y,barW,bh);
+
+      const labelFont = Math.max(12, Math.round(w/22));   // besar di mobile
+      ctx.fillStyle="#222"; ctx.font = `600 ${labelFont}px Inter, Arial`; ctx.textAlign="center";
+      ctx.fillText(lab, x+barW/2, baseY+18);
+
+      const valueFont = Math.max(13, Math.round(w/18));
+      ctx.fillStyle="#000"; ctx.font = `800 ${valueFont}px Inter, Arial`;
+      ctx.fillText(formatRupiah(v), x+barW/2, y-6);
+    });
+  }
+
+  /* Ticker */
+  let tickerRunning=false;
+  function startTicker(){
+    if(tickerRunning) return;
+    tickerRunning=true;
+    const run=()=>{
+      tickerInner.style.transition="none";
+      tickerInner.style.transform=`translateX(${window.innerWidth}px)`;
+      requestAnimationFrame(()=>{
+        const width=tickerInner.getBoundingClientRect().width;
+        const total=width + window.innerWidth;
+        const dur= total / Math.max(60, tickerSpeed);
+        tickerInner.style.transition=`transform ${dur}s linear`;
+        tickerInner.style.transform=`translateX(-${width}px)`;
+        tickerInner.ontransitionend = ()=> setTimeout(run, Math.max(0,tickerPauseSec)*1000);
+      });
+    };
+    run();
+  }
+
+  /* Sholat (Jakarta) */
+  const tz="Asia/Jakarta";
+  let pTimes=null;
+  function parseLcl(hhmm){
+    const [H,M]=String(hhmm).split(":").map(Number);
+    const d=new Date(new Date().toLocaleString('en-US',{timeZone:tz}));
+    d.setHours(H||0,M||0,0,0); return d;
+  }
+  async function loadPrayer(){
+    const today=new Date();
+    const y=today.toLocaleString('en-CA',{year:'numeric',timeZone:tz});
+    const m=today.toLocaleString('en-CA',{month:'2-digit',timeZone:tz});
+    const d=today.toLocaleString('en-CA',{day:'2-digit',timeZone:tz});
+    try{
+      const r=await fetch(`https://api.myquran.com/v2/sholat/jadwal/1301/${y}/${m}/${d}`,{cache:'no-store'});
+      if(r.ok){ const j=await r.json(); const t=j?.data?.jadwal;
+        if(t){ pTimes={Fajr:parseLcl(t.subuh), Syuruq:parseLcl(t.terbit), Dhuhr:parseLcl(t.dzuhur), Asr:parseLcl(t.ashar), Maghrib:parseLcl(t.maghrib), Isha:parseLcl(t.isya)}; return true; }
+      }
+    }catch(_){}
+    try{
+      const r=await fetch(`https://api.aladhan.com/v1/timingsByCity?city=Jakarta&country=Indonesia&method=3`,{cache:'no-store'});
+      if(r.ok){ const j=await r.json(); const t=j?.data?.timings;
+        if(t){ pTimes={Fajr:parseLcl(t.Fajr), Syuruq:parseLcl(t.Sunrise), Dhuhr:parseLcl(t.Dhuhr), Asr:parseLcl(t.Asr), Maghrib:parseLcl(t.Maghrib), Isha:parseLcl(t.Isha)}; return true; }
+      }
+    }catch(_){}
+    return false;
+  }
+  function renderPrayer(){
+    if(!pTimes){ ptEl.innerHTML='<span style="opacity:.7">Jadwal sholat tidak tersedia</span>'; return; }
+    const order=["Fajr","Syuruq","Dhuhr","Asr","Maghrib","Isha"];
+    const nameMap={Fajr:"Subuh",Syuruq:"Syuruq",Dhuhr:"Zuhur",Asr:"Asar",Maghrib:"Maghrib",Isha:"Isya"};
+    function fmt(d){const hh=String(d.getHours()).padStart(2,"0"),mm=String(d.getMinutes()).padStart(2,"0");return `${hh}:${mm}`;}
+    ptEl.innerHTML="";
+    order.forEach(k=>{
+      const n=document.createElement("div"); n.className="name"; n.textContent=nameMap[k];
+      const t=document.createElement("div"); t.className="time"; t.textContent=fmt(pTimes[k]);
+      ptEl.append(n,t);
+    });
+
+    const now=new Date(new Date().toLocaleString('en-US',{timeZone:tz}));
+    let nextK=null;
+    for(const k of order){ if(now < pTimes[k]){ nextK=k; break; } }
+    if(!nextK) nextK="Fajr";
+    const target = pTimes[nextK] < now ? new Date(pTimes[nextK].getTime()+86400000) : pTimes[nextK];
+    const diff=target-now;
+    const h=String(Math.floor(diff/3600000)).padStart(2,'0');
+    const m=String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
+    const s=String(Math.floor((diff%60000)/1000)).padStart(2,'0');
+    nextEl.textContent = "Selanjutnya: " + nameMap[nextK];
+    cdEl.textContent = `${h}:${m}:${s}`;
+  }
+
+  /* Config */
+  async function fetchConfig(){ try{ const r=await fetch(configUrl,{cache:'no-store'}); if(!r.ok) return null; return await r.json(); }catch(_){ return null; } }
+  function applyConfig(cfg){
+    // Slides
+    slides = Array.isArray(cfg?.slides) ? cfg.slides.slice() : [];
+    imgs = slides.filter(isImg);
+    quotes = slides.filter(isQuote);
+    videos = slides.filter(isVideo);
+
+    // Finance, Schedule
+    finance = cfg?.finance || null;
+    schedule = Array.isArray(cfg?.schedule) ? cfg.schedule : [];
+    if(finance && finance.title) ftitle.textContent = finance.title;
+
+    // Slideshow
+    if(imgs.length>0){ runSlide(); }
+
+    // Video (tampilkan 1 pertama jika ada)
+    if(videos.length>0){
+      vplayer.src = videos[0].video;
+      videoSec.style.display = "block";
+    }else{
+      videoSec.style.display = "none";
+    }
+
+    // Quote (auto rotate)
+    if(quotes.length>0){
+      quoteSec.style.display = "block";
+      runQuote();
+    }else{
+      quoteSec.style.display = "none";
+    }
+
+    // Schedule
+    if(schedule.length>0){
+      schedSec.style.display = "block";
+      slist.innerHTML="";
+      schedule.forEach(it=>{
+        const row=document.createElement('div'); row.className="sRow";
+        row.innerHTML = `
+          <div class="sTime">${it.time||""}</div>
+          <div class="sTopic">${it.topic||""}</div>
+          <div class="sUst">${it.ustadz||""}</div>`;
+        slist.appendChild(row);
+      });
+    }else{
+      schedSec.style.display = "none";
+    }
+
+    // Finance
+    if(finance){
+      finSec.style.display = "block";
+      drawFinance();
+      window.addEventListener('resize', drawFinance, {passive:true});
+    }else{
+      finSec.style.display = "none";
+    }
+
+    // Ticker
+    const t = tickerParam ?? cfg?.ticker;
+    const s = showTickerQ || !!cfg?.showTicker || !!t;
+    if (s && t) {
+      tickerWrap.style.display="flex";
+      tickerText.textContent=t;
+      startTicker();
+    } else {
+      tickerWrap.style.display="none";
+    }
+  }
+
+  /* Utils */
+  function formatRupiah(n){
+    try{ return new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(n); }
+    catch(_){ return "Rp " + (n||0).toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
+  }
+
+  /* Init */
+  (async function init(){
+    const th=(qs.get("theme")||"gold").toLowerCase();
+    document.body.className = `theme-${["emerald","gold"].includes(th)?th:"gold"}`;
+
+    await loadPrayer();
+    renderPrayer();
+    setInterval(renderPrayer, 1000);
+
+    const cfg=await fetchConfig(); applyConfig(cfg||{});
+  })();
+})();
+</script>
+</body>
+</html>
 
