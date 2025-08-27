@@ -50,11 +50,24 @@
   }
   .prayHead{display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px}
   .prayTitle{font-weight:900}
-  .prayNext{font-weight:900; color:var(--gold)}
+
   .prayCnt{display:grid; grid-template-columns: repeat(3, auto auto); gap:8px 14px}
   .prayCnt .name{color:var(--muted); font-weight:800}
   .prayCnt .time{font-weight:900}
-  .countdown{margin-top:6px; font-weight:900}
+
+  /* footer next + countdown (baru) */
+  .prayFooter{
+    margin-top:8px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:12px;
+    font-weight:900;
+    text-align:center;
+  }
+  .prayFooter .next{ color:var(--gold); }
+  .countdown{ font-weight:900 }
 
   /* Slideshow */
   .slideCard{
@@ -124,10 +137,12 @@
       <div class="prayCard">
         <div class="prayHead">
           <div class="prayTitle">Waktu Sholat</div>
-          <div class="prayNext" id="next">Selanjutnya: -</div>
         </div>
         <div class="prayCnt" id="pt"></div>
-        <div class="countdown" id="cd">--:--:--</div>
+        <div class="prayFooter">
+          <div class="next" id="next">Selanjutnya: -</div>
+          <div class="countdown" id="cd">--:--:--</div>
+        </div>
       </div>
     </div>
   </section>
