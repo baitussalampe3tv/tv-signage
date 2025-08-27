@@ -1,1 +1,487 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Tools – TV Signage</title>
+<style>
+  :root{
+    --bg:#0f172a; --panel:#0b1226; --mut:#94a3b8; --txt:#e2e8f0; --acc:#22c55e; --warn:#f59e0b; --bad:#ef4444;
+    --line:#1f2a44; --btn:#111827; --btnh:#1f2937;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0; background:linear-gradient(180deg,#0a1021,#0e1531); color:var(--txt); font-family:Inter,system-ui,Segoe UI,Arial}
+  .wrap{max-width:1200px; margin:24px auto; padding:0 16px}
+  h1{font-size:22px;margin:0 0 12px}
+  .bar{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;margin-bottom:14px}
+  .card{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;padding:14px 14px 10px;margin-bottom:14px}
+  .row{display:grid;grid-template-columns:1fr 2fr;gap:10px;margin:8px 0}
+  label{font-weight:700;color:var(--mut);font-size:13px;padding-top:6px}
+  input,select,textarea{width:100%;background:#0b1226;border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:10px 12px;outline:none}
+  textarea{min-height:90px;resize:vertical}
+  .btns{display:flex;flex-wrap:wrap;gap:8px}
+  button,.btn{background:var(--btn);border:1px solid var(--line);color:var(--txt);padding:10px 12px;border-radius:10px;cursor:pointer}
+  button:hover,.btn:hover{background:var(--btnh)}
+  .ok{border-color:#14532d;background:#052e16}
+  .bad{border-color:#7f1d1d;background:#421010}
+  .warn{border-color:#78450b;background:#3c2407}
+  small.hint{color:var(--mut);display:block;margin-top:6px}
+  .secTitle{font-weight:900;margin:2px 0 10px;color:#cbd5e1}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  .list{display:grid;gap:10px}
+  .item{padding:10px;border:1px dashed var(--line);border-radius:10px;background:rgba(255,255,255,.03)}
+  .itemHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .tag{font-size:12px;font-weight:800;color:#93c5fd;background:#0b254a;border:1px solid #123e7a;padding:4px 8px;border-radius:999px}
+  .ops{display:flex;gap:6px}
+  .ops button{padding:6px 8px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .preview{display:grid;gap:8px}
+  a.link{color:#93c5fd;text-decoration:none;word-break:break-all}
+  .footer{opacity:.75;font-size:12px;margin-top:10px}
+  @media (max-width:820px){ .grid2,.grid3{grid-template-columns:1fr} .row{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🛠️ Admin Tools – TV Signage</h1>
+
+  <div class="card">
+    <div class="bar">
+      <div class="row">
+        <label>JSON URL</label>
+        <input id="jsonUrl" placeholder="https://baitussalampe3tv.github.io/tv-signage/signage.json">
+      </div>
+      <div class="btns">
+        <button id="btnLoad">Load</button>
+        <button id="btnReset" class="warn">Reset (kosongkan)</button>
+      </div>
+    </div>
+    <small class="hint">Jika gagal load, biasanya karena CORS. Solusi: buka admin ini dari domain yang sama (GitHub Pages repo yang sama) atau edit manual lalu Export.</small>
+    <div id="status" class="footer">Status: -</div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="card">
+    <div class="secTitle">⚙️ Settings</div>
+    <div class="grid2">
+      <div class="row"><label>overlayRotationSec</label><input id="setRotation" type="number" min="4" step="1"></div>
+      <div class="row"><label>overlayShowSec</label><input id="setShow" type="number" min="4" step="1"></div>
+    </div>
+    <div class="grid3">
+      <div class="row"><label>Countdown Subuh (Fajr)</label><input id="cdFajr" type="number" min="0" step="1"></div>
+      <div class="row"><label>Countdown Zuhur (Dhuhr)</label><input id="cdDhuhr" type="number" min="0" step="1"></div>
+      <div class="row"><label>Countdown Asar (Asr)</label><input id="cdAsr" type="number" min="0" step="1"></div>
+      <div class="row"><label>Countdown Maghrib</label><input id="cdMaghrib" type="number" min="0" step="1"></div>
+      <div class="row"><label>Countdown Isya (Isha)</label><input id="cdIsha" type="number" min="0" step="1"></div>
+      <div class="row"><label>overlaysOrder (comma)</label><input id="overlaysOrder" placeholder="video,finance,schedule,quote"></div>
+    </div>
+  </div>
+
+  <!-- SLIDES -->
+  <div class="card">
+    <div class="secTitle">🖼️ Slides (Image/Video/Quote)</div>
+    <div class="btns" style="margin-bottom:8px">
+      <button id="addImg">+ Image</button>
+      <button id="addVid">+ Video</button>
+      <button id="addQuote">+ Quote</button>
+    </div>
+    <div id="slidesList" class="list"></div>
+  </div>
+
+  <!-- FINANCE -->
+  <div class="card">
+    <div class="secTitle">💰 Finance Chart</div>
+    <div class="row"><label>Title</label><input id="finTitle"></div>
+    <div class="two">
+      <div class="row"><label>Labels (comma)</label><input id="finLabels" placeholder="Infaq Shodaqoh, Operasional"></div>
+      <div class="row"><label>Data (comma)</label><input id="finData" placeholder="3200000,1500000"></div>
+    </div>
+    <div class="row"><label>durationSec</label><input id="finDur" type="number" min="4" step="1"></div>
+  </div>
+
+  <!-- SCHEDULE -->
+  <div class="card">
+    <div class="secTitle">📅 Schedule</div>
+    <div class="btns" style="margin-bottom:8px">
+      <button id="addSched">+ Tambah Baris</button>
+    </div>
+    <div id="schedList" class="list"></div>
+  </div>
+
+  <!-- TICKER -->
+  <div class="card">
+    <div class="secTitle">📰 Ticker</div>
+    <div class="row"><label>Text</label><textarea id="tickerText"></textarea></div>
+    <div class="row"><label>showTicker</label>
+      <select id="showTicker"><option value="true">true</option><option value="false">false</option></select>
+    </div>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="card">
+    <div class="secTitle">💾 Simpan & Preview</div>
+    <div class="btns" style="margin-bottom:10px">
+      <button id="btnExport" class="ok">⬇️ Export signage.json</button>
+      <button id="btnCopy">📋 Copy JSON</button>
+    </div>
+    <div class="row">
+      <label>Base URL (repo GitHub Pages)</label>
+      <input id="baseUrl" placeholder="https://baitussalampe3tv.github.io/tv-signage/">
+    </div>
+    <div class="preview">
+      <div class="two">
+        <div>
+          <div class="secTitle">🔎 Preview TV</div>
+          <a id="prevTv" class="link" target="_blank" rel="noopener">-</a>
+        </div>
+        <div>
+          <div class="secTitle">🔎 Preview Mobile</div>
+          <a id="prevMb" class="link" target="_blank" rel="noopener">-</a>
+        </div>
+      </div>
+      <small class="hint">Link dibuat otomatis dari Base URL + `tv_signage.html` atau `tv_signage_mobile.html` dan param `?config=.../signage.json&theme=gold&showTicker=1&t=timestamp`.</small>
+    </div>
+  </div>
+
+  <div class="footer">Made for Baitussalam PE3 • Client-side only (no server). Simpan hasil dengan Export dan upload ke GitHub.</div>
+</div>
+
+<script>
+(function(){
+  let state = {
+    settings: { overlayRotationSec: 60, overlayShowSec: 12 },
+    slides: [],
+    finance: null,
+    schedule: [],
+    overlaysOrder: ["video","finance","schedule","quote"],
+    ticker: "",
+    showTicker: true,
+    countdownMinutes: { Fajr:20, Dhuhr:15, Asr:15, Maghrib:10, Isha:15 }
+  };
+
+  // Elements
+  const el = id => document.getElementById(id);
+  const jsonUrl = el('jsonUrl'), statusEl = el('status');
+  const setRotation = el('setRotation'), setShow = el('setShow');
+  const cdFajr = el('cdFajr'), cdDhuhr = el('cdDhuhr'), cdAsr = el('cdAsr'), cdMaghrib = el('cdMaghrib'), cdIsha = el('cdIsha');
+  const overlaysOrder = el('overlaysOrder');
+
+  const slidesList = el('slidesList');
+  const addImg = el('addImg'), addVid = el('addVid'), addQuote = el('addQuote');
+
+  const finTitle = el('finTitle'), finLabels = el('finLabels'), finData = el('finData'), finDur = el('finDur');
+
+  const schedList = el('schedList'), addSched = el('addSched');
+
+  const tickerText = el('tickerText'), showTicker = el('showTicker');
+
+  const baseUrl = el('baseUrl'), prevTv = el('prevTv'), prevMb = el('prevMb');
+
+  // helpers
+  const clone = x => JSON.parse(JSON.stringify(x));
+  const setStatus = (m) => statusEl.textContent = "Status: " + m;
+
+  function loadToForm(){
+    setRotation.value = +((state.settings||{}).overlayRotationSec || 60);
+    setShow.value = +((state.settings||{}).overlayShowSec || 12);
+
+    cdFajr.value = +((state.countdownMinutes||{}).Fajr ?? 20);
+    cdDhuhr.value = +((state.countdownMinutes||{}).Dhuhr ?? 15);
+    cdAsr.value = +((state.countdownMinutes||{}).Asr ?? 15);
+    cdMaghrib.value = +((state.countdownMinutes||{}).Maghrib ?? 10);
+    cdIsha.value = +((state.countdownMinutes||{}).Isha ?? 15);
+
+    overlaysOrder.value = (state.overlaysOrder||[]).join(',');
+
+    // slides
+    renderSlides();
+
+    // finance
+    if(state.finance){
+      finTitle.value = state.finance.title || "";
+      finLabels.value = (state.finance.labels||[]).join(', ');
+      finData.value = (state.finance.data||[]).join(', ');
+      finDur.value = +((state.finance.durationSec)||12);
+    } else {
+      finTitle.value = ""; finLabels.value = ""; finData.value = ""; finDur.value = 12;
+    }
+
+    // schedule
+    renderSchedule();
+
+    // ticker
+    tickerText.value = state.ticker || "";
+    showTicker.value = String(!!state.showTicker);
+  }
+
+  function formToState(){
+    state.settings = {
+      overlayRotationSec: Math.max(4, +setRotation.value || 60),
+      overlayShowSec: Math.max(4, +setShow.value || 12)
+    };
+    state.countdownMinutes = {
+      Fajr:+cdFajr.value||0, Dhuhr:+cdDhuhr.value||0, Asr:+cdAsr.value||0, Maghrib:+cdMaghrib.value||0, Isha:+cdIsha.value||0
+    };
+    state.overlaysOrder = (overlaysOrder.value||"").split(',').map(s=>s.trim()).filter(Boolean);
+
+    // finance
+    const labels = (finLabels.value||"").split(',').map(s=>s.trim()).filter(Boolean);
+    const data = (finData.value||"").split(',').map(s=>parseInt(s.trim(),10)).filter(n=>!isNaN(n));
+    state.finance = (finTitle.value||labels.length||data.length)
+      ? { title:finTitle.value||"", labels, data, durationSec: Math.max(4, +finDur.value||12) }
+      : null;
+
+    // schedule
+    const sRows = Array.from(schedList.querySelectorAll('.item'));
+    state.schedule = sRows.map(row=>{
+      return {
+        time: row.querySelector('input[name="time"]').value || "",
+        topic: row.querySelector('input[name="topic"]').value || "",
+        ustadz: row.querySelector('input[name="ustadz"]').value || ""
+      };
+    });
+
+    // slides — sudah dipush per item saat edit/hapus/tambah
+    // ticker
+    state.ticker = tickerText.value || "";
+    state.showTicker = (showTicker.value === "true");
+  }
+
+  // Slides UI
+  function slideTemplate(slide, idx){
+    const type = slide.quote ? 'quote' : (slide.video ? 'video' : 'image');
+    const tagMap = { image:'Image', video:'Video', quote:'Quote' };
+    const div = document.createElement('div');
+    div.className = 'item';
+    div.dataset.idx = idx;
+    div.innerHTML = `
+      <div class="itemHead">
+        <span class="tag">#${idx+1} • ${tagMap[type]}</span>
+        <div class="ops">
+          <button data-act="up">▲</button>
+          <button data-act="down">▼</button>
+          <button data-act="del" class="bad">Hapus</button>
+        </div>
+      </div>
+      <div class="list">
+        ${
+          type==='image' ? `
+          <div class="two">
+            <div class="row"><label>URL Gambar</label><input name="url" value="${escapeHtml(slide.url||'')}"></div>
+            <div class="row"><label>durationSec</label><input name="durationSec" type="number" min="4" step="1" value="${slide.durationSec||6}"></div>
+          </div>
+          <div class="row"><label>Title</label><input name="title" value="${escapeHtml(slide.title||'')}"></div>
+          <div class="row"><label>Desc</label><input name="desc" value="${escapeHtml(slide.desc||'')}"></div>
+          ` : type==='video' ? `
+          <div class="row"><label>Video URL</label><input name="video" value="${escapeHtml(slide.video||'')}"></div>
+          ` : `
+          <div class="two">
+            <div class="row"><label>Quote</label><input name="quote" value="${escapeHtml(slide.quote||'')}"></div>
+            <div class="row"><label>durationSec</label><input name="durationSec" type="number" min="4" step="1" value="${slide.durationSec||10}"></div>
+          </div>
+          <div class="row"><label>Sumber</label><input name="source" value="${escapeHtml(slide.source||'')}"></div>
+          `
+        }
+      </div>
+    `;
+    // events
+    div.addEventListener('input', e=>{
+      const n=e.target.name, v=e.target.value;
+      const s = state.slides[idx];
+      if(type==='image'){
+        if(n==='url') s.url=v;
+        if(n==='title') s.title=v;
+        if(n==='desc') s.desc=v;
+        if(n==='durationSec') s.durationSec = Math.max(4, +v||6);
+      } else if(type==='video'){
+        if(n==='video') s.video=v;
+      } else {
+        if(n==='quote') s.quote=v;
+        if(n==='source') s.source=v;
+        if(n==='durationSec') s.durationSec = Math.max(4, +v||10);
+      }
+      genPreviewLinks(); // so preview reflects latest, after export upload
+    });
+    div.querySelectorAll('[data-act]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const act=btn.dataset.act;
+        if(act==='del'){ state.slides.splice(idx,1); renderSlides(); }
+        if(act==='up' && idx>0){ const tmp=state.slides[idx-1]; state.slides[idx-1]=state.slides[idx]; state.slides[idx]=tmp; renderSlides(); }
+        if(act==='down' && idx<state.slides.length-1){ const tmp=state.slides[idx+1]; state.slides[idx+1]=state.slides[idx]; state.slides[idx]=tmp; renderSlides(); }
+      });
+    });
+    return div;
+  }
+  function renderSlides(){
+    slidesList.innerHTML = "";
+    state.slides.forEach((s,i)=> slidesList.appendChild(slideTemplate(s,i)) );
+  }
+
+  addImg.addEventListener('click', ()=>{
+    state.slides.push({ url:"images/kegiatan-1.jpg", title:"", desc:"", durationSec:6 });
+    renderSlides();
+  });
+  addVid.addEventListener('click', ()=>{
+    state.slides.push({ video:"https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" });
+    renderSlides();
+  });
+  addQuote.addEventListener('click', ()=>{
+    state.slides.push({ quote:"“Contoh kutipan.”", source:"HR. …", durationSec:10 });
+    renderSlides();
+  });
+
+  // Schedule UI
+  function schedTemplate(row, idx){
+    const div = document.createElement('div');
+    div.className = 'item';
+    div.dataset.idx = idx;
+    div.innerHTML = `
+      <div class="itemHead">
+        <span class="tag">#${idx+1}</span>
+        <div class="ops">
+          <button data-act="up">▲</button>
+          <button data-act="down">▼</button>
+          <button data-act="del" class="bad">Hapus</button>
+        </div>
+      </div>
+      <div class="three">
+        <div class="row"><label>Time</label><input name="time" value="${escapeHtml(row.time||'')}"></div>
+        <div class="row"><label>Topic</label><input name="topic" value="${escapeHtml(row.topic||'')}"></div>
+        <div class="row"><label>Ustadz</label><input name="ustadz" value="${escapeHtml(row.ustadz||'')}"></div>
+      </div>
+    `;
+    div.addEventListener('input', e=>{
+      const n=e.target.name, v=e.target.value;
+      const r = state.schedule[idx];
+      if(n==='time') r.time=v;
+      if(n==='topic') r.topic=v;
+      if(n==='ustadz') r.ustadz=v;
+    });
+    div.querySelectorAll('[data-act]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const act=btn.dataset.act;
+        if(act==='del'){ state.schedule.splice(idx,1); renderSchedule(); }
+        if(act==='up' && idx>0){ const tmp=state.schedule[idx-1]; state.schedule[idx-1]=state.schedule[idx]; state.schedule[idx]=tmp; renderSchedule(); }
+        if(act==='down' && idx<state.schedule.length-1){ const tmp=state.schedule[idx+1]; state.schedule[idx+1]=state.schedule[idx]; state.schedule[idx]=tmp; renderSchedule(); }
+      });
+    });
+    return div;
+  }
+  function renderSchedule(){
+    schedList.innerHTML = "";
+    state.schedule.forEach((r,i)=> schedList.appendChild(schedTemplate(r,i)) );
+  }
+  addSched.addEventListener('click', ()=>{
+    state.schedule.push({ time:"", topic:"", ustadz:"" });
+    renderSchedule();
+  });
+
+  // Export / Copy / Preview
+  function currentJson(){
+    formToState();
+    // build final object mirip struktur lama
+    const out = {};
+    if(state.settings) out.settings = clone(state.settings);
+    out.slides = clone(state.slides);
+    if(state.finance) out.finance = clone(state.finance);
+    if(state.schedule && state.schedule.length) out.schedule = clone(state.schedule);
+    if(state.overlaysOrder && state.overlaysOrder.length) out.overlaysOrder = clone(state.overlaysOrder);
+    if(state.ticker) out.ticker = state.ticker;
+    out.showTicker = !!state.showTicker;
+    if(state.countdownMinutes) out.countdownMinutes = clone(state.countdownMinutes);
+    return out;
+  }
+
+  el('btnExport').addEventListener('click', ()=>{
+    const data = currentJson();
+    const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href=url; a.download='signage.json'; a.click();
+    URL.revokeObjectURL(url);
+    setStatus('Exported signage.json');
+  });
+  el('btnCopy').addEventListener('click', async ()=>{
+    const data = currentJson();
+    await navigator.clipboard.writeText(JSON.stringify(data,null,2));
+    setStatus('JSON disalin ke clipboard');
+  });
+
+  function genPreviewLinks(){
+    const base = (baseUrl.value||"").trim();
+    const conf = (jsonUrl.value||"").trim() || (base? (base.replace(/\/$/,'')+'/signage.json') : '');
+    const t = Date.now();
+    const tv = base? `${base.replace(/\/$/,'')}/tv_signage.html?config=${encodeURIComponent(conf)}&theme=gold&showTicker=1&t=${t}` : '-';
+    const mb = base? `${base.replace(/\/$/,'')}/tv_signage_mobile.html?config=${encodeURIComponent(conf)}&theme=gold&showTicker=1&t=${t}` : '-';
+    prevTv.textContent = tv; prevTv.href = tv;
+    prevMb.textContent = mb; prevMb.href = mb;
+  }
+  baseUrl.addEventListener('input', genPreviewLinks);
+  jsonUrl.addEventListener('input', genPreviewLinks);
+
+  // Load & Reset
+  async function loadFromUrl(){
+    const url = (jsonUrl.value||"").trim();
+    if(!url){ setStatus('Masukkan URL JSON lebih dulu'); return; }
+    try{
+      setStatus('Memuat…');
+      const r = await fetch(url, {cache:'no-store'});
+      if(!r.ok) throw new Error(r.status+' '+r.statusText);
+      const j = await r.json();
+      // normalize
+      state = {
+        settings: j.settings || { overlayRotationSec:60, overlayShowSec:12 },
+        slides: Array.isArray(j.slides)? clone(j.slides) : [],
+        finance: j.finance || null,
+        schedule: Array.isArray(j.schedule)? clone(j.schedule) : [],
+        overlaysOrder: Array.isArray(j.overlaysOrder)? clone(j.overlaysOrder) : ["video","finance","schedule","quote"],
+        ticker: j.ticker || "",
+        showTicker: !!j.showTicker,
+        countdownMinutes: j.countdownMinutes || { Fajr:20, Dhuhr:15, Asr:15, Maghrib:10, Isha:15 }
+      };
+      loadToForm();
+      genPreviewLinks();
+      setStatus('Berhasil load JSON');
+    }catch(e){
+      console.error(e);
+      setStatus('Gagal load: '+e.message+' (CORS?)');
+    }
+  }
+  el('btnLoad').addEventListener('click', loadFromUrl);
+
+  el('btnReset').addEventListener('click', ()=>{
+    state = {
+      settings: { overlayRotationSec:60, overlayShowSec:12 },
+      slides: [],
+      finance: null,
+      schedule: [],
+      overlaysOrder: ["video","finance","schedule","quote"],
+      ticker: "",
+      showTicker: true,
+      countdownMinutes: { Fajr:20, Dhuhr:15, Asr:15, Maghrib:10, Isha:15 }
+    };
+    loadToForm(); genPreviewLinks(); setStatus('Form direset (kosong)');
+  });
+
+  // helpers
+  function escapeHtml(s){
+    return String(s==null?"":s).replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[m]));
+  }
+
+  // init
+  (function init(){
+    // default base url isi dari lokasi admin ini
+    const loc = location.href.split('/').slice(0,-1).join('/') + '/';
+    baseUrl.value = loc;
+    // default json url duga signage.json di lokasi sama
+    jsonUrl.value = loc + 'signage.json';
+    loadToForm(); genPreviewLinks();
+    setStatus('Siap');
+  })();
+})();
+</script>
+</body>
+</html>
 
