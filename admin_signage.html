@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Admin Masjid Baitussalam PE3 – TV Signage</title>
+<title>Admin Tools – TV Signage</title>
 <style>
   :root{
     --bg:#0f172a; --panel:#0b1226; --mut:#94a3b8; --txt:#e2e8f0; --acc:#22c55e; --warn:#f59e0b; --bad:#ef4444;
@@ -44,6 +44,77 @@
 </style>
 </head>
 <body>
+
+<!-- === SIGNAGE ADMIN AUTH GATE (built-in) === -->
+<script>
+(() => {
+  const AUTH = {
+    users: {
+      /* DEFAULT (ubah segera!): admin/admin */
+      "admin": "8da193366e1554c08b2870c50f737b9587c3372b656151c4a96028af26f51334"
+    },
+    sessionHours: 12,
+    storageKey: "signage_admin_session"
+  };
+  async function sha256Hex(str){const buf=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(str));return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("");}
+  function saveSession(user){const exp=Date.now()+AUTH.sessionHours*60*60*1000;localStorage.setItem(AUTH.storageKey,JSON.stringify({user,exp}));}
+  function loadSession(){try{const j=JSON.parse(localStorage.getItem(AUTH.storageKey)||"null");if(!j)return null;if(Date.now()>j.exp){localStorage.removeItem(AUTH.storageKey);return null;}if(!AUTH.users[j.user])return null;return j;}catch{return null;}}
+  function logout(){localStorage.removeItem(AUTH.storageKey);location.reload();}
+  function renderGate(){
+    const gate=document.createElement("div");
+    gate.id="authGate";
+    gate.innerHTML=`
+      <style>
+        #authGate{position:fixed;inset:0;background:linear-gradient(180deg,#0a1021,#0e1531);display:grid;place-items:center;z-index:9999}
+        .authCard{width:min(92vw,420px);background:rgba(255,255,255,.06);border:1px solid #1f2a44;border-radius:14px;padding:18px;color:#e2e8f0;font-family:Inter,system-ui,Arial}
+        .authCard h2{margin:0 0 10px;font-size:18px}
+        .authRow{margin:10px 0;display:grid;gap:6px}
+        .authRow label{font-size:12px;color:#b6c2d9;font-weight:800}
+        .authRow input{padding:12px;border:1px solid #1f2a44;border-radius:10px;background:#0b1226;color:#eef2ff;outline:none}
+        .authBtn{width:100%;padding:12px;border:1px solid #1f2a44;border-radius:10px;background:#0f172a;color:#fff;font-weight:800;cursor:pointer}
+        .authBtn:hover{background:#1f2937}
+        .authErr{color:#fca5a5;font-size:12px;min-height:16px}
+        .hint{color:#9fb3d1;font-size:12px;margin-top:8px}
+        .logoutBtn{position:fixed;top:10px;right:10px;background:#1f2937;border:1px solid #374151;color:#e5e7eb;border-radius:10px;padding:8px 10px;font-size:12px;display:none;z-index:10000}
+      </style>
+      <div class="authCard">
+        <h2>🔐 Signage Admin Login</h2>
+        <div class="authRow"><label>Username</label><input id="authUser" autocomplete="username" placeholder="username"></div>
+        <div class="authRow"><label>Password</label><input id="authPass" type="password" autocomplete="current-password" placeholder="password"></div>
+        <div class="authErr" id="authErr"></div>
+        <button class="authBtn" id="authSubmit">Masuk</button>
+        <div class="hint">Buat hash baru di Console: <code>hash('username','password')</code></div>
+      </div>
+      <button class="logoutBtn" id="logoutBtn" title="Logout">Logout</button>
+    `;
+    document.body.appendChild(gate);
+    gate.querySelector("#logoutBtn").addEventListener("click", logout);
+  }
+  function hideApp(){document.documentElement.style.visibility="hidden";}
+  function showApp(){document.documentElement.style.visibility="";const $l=document.getElementById("logoutBtn");if($l)$l.style.display="block";const $g=document.getElementById("authGate");if($g)$g.remove();}
+  async function tryLogin(){
+    const u=(document.getElementById("authUser").value||"").trim();
+    const p=(document.getElementById("authPass").value||"");
+    const err=document.getElementById("authErr"); err.textContent="";
+    if(!u||!p){err.textContent="Isi username & password.";return;}
+    if(!AUTH.users[u]){err.textContent="User tidak dikenal.";return;}
+    const h=await sha256Hex(`${u}:${p}`);
+    if(h===AUTH.users[u]){saveSession(u);showApp();}
+    else{err.textContent="Password salah.";}
+  }
+  window.hash=async(u,p)=>{if(!u||!p){console.log("Gunakan: hash('user','pass')");return;}const hx=await (async s=>{const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(b=>b.toString(16).padStart(2,"0")).join("")})(`${u}:${p}`);console.log(`Tambahkan ke AUTH.users: "${u}": "${hx}"`);return hx;};
+  hideApp();
+  const sess=loadSession();
+  if(sess){showApp();}
+  else{
+    renderGate();
+    const onReady=()=>{const $p=document.getElementById("authPass"),$s=document.getElementById("authSubmit");$s.addEventListener("click",tryLogin);$p.addEventListener("keydown",e=>{if(e.key==="Enter")tryLogin();});document.documentElement.style.visibility="";};
+    if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",onReady);else onReady();
+  }
+})();
+</script>
+<!-- === /AUTH GATE === -->
+
 <div class="wrap">
   <h1>🛠️ Admin Tools – TV Signage</h1>
 
@@ -141,11 +212,11 @@
           <a id="prevMb" class="link" target="_blank" rel="noopener">-</a>
         </div>
       </div>
-      <small class="hint">Link dibuat otomatis dari Base URL + `tv_signage.html` atau `tv_signage_mobile.html` dan param `?config=.../signage.json&theme=gold&showTicker=1&t=timestamp`.</small>
+      <small class="hint">Link dibuat otomatis dari Base URL + `tv_signage.html` / `tv_signage_mobile.html` dan param `?config=.../signage.json&theme=gold&showTicker=1&t=timestamp`.</small>
     </div>
   </div>
 
-  <div class="footer">Made for Baitussalam PE3 • Client-side only (no server). Simpan hasil dengan Export dan upload ke GitHub.</div>
+  <div class="footer">Made for Baitussalam PE3 • Client-side only. Export lalu upload ke GitHub.</div>
 </div>
 
 <script>
@@ -161,7 +232,6 @@
     countdownMinutes: { Fajr:20, Dhuhr:15, Asr:15, Maghrib:10, Isha:15 }
   };
 
-  // Elements
   const el = id => document.getElementById(id);
   const jsonUrl = el('jsonUrl'), statusEl = el('status');
   const setRotation = el('setRotation'), setShow = el('setShow');
@@ -179,7 +249,6 @@
 
   const baseUrl = el('baseUrl'), prevTv = el('prevTv'), prevMb = el('prevMb');
 
-  // helpers
   const clone = x => JSON.parse(JSON.stringify(x));
   const setStatus = (m) => statusEl.textContent = "Status: " + m;
 
@@ -195,10 +264,8 @@
 
     overlaysOrder.value = (state.overlaysOrder||[]).join(',');
 
-    // slides
     renderSlides();
 
-    // finance
     if(state.finance){
       finTitle.value = state.finance.title || "";
       finLabels.value = (state.finance.labels||[]).join(', ');
@@ -208,10 +275,8 @@
       finTitle.value = ""; finLabels.value = ""; finData.value = ""; finDur.value = 12;
     }
 
-    // schedule
     renderSchedule();
 
-    // ticker
     tickerText.value = state.ticker || "";
     showTicker.value = String(!!state.showTicker);
   }
@@ -226,14 +291,12 @@
     };
     state.overlaysOrder = (overlaysOrder.value||"").split(',').map(s=>s.trim()).filter(Boolean);
 
-    // finance
     const labels = (finLabels.value||"").split(',').map(s=>s.trim()).filter(Boolean);
     const data = (finData.value||"").split(',').map(s=>parseInt(s.trim(),10)).filter(n=>!isNaN(n));
     state.finance = (finTitle.value||labels.length||data.length)
       ? { title:finTitle.value||"", labels, data, durationSec: Math.max(4, +finDur.value||12) }
       : null;
 
-    // schedule
     const sRows = Array.from(schedList.querySelectorAll('.item'));
     state.schedule = sRows.map(row=>{
       return {
@@ -243,13 +306,10 @@
       };
     });
 
-    // slides — sudah dipush per item saat edit/hapus/tambah
-    // ticker
     state.ticker = tickerText.value || "";
     state.showTicker = (showTicker.value === "true");
   }
 
-  // Slides UI
   function slideTemplate(slide, idx){
     const type = slide.quote ? 'quote' : (slide.video ? 'video' : 'image');
     const tagMap = { image:'Image', video:'Video', quote:'Quote' };
@@ -286,7 +346,6 @@
         }
       </div>
     `;
-    // events
     div.addEventListener('input', e=>{
       const n=e.target.name, v=e.target.value;
       const s = state.slides[idx];
@@ -302,7 +361,7 @@
         if(n==='source') s.source=v;
         if(n==='durationSec') s.durationSec = Math.max(4, +v||10);
       }
-      genPreviewLinks(); // so preview reflects latest, after export upload
+      genPreviewLinks();
     });
     div.querySelectorAll('[data-act]').forEach(btn=>{
       btn.addEventListener('click', ()=>{
@@ -332,7 +391,6 @@
     renderSlides();
   });
 
-  // Schedule UI
   function schedTemplate(row, idx){
     const div = document.createElement('div');
     div.className = 'item';
@@ -378,10 +436,8 @@
     renderSchedule();
   });
 
-  // Export / Copy / Preview
   function currentJson(){
     formToState();
-    // build final object mirip struktur lama
     const out = {};
     if(state.settings) out.settings = clone(state.settings);
     out.slides = clone(state.slides);
@@ -421,7 +477,6 @@
   baseUrl.addEventListener('input', genPreviewLinks);
   jsonUrl.addEventListener('input', genPreviewLinks);
 
-  // Load & Reset
   async function loadFromUrl(){
     const url = (jsonUrl.value||"").trim();
     if(!url){ setStatus('Masukkan URL JSON lebih dulu'); return; }
@@ -430,7 +485,6 @@
       const r = await fetch(url, {cache:'no-store'});
       if(!r.ok) throw new Error(r.status+' '+r.statusText);
       const j = await r.json();
-      // normalize
       state = {
         settings: j.settings || { overlayRotationSec:60, overlayShowSec:12 },
         slides: Array.isArray(j.slides)? clone(j.slides) : [],
@@ -465,17 +519,13 @@
     loadToForm(); genPreviewLinks(); setStatus('Form direset (kosong)');
   });
 
-  // helpers
   function escapeHtml(s){
     return String(s==null?"":s).replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[m]));
   }
 
-  // init
   (function init(){
-    // default base url isi dari lokasi admin ini
     const loc = location.href.split('/').slice(0,-1).join('/') + '/';
     baseUrl.value = loc;
-    // default json url duga signage.json di lokasi sama
     jsonUrl.value = loc + 'signage.json';
     loadToForm(); genPreviewLinks();
     setStatus('Siap');
@@ -484,4 +534,3 @@
 </script>
 </body>
 </html>
-
