@@ -20,7 +20,7 @@
   ],
 
   "finance": {
-    "title": "Laporan Keuangan Kotak Amal – Bulan Agustus 2025",
+    "title": "Laporan Penerimaan Kotak Amal – Bulan Agustus 2025",
     "labels": ["Pekan ke-2", "Pekan ke-3"],
     "data":   [3458000, 3022000],
     "durationSec": 12
