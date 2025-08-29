@@ -63,7 +63,6 @@
     background:linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
     box-shadow:var(--shadow); overflow:hidden; display:grid; place-items:center; border:1px solid var(--border);
     min-height:min(70vh,820px)}
-  /* jika overlay aktif, paksa board hilang total */
   #stage.overlay-active #board{display:none !important;}
 
   .board{display:grid; grid-template-columns:2fr 1fr; gap:22px; width:min(92vw,1680px); height:min(70vh,820px);
@@ -97,7 +96,6 @@
 
   /* Video */
   #videoOverlay video{max-width:92vw; max-height:72vh; border-radius:16px; box-shadow:0 16px 48px rgba(0,0,0,.5); outline:1px solid rgba(255,255,255,.2)}
-  /* (Iframe API pakai DIV holder, ukuran di-set via style JS) */
 
   /* Finance */
   .fcard{display:grid; gap:12px; place-items:center; padding:28px 34px; border-radius:22px;
@@ -307,8 +305,8 @@
   }
 
   /* ===== YouTube Iframe API state & helpers ===== */
-  let ytPlayer = null;         // instance player aktif
-  let ytTimeout = null;        // fallback timer
+  let ytPlayer = null;
+  let ytTimeout = null;
   const YT_API = { loaded:false, ready:false, waiting:[] };
 
   function ensureYouTubeAPI(){
@@ -355,42 +353,56 @@
       return id ? {id, start} : null;
     }catch(_){ return null; }
   }
-  function closeVideoOverlay(){
-    const oldIfr = videoOverlay.querySelector("iframe"); if(oldIfr) oldIfr.remove();
-    if(ytPlayer){ try{ ytPlayer.stopVideo(); ytPlayer.destroy(); }catch(_){ } ytPlayer = null; }
-    if(ytTimeout){ clearTimeout(ytTimeout); ytTimeout = null; }
-    try{ vplayer.pause(); vplayer.removeAttribute('src'); vplayer.load(); }catch(_){}
-    videoOverlay.style.display="none";
-    exitOverlay();
-  }
 
-  /* ===== Helpers ===== */
-  const isImg   = s => !!s.url;
-  const isQuote = s => !!s.quote;
-  const isVideo = s => !!s.video;
-
-  function hideAllOverlays(){
-    // video harus ditutup rapi (YT & <video>)
-    closeVideoOverlay();
-    // sisanya cukup hide
+  /* ===== Overlay Utils (fixed: no recursion loop) ===== */
+  function hideAllOverlays(skipVideo){
+    // sembunyikan overlay non-video
     quoteOverlay.style.display="none";
     financeOverlay.style.display="none";
     scheduleOverlay.style.display="none";
     prayerOverlay.style.display="none";
+
+    // bereskan video jika tidak di-skip
+    if(!skipVideo){
+      try { vplayer.pause(); vplayer.removeAttribute('src'); vplayer.load(); } catch(_){}
+      const oldIfr = videoOverlay.querySelector("iframe");
+      if (oldIfr) oldIfr.remove();
+      if (ytPlayer) { try { ytPlayer.stopVideo(); ytPlayer.destroy(); }catch(_){} ytPlayer=null; }
+      if (ytTimeout){ clearTimeout(ytTimeout); ytTimeout=null; }
+      videoOverlay.style.display="none";
+    }
   }
-  function enterOverlay(){
-    stage.classList.add('overlay-active');
-    board.style.display="none";
-    hideAllOverlays();
-  }
-  function exitOverlay(){
-    hideAllOverlays();
+
+  function closeVideoOverlay(){
+    // tutup video & bersihkan, lalu tampilkan board lagi — TANPA memanggil exitOverlay()
+    hideAllOverlays(false);
     stage.classList.remove('overlay-active');
     if(imgs.length>0){
       board.style.display="grid";
       cycle("A"); setTimeout(()=>cycle("B"),400); setTimeout(()=>cycle("C"),800);
     }
   }
+
+  function enterOverlay(){
+    stage.classList.add('overlay-active');
+    board.style.display="none";
+    // bersihkan overlay lain tapi jangan matikan video yg mungkin sedang disiapkan
+    hideAllOverlays(true);
+  }
+
+  function exitOverlay(){
+    hideAllOverlays(false);
+    stage.classList.remove('overlay-active');
+    if(imgs.length>0){
+      board.style.display="grid";
+      cycle("A"); setTimeout(()=>cycle("B"),400); setTimeout(()=>cycle("C"),800);
+    }
+  }
+
+  /* ===== Helpers ===== */
+  const isImg   = s => !!s.url;
+  const isQuote = s => !!s.quote;
+  const isVideo = s => !!s.video;
 
   function createImg(src){
     const i=new Image();
@@ -437,7 +449,7 @@
     enterOverlay();
     videoOverlay.style.display="flex";
 
-    // bersihkan kalau ada sisa
+    // bersihkan sisa sebelumnya
     const old = videoOverlay.querySelector("iframe"); if(old) old.remove();
     if(ytTimeout){ clearTimeout(ytTimeout); ytTimeout = null; }
     if(ytPlayer){ try{ ytPlayer.stopVideo(); ytPlayer.destroy(); }catch(_){ } ytPlayer=null; }
@@ -446,14 +458,12 @@
     const dur = Number(item.durationSec || settings.overlayShowSec || 12);
 
     if(isYouTubeUrl(url)){
-      // Mode YouTube pakai Iframe API
       try{ vplayer.pause(); vplayer.removeAttribute('src'); vplayer.load(); }catch(_){}
       ensureYouTubeAPI();
 
       const ex = extractYouTube(url);
       if(!ex){ videoOverlay.style.display="none"; exitOverlay(); return; }
 
-      // container player (ukuran seperti iframe responsive)
       const holder = document.createElement('div');
       holder.id = "ytHolder-" + Math.random().toString(36).slice(2);
       holder.style.width = "min(92vw,1600px)";
@@ -483,16 +493,14 @@
         });
       });
 
-      // Fallback: pakai durationSec jika diset
       if(dur>0){
         ytTimeout = setTimeout(()=>{ closeVideoOverlay(); }, Math.max(4,dur)*1000);
       }
 
     }else{
-      // Mode file video (mp4/webm/ogg)
       vplayer.loop=false; vplayer.muted=true; vplayer.playsInline=true;
       vplayer.src = withBust(resolveAsset(url));
-      try{ await vplayer.play(); }catch(_){ /* ignore autoplay errors */ }
+      try{ await vplayer.play(); }catch(_){ /* autoplay error ignore */ }
 
       if(dur>0){
         ytTimeout = setTimeout(()=>{ closeVideoOverlay(); }, Math.max(4,dur)*1000);
@@ -660,7 +668,7 @@
       return;
     }
     stage.classList.add('overlay-active');
-    hideAllOverlays();
+    hideAllOverlays(true);
     prayerOverlay.style.display="flex";
     board.style.display="none";
     const mapName={Fajr:"Subuh",Dhuhr:"Zuhur",Asr:"Asar",Maghrib:"Maghrib",Isha:"Isya"};
@@ -703,7 +711,7 @@
     quotes = slides.filter(isQuote);
     videos = slides.filter(isVideo);
 
-    // Rescue
+    // Default rescue
     if(!slides || slides.length===0){
       slides=[
         {quote:"“Sebaik-baik kalian adalah yang mempelajari Al-Qur’an dan mengajarkannya.”", source:"HR. Bukhari", durationSec:12},
