@@ -1,9 +1,9 @@
 {
   "settings": { "overlayRotationSec": 8, "overlayShowSec": 10 },
   "slides": [
-    { "url": "images/peresmian-1.jpg", "title": "Peresmian Masjid Baitussalam PE3", "desc": "Acara Peresmian Masjid 28 Juli 2024", "durationSec": 6 },
-    { "url": "images/peresmian-2.jpg", "title": "Peresmian Masjid Baitussalam PE3", "desc": "Acara Peresmian Masjid 28 Juli 2024", "durationSec": 6 },
-    { "url": "images/peresmian-3.jpg", "title": "Peresmian Masjid Baitussalam PE3", "desc": "Acara Peresmian Masjid 28 Juli 2024", "durationSec": 6 },
+    { "url": "images/kegiatan-1.jpg", "title": "Peresmian Masjid Baitussalam PE3", "desc": "Acara Peresmian Masjid 28 Juli 2024", "durationSec": 6 },
+    { "url": "images/kegiatan-2.jpg", "title": "Peresmian Masjid Baitussalam PE3", "desc": "Acara Peresmian Masjid 28 Juli 2024", "durationSec": 6 },
+    { "url": "images/kegiatan-3.jpg", "title": "Peresmian Masjid Baitussalam PE3", "desc": "Acara Peresmian Masjid 28 Juli 2024", "durationSec": 6 },
     { "video": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" },
     { "quote": "“Sebaik-baik kalian adalah yang mempelajari Al-Qur’an dan mengajarkannya.”", "source": "HR. Bukhari", "durationSec": 10 }
   ],
