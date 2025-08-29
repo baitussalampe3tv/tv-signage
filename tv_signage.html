@@ -84,6 +84,12 @@
     background:linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.85));
   }
   #videoOverlay{ background: rgba(0,0,0,.85); }
+  /* wadah video supaya bisa di-resize proporsional via JS */
+  .vbox{
+    background:#000; border-radius:16px; box-shadow:0 16px 48px rgba(0,0,0,.5);
+    outline:1px solid rgba(255,255,255,.2); overflow:hidden; display:grid; place-items:center;
+  }
+  #videoOverlay video, #videoOverlay iframe{ width:100%; height:100%; display:block }
 
   /* Quote fullscreen */
   .qwrap{
@@ -93,9 +99,6 @@
   }
   .qtext{font-weight:900; font-size:clamp(32px,3.6vw,72px); line-height:1.35; margin:0 0 12px; text-align:center; color:var(--gold); text-shadow:0 3px 8px rgba(0,0,0,.85)}
   .qsrc{font-weight:800; font-size:clamp(18px,2.2vw,32px); margin:0; text-align:center; color:#fff; text-shadow:0 2px 6px rgba(0,0,0,.8)}
-
-  /* Video */
-  #videoOverlay video{max-width:92vw; max-height:72vh; border-radius:16px; box-shadow:0 16px 48px rgba(0,0,0,.5); outline:1px solid rgba(255,255,255,.2)}
 
   /* Finance */
   .fcard{display:grid; gap:12px; place-items:center; padding:28px 34px; border-radius:22px;
@@ -198,9 +201,17 @@
 
   <!-- OVERLAYS -->
   <div id="quoteOverlay"><div class="qwrap"><p class="qtext" id="qtext"></p><p class="qsrc" id="qsrc"></p></div></div>
-  <div id="videoOverlay"><video id="vplayer" playsinline muted></video></div>
+
+  <div id="videoOverlay">
+    <!-- vbox akan diukur proporsional via JS -->
+    <div class="vbox" id="vbox">
+      <video id="vplayer" playsinline muted></video>
+    </div>
+  </div>
+
   <div id="financeOverlay"><div class="fcard"><div class="ftitle" id="ftitle">Laporan Keuangan</div><canvas id="finCanvas"></canvas></div></div>
   <div id="scheduleOverlay"><div class="scard"><div class="stitle">Jadwal Kajian</div><div class="slist" id="slist"></div></div></div>
+
   <div id="prayerOverlay" style="display:none">
     <div class="pCard">
       <div class="pTitle">Menuju Iqomah</div>
@@ -250,6 +261,7 @@
   const qsrc=document.getElementById("qsrc");
 
   const videoOverlay=document.getElementById("videoOverlay");
+  const vbox=document.getElementById("vbox");
   const vplayer=document.getElementById("vplayer");
 
   const financeOverlay=document.getElementById("financeOverlay");
@@ -356,13 +368,11 @@
 
   /* ===== Overlay Utils (fixed: no recursion loop) ===== */
   function hideAllOverlays(skipVideo){
-    // sembunyikan overlay non-video
     quoteOverlay.style.display="none";
     financeOverlay.style.display="none";
     scheduleOverlay.style.display="none";
     prayerOverlay.style.display="none";
 
-    // bereskan video jika tidak di-skip
     if(!skipVideo){
       try { vplayer.pause(); vplayer.removeAttribute('src'); vplayer.load(); } catch(_){}
       const oldIfr = videoOverlay.querySelector("iframe");
@@ -374,7 +384,6 @@
   }
 
   function closeVideoOverlay(){
-    // tutup video & bersihkan, lalu tampilkan board lagi — TANPA memanggil exitOverlay()
     hideAllOverlays(false);
     stage.classList.remove('overlay-active');
     if(imgs.length>0){
@@ -386,7 +395,6 @@
   function enterOverlay(){
     stage.classList.add('overlay-active');
     board.style.display="none";
-    // bersihkan overlay lain tapi jangan matikan video yg mungkin sedang disiapkan
     hideAllOverlays(true);
   }
 
@@ -436,6 +444,17 @@
     if(which==="C"){clearTimeout(tC);tC=setTimeout(fn,ms);}
   }
 
+  /* ===== Video sizing: fit ke ruang proporsional 16:9 ===== */
+  function sizeVideoBox(aspect=16/9){
+    const maxW = Math.floor(window.innerWidth * 0.92);
+    const maxH = Math.floor(window.innerHeight * 0.72);
+    let w = maxW, h = Math.round(w / aspect);
+    if (h > maxH) { h = maxH; w = Math.round(h * aspect); }
+    vbox.style.width = w + "px";
+    vbox.style.height = h + "px";
+  }
+  window.addEventListener('resize', ()=>sizeVideoBox());
+
   /* ===== Overlays ===== */
   function showQuoteFullscreen(item, durSec){
     enterOverlay();
@@ -457,47 +476,57 @@
     const url = String(item.video||"").trim();
     const dur = Number(item.durationSec || settings.overlayShowSec || 12);
 
+    // set ukuran awal
+    sizeVideoBox(16/9);
+
     if(isYouTubeUrl(url)){
+      // pakai YouTube nocookie + origin utk hindari warning postMessage
       try{ vplayer.pause(); vplayer.removeAttribute('src'); vplayer.load(); }catch(_){}
       ensureYouTubeAPI();
-
       const ex = extractYouTube(url);
       if(!ex){ videoOverlay.style.display="none"; exitOverlay(); return; }
 
       const holder = document.createElement('div');
       holder.id = "ytHolder-" + Math.random().toString(36).slice(2);
-      holder.style.width = "min(92vw,1600px)";
-      holder.style.aspectRatio = "16/9";
-      holder.style.background = "#000";
-      holder.style.borderRadius = "16px";
-      holder.style.boxShadow = "0 16px 48px rgba(0,0,0,.5)";
-      holder.style.outline = "1px solid rgba(255,255,255,.2)";
-      videoOverlay.appendChild(holder);
+      holder.style.width = "100%";
+      holder.style.height = "100%";
+      vbox.innerHTML = ""; vbox.appendChild(holder);
 
       whenYouTubeReady(()=>{
         ytPlayer = new YT.Player(holder, {
+          host: 'https://www.youtube-nocookie.com',
           videoId: ex.id,
           playerVars: {
-            autoplay: 1, mute: 1, controls: 0, rel: 0,
-            playsinline: 1, modestbranding: 1, iv_load_policy: 3,
+            origin: location.origin,
+            enablejsapi: 1,
+            autoplay: 1,
+            mute: 1,
+            controls: 0,
+            rel: 0,
+            playsinline: 1,
+            modestbranding: 1,
+            iv_load_policy: 3,
             start: ex.start || 0
           },
           events: {
-            onReady: (e)=>{ try{ e.target.playVideo(); }catch(_){ } },
+            onReady: (e)=>{
+              try { e.target.mute(); e.target.playVideo(); } catch(_){}
+              const ifr = vbox.querySelector('iframe');
+              if (ifr) ifr.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
+            },
             onStateChange: (e)=>{
-              if(e.data === YT.PlayerState.ENDED){
-                closeVideoOverlay();
-              }
-            }
+              if (e.data === YT.PlayerState.ENDED) closeVideoOverlay();
+            },
+            onError: (_e)=>{ console.warn('[YT] onError — menutup overlay.'); closeVideoOverlay(); }
           }
         });
       });
 
-      if(dur>0){
-        ytTimeout = setTimeout(()=>{ closeVideoOverlay(); }, Math.max(4,dur)*1000);
-      }
+      if(dur>0){ ytTimeout = setTimeout(()=>{ closeVideoOverlay(); }, Math.max(4,dur)*1000); }
 
     }else{
+      // MP4
+      vbox.innerHTML = ""; vbox.appendChild(vplayer);
       vplayer.loop=false; vplayer.muted=true; vplayer.playsInline=true;
       vplayer.src = withBust(resolveAsset(url));
       try{ await vplayer.play(); }catch(_){ /* autoplay error ignore */ }
@@ -748,7 +777,7 @@
       if(kind==="video"   && videos.length>0)   showVideoFullscreen(videos[0]);
       else if(kind==="finance" && finance)      showFinance();
       else if(kind==="schedule"&& schedule.length>0) showSchedule();
-      else if(kind==="quote"   && quotes.length>0)   showQuoteFullscreen(quotes[0], Number(quotes[0].durationSec||settings.overlayShowSec));
+      else if(kind==="quote"   && quotes.length>0)   showQuoteFullscreen(quotes[0], Number(quotes[0].duration||settings.overlayShowSec));
     }, rotSec*1000);
 
     // Ticker
