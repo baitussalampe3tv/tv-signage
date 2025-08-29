@@ -84,7 +84,6 @@
     background:linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.85));
   }
   #videoOverlay{ background: rgba(0,0,0,.85); }
-  /* wadah video supaya bisa di-resize proporsional via JS */
   .vbox{
     background:#000; border-radius:16px; box-shadow:0 16px 48px rgba(0,0,0,.5);
     outline:1px solid rgba(255,255,255,.2); overflow:hidden; display:grid; place-items:center;
@@ -203,7 +202,6 @@
   <div id="quoteOverlay"><div class="qwrap"><p class="qtext" id="qtext"></p><p class="qsrc" id="qsrc"></p></div></div>
 
   <div id="videoOverlay">
-    <!-- vbox akan diukur proporsional via JS -->
     <div class="vbox" id="vbox">
       <video id="vplayer" playsinline muted></video>
     </div>
@@ -290,6 +288,7 @@
   let settings={overlayRotationSec:60,overlayShowSec:12};
   let DUR = { Fajr:20, Dhuhr:15, Asr:15, Maghrib:10, Isha:15 };
   let aPtr=0,bPtr=1,cPtr=2,tA,tB,tC;
+  let vPtr=0, qPtr=0;        // <<— rotasi video & quote
   let rotationTimer=null, tickerRunning=false;
 
   /* ===== URL Resolver & Cache-buster ===== */
@@ -316,7 +315,7 @@
     }
   }
 
-  /* ===== YouTube Iframe API state & helpers ===== */
+  /* ===== YouTube Iframe API ===== */
   let ytPlayer = null;
   let ytTimeout = null;
   const YT_API = { loaded:false, ready:false, waiting:[] };
@@ -366,7 +365,7 @@
     }catch(_){ return null; }
   }
 
-  /* ===== Overlay Utils (fixed: no recursion loop) ===== */
+  /* ===== Overlay Utils (no recursion) ===== */
   function hideAllOverlays(skipVideo){
     quoteOverlay.style.display="none";
     financeOverlay.style.display="none";
@@ -444,7 +443,7 @@
     if(which==="C"){clearTimeout(tC);tC=setTimeout(fn,ms);}
   }
 
-  /* ===== Video sizing: fit ke ruang proporsional 16:9 ===== */
+  /* ===== Video sizing: 16:9 fit ===== */
   function sizeVideoBox(aspect=16/9){
     const maxW = Math.floor(window.innerWidth * 0.92);
     const maxH = Math.floor(window.innerHeight * 0.72);
@@ -468,7 +467,7 @@
     enterOverlay();
     videoOverlay.style.display="flex";
 
-    // bersihkan sisa sebelumnya
+    // bersihkan sisa
     const old = videoOverlay.querySelector("iframe"); if(old) old.remove();
     if(ytTimeout){ clearTimeout(ytTimeout); ytTimeout = null; }
     if(ytPlayer){ try{ ytPlayer.stopVideo(); ytPlayer.destroy(); }catch(_){ } ytPlayer=null; }
@@ -476,11 +475,9 @@
     const url = String(item.video||"").trim();
     const dur = Number(item.durationSec || settings.overlayShowSec || 12);
 
-    // set ukuran awal
     sizeVideoBox(16/9);
 
     if(isYouTubeUrl(url)){
-      // pakai YouTube nocookie + origin utk hindari warning postMessage
       try{ vplayer.pause(); vplayer.removeAttribute('src'); vplayer.load(); }catch(_){}
       ensureYouTubeAPI();
       const ex = extractYouTube(url);
@@ -530,7 +527,7 @@
       vbox.innerHTML = ""; vbox.appendChild(vplayer);
       vplayer.loop=false; vplayer.muted=true; vplayer.playsInline=true;
       vplayer.src = withBust(resolveAsset(url));
-      try{ await vplayer.play(); }catch(_){ /* autoplay error ignore */ }
+      try{ await vplayer.play(); }catch(_){}
 
       if(dur>0){
         ytTimeout = setTimeout(()=>{ closeVideoOverlay(); }, Math.max(4,dur)*1000);
@@ -741,16 +738,6 @@
     quotes = slides.filter(isQuote);
     videos = slides.filter(isVideo);
 
-    // Default rescue
-    if(!slides || slides.length===0){
-      slides=[
-        {quote:"“Sebaik-baik kalian adalah yang mempelajari Al-Qur’an dan mengajarkannya.”", source:"HR. Bukhari", durationSec:12},
-        {url:"https://picsum.photos/seed/a/1600/900", title:"Kegiatan Masjid", desc:"Contoh 1", durationSec:8},
-        {url:"https://picsum.photos/seed/b/1600/900", title:"Kajian Rutin",  desc:"Contoh 2", durationSec:8}
-      ];
-      imgs=slides.filter(isImg); quotes=slides.filter(isQuote); videos=slides.filter(isVideo);
-    }
-
     // Finance & Schedule
     finance  = cfg?.finance || null;
     if(finance && finance.title) ftitle.textContent = finance.title;
@@ -766,7 +753,7 @@
       board.style.display="none";
     }
 
-    // Overlay Rotation
+    // Overlay Rotation (video/finance/schedule/quote) — pakai pointer
     if(rotationTimer){ clearInterval(rotationTimer); rotationTimer=null; }
     const order = (cfg?.overlaysOrder && cfg.overlaysOrder.length) ? cfg.overlaysOrder
                   : ["video","finance","schedule","quote"];
@@ -775,10 +762,17 @@
     rotationTimer=setInterval(()=>{
       if(stage.classList.contains('overlay-active')) return;
       const kind = order[idx%order.length]; idx++;
-      if(kind==="video"   && videos.length>0)   showVideoFullscreen(videos[0]);
-      else if(kind==="finance" && finance)      showFinance();
-      else if(kind==="schedule"&& schedule.length>0) showSchedule();
-      else if(kind==="quote"   && quotes.length>0)   showQuoteFullscreen(quotes[0], Number(quotes[0].duration||settings.overlayShowSec));
+      if(kind==="video" && videos.length>0){
+        showVideoFullscreen(videos[vPtr]); vPtr=(vPtr+1)%videos.length;
+      }else if(kind==="finance" && finance){
+        showFinance();
+      }else if(kind==="schedule" && schedule.length>0){
+        showSchedule();
+      }else if(kind==="quote" && quotes.length>0){
+        const q = quotes[qPtr];
+        showQuoteFullscreen(q, Number(q.durationSec||settings.overlayShowSec));
+        qPtr=(qPtr+1)%quotes.length;
+      }
     }, rotSec*1000);
 
     // Ticker
