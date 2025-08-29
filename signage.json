@@ -26,17 +26,17 @@
   },
 
   "schedule": [
-    { "time": "Ahad Ba'da Subuh - 31 Agustus 2025",              "topic": "Kajian Keluarga",              "ustadz": "Ust. Bendri Jaisyurrahman" },
-    { "time": "Ahad pkl 09:00 Pagi - 7 September 2025",             "topic": "Kajian Anak",                "ustadz": "Kak Agung Tyo" },
-    { "time": "Sabtu Pekan 1 & 3 - Ba'da Maghrib", "topic": "Kajian Kitab Adabul Mufrad", "ustadz": "Ust. Muhammad Azizan Lc. MSi" },
-    { "time": "Ahad Pekan 2 & 4 - Ba'da Subuh",    "topic": "Kajian Kitab Minhajul Muslim", "ustadz": "Ust. Ibrahim Saleh Lc. MKom" },
-    { "time": "Ahad Pekan 2 & 4 - Ba'da Maghrib",  "topic": "Kajian Sirah Nabawiyyah",      "ustadz": "Ust. Chamdan Subkhi" },
+    { "time": "Ahad Ba'da Subuh - 31 Agust 2025",              "topic": "Kajian Keluarga",              "ustadz": "Ust. Bendri Jaisyurrahman" },
+    { "time": "Ahad Waktu Dhuha - 7 Sept 2025",             "topic": "Kajian Anak",                "ustadz": "Kak Agung Tyo" },
+    { "time": "Sabtu Pekan 1&3 - Ba'da Maghrib", "topic": "Kajian Kitab Adabul Mufrad", "ustadz": "Ust. Muhammad Azizan Lc. MSi" },
+    { "time": "Ahad Pekan 2&4 - Ba'da Subuh",    "topic": "Kajian Kitab Minhajul Muslim", "ustadz": "Ust. Ibrahim Saleh Lc. MKom" },
+    { "time": "Ahad Pekan 2&4 - Ba'da Maghrib",  "topic": "Kajian Sirah Nabawiyyah",      "ustadz": "Ust. Chamdan Subkhi" },
     { "time": "Jumat 29 Agustus 2025",             "topic": "Khutbah Jumat",                "ustadz": "" }
   ],
 
   "overlaysOrder": ["video", "finance", "schedule", "quote"],
 
-  "ticker": "Infaq Operasional : BCA Syariah 003131 0006 a/n Masjid Baitussalam Premier Estate 3     |     Shalat berjamaah lebih utama daripada shalat sendirian sebanyak 27 derajat (HR. Bukhari dan Muslim)      |     Barangsiapa shalat Isya berjamaah, seakan telah shalat separuh malam. Dan barangsiapa shalat Subuh berjamaah, seakan telah shalat sepanjang malam (HR. Muslim)",
+  "ticker": "Infaq Operasional : BCA Syariah 003131 0006 a/n Masjid Baitussalam Premier Estate 3 | Shalat berjamaah lebih utama daripada shalat sendirian sebanyak 27 derajat (HR. Bukhari dan Muslim) | Barangsiapa shalat Isya berjamaah, seakan telah shalat separuh malam. Dan barangsiapa shalat Subuh berjamaah, seakan telah shalat sepanjang malam (HR. Muslim)",
   "showTicker": true,
 
   "countdownMinutes": { "Fajr": 20, "Dhuhr": 15, "Asr": 15, "Maghrib": 10, "Isha": 15 }
