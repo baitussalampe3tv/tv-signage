@@ -79,7 +79,7 @@
   .cap-title{font-weight:900; font-size:clamp(18px,2vw,26px); margin:0 0 4px}
   .cap-desc{font-weight:600; font-size:clamp(14px,1.4vw,18px); margin:0}
 
-  /* OVERLAYS — seluruh layar diberi latar pekat agar tak tembus ke board */
+  /* OVERLAYS */
   #quoteOverlay,#videoOverlay,#financeOverlay,#scheduleOverlay,#prayerOverlay{
     position:absolute; inset:0; display:none; align-items:center; justify-content:center; z-index:30;
     background:linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.85));
@@ -97,6 +97,7 @@
 
   /* Video */
   #videoOverlay video{max-width:92vw; max-height:72vh; border-radius:16px; box-shadow:0 16px 48px rgba(0,0,0,.5); outline:1px solid rgba(255,255,255,.2)}
+  /* (Iframe API pakai DIV holder, ukuran di-set via style JS) */
 
   /* Finance */
   .fcard{display:grid; gap:12px; place-items:center; padding:28px 34px; border-radius:22px;
@@ -104,14 +105,14 @@
   .ftitle{font-weight:900; font-size:clamp(26px,3.4vw,54px); color:var(--gold)}
   #finCanvas{width:min(86vw,1400px); height:min(48vh,520px); background:rgba(0,0,0,.25); border-radius:14px; outline:1px solid rgba(255,255,255,.2)}
 
-  /* Schedule (dilebarkan kolom time + font dibesarkan) */
+  /* Schedule */
   .scard{display:grid; gap:12px; place-items:stretch; padding:28px 34px; border-radius:22px;
     background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.08)); border:1px solid var(--border); box-shadow:var(--shadow); color:#fff; text-align:left; backdrop-filter:blur(6px); width:min(92vw,1500px)}
   .stitle{font-weight:900; font-size:clamp(26px,3.2vw,52px); color:var(--gold); text-align:center}
   .slist{display:grid; gap:12px}
   .srow{
     display:grid;
-    grid-template-columns: minmax(260px, 380px) 1fr 1fr; /* kolom time lebih lega */
+    grid-template-columns: minmax(260px, 380px) 1fr 1fr;
     gap:16px; padding:14px 16px; border-radius:12px; background:rgba(0,0,0,.25); border:1px solid rgba(255,255,255,.15)
   }
   .srow .time{  font-weight:900; font-size:clamp(16px,1.9vw,24px) }
@@ -132,50 +133,33 @@
   #tickerInner{white-space:nowrap; will-change:transform; padding:0 100vw 0 0}
   #tickerText{display:inline-block; padding:12px 28px; font-size:clamp(16px,1.6vw,22px); font-weight:800}
 
-  /* ========== RESPONSIVE: <= 1024px (tablet & small laptop) ========== */
+  /* Tablet */
   @media (max-width: 1024px){
     .topbar{ grid-template-columns: 1fr; gap:12px }
     .prayer{ min-width:auto }
     #stage{ margin:84px 12px 56px }
-    .board{
-      grid-template-columns: 1fr;      /* grid jadi satu kolom */
-      width: 96vw; height: auto;       /* tinggi auto biar muat */
-      padding:16px; gap:16px
-    }
+    .board{ grid-template-columns: 1fr; width: 96vw; height: auto; padding:16px; gap:16px }
     .stack{ grid-template-rows: 1fr; grid-template-columns: 1fr; gap:16px }
     .frame{ min-height: 28vh }
     .caption{ left:10px; right:10px; bottom:10px; padding:10px 12px }
   }
 
-  /* ========== RESPONSIVE: <= 600px (smartphone) ========== */
+  /* Smartphone */
   @media (max-width: 600px){
     .brand{ padding:8px 10px }
     .brand img{ height:36px }
     .brand-name{ font-size:16px }
     .brand-sub{ font-size:12px }
-
-    .prayer{
-      grid-template-columns: 1fr;
-      gap:8px;
-      padding:8px 10px
-    }
-    .pt{
-      grid-template-columns: repeat(3, auto auto); /* 3 kolom pasangan (nama, waktu) */
-      gap:6px 12px
-    }
+    .prayer{ grid-template-columns: 1fr; gap:8px; padding:8px 10px }
+    .pt{ grid-template-columns: repeat(3, auto auto); gap:6px 12px }
     .next,.cd{ justify-self: start }
-
     #stage{ margin:74px 10px 52px }
     .board{ width: 98vw; padding:12px; gap:12px }
     .frame{ min-height: 26vh }
     .cap-title{ font-size:clamp(16px,4.2vw,22px) }
     .cap-desc{  font-size:clamp(13px,3.5vw,18px) }
-
     .scard{ padding:18px 16px }
-    .srow{
-      grid-template-columns: 1fr;     /* jadikan 1 kolom */
-      gap:8px
-    }
+    .srow{ grid-template-columns: 1fr; gap:8px }
     .srow .time{ font-size:clamp(16px,4.3vw,22px) }
     .srow .topic{font-size:clamp(15px,4vw,20px) }
     .srow .ust{  font-size:clamp(14px,3.8vw,18px) }
@@ -298,22 +282,108 @@
   let aPtr=0,bPtr=1,cPtr=2,tA,tB,tC;
   let rotationTimer=null, tickerRunning=false;
 
+  /* ===== URL Resolver & Cache-buster ===== */
+  function baseOf(urlStr){
+    try{ const u=new URL(urlStr, location.href); u.hash=""; u.search=""; return u.href.replace(/[^/]+$/,""); }
+    catch(_){ return ""; }
+  }
+  const __configBase = baseOf(configUrl);
+  function resolveAsset(u){
+    if(!u) return "";
+    if(/^https?:\/\//i.test(u) || /^data:/i.test(u)) return u;
+    if(u.startsWith("/")) return u;
+    return __configBase ? (__configBase + u) : u;
+  }
+  const __imgBust = qs.get("imgBust") || qs.get("t");
+  function withBust(u){
+    if(!__imgBust) return u;
+    try{
+      const url=new URL(u, location.href);
+      url.searchParams.set("v", __imgBust);
+      return url.toString();
+    }catch(_){
+      return u + (u.includes("?")?"&":"?") + "v=" + encodeURIComponent(__imgBust);
+    }
+  }
+
+  /* ===== YouTube Iframe API state & helpers ===== */
+  let ytPlayer = null;         // instance player aktif
+  let ytTimeout = null;        // fallback timer
+  const YT_API = { loaded:false, ready:false, waiting:[] };
+
+  function ensureYouTubeAPI(){
+    if (YT_API.loaded) return;
+    YT_API.loaded = true;
+    const tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.head.appendChild(tag);
+    window.onYouTubeIframeAPIReady = function(){
+      YT_API.ready = true;
+      YT_API.waiting.forEach(fn=>fn());
+      YT_API.waiting.length = 0;
+    };
+  }
+  function whenYouTubeReady(cb){
+    if (YT_API.ready && window.YT && YT.Player) cb();
+    else YT_API.waiting.push(cb);
+  }
+  function isYouTubeUrl(u){ return /(?:youtube\.com|youtu\.be)/i.test(u||""); }
+  function extractYouTube(u){
+    try{
+      const url=new URL(u);
+      let id="", start=0;
+      const parseTimeToSec=(t)=>{
+        if(!t) return 0;
+        if(/^\d+$/.test(t)) return +t;
+        let s=0; const h=/(\d+)h/i.exec(t); if(h) s+=+h[1]*3600;
+        const m=/(\d+)m/i.exec(t); if(m) s+=+m[1]*60;
+        const sc=/(\d+)s/i.exec(t); if(sc) s+=+sc[1];
+        return s||0;
+      };
+      if(url.hostname.includes("youtu.be")){
+        id=url.pathname.replace(/^\/+/,"");
+        start=parseTimeToSec(url.searchParams.get("t"));
+      }else{
+        if(url.pathname.startsWith("/watch")){
+          id=url.searchParams.get("v")||"";
+          start=parseTimeToSec(url.searchParams.get("t"));
+        }else if(url.pathname.startsWith("/embed/")){
+          id=url.pathname.split("/").pop();
+          start=parseTimeToSec(url.searchParams.get("start")||url.searchParams.get("t"));
+        }
+      }
+      return id ? {id, start} : null;
+    }catch(_){ return null; }
+  }
+  function closeVideoOverlay(){
+    const oldIfr = videoOverlay.querySelector("iframe"); if(oldIfr) oldIfr.remove();
+    if(ytPlayer){ try{ ytPlayer.stopVideo(); ytPlayer.destroy(); }catch(_){ } ytPlayer = null; }
+    if(ytTimeout){ clearTimeout(ytTimeout); ytTimeout = null; }
+    try{ vplayer.pause(); vplayer.removeAttribute('src'); vplayer.load(); }catch(_){}
+    videoOverlay.style.display="none";
+    exitOverlay();
+  }
+
   /* ===== Helpers ===== */
   const isImg   = s => !!s.url;
   const isQuote = s => !!s.quote;
   const isVideo = s => !!s.video;
 
   function hideAllOverlays(){
-    quoteOverlay.style.display="none"; videoOverlay.style.display="none";
-    financeOverlay.style.display="none"; scheduleOverlay.style.display="none";
+    // video harus ditutup rapi (YT & <video>)
+    closeVideoOverlay();
+    // sisanya cukup hide
+    quoteOverlay.style.display="none";
+    financeOverlay.style.display="none";
+    scheduleOverlay.style.display="none";
     prayerOverlay.style.display="none";
   }
-  function enterOverlay(){ // sembunyikan board total
+  function enterOverlay(){
     stage.classList.add('overlay-active');
     board.style.display="none";
     hideAllOverlays();
   }
-  function exitOverlay(){ // tampilkan kembali board jika ada gambar
+  function exitOverlay(){
     hideAllOverlays();
     stage.classList.remove('overlay-active');
     if(imgs.length>0){
@@ -322,12 +392,20 @@
     }
   }
 
-  function createImg(src){ const i=new Image(); i.src=src; i.decoding="async"; i.loading="eager"; return i; }
+  function createImg(src){
+    const i=new Image();
+    i.decoding="async"; i.loading="eager";
+    i.src = withBust(resolveAsset(src));
+    i.onerror = ()=>{ console.warn("[Image] gagal load:", i.src);
+      i.style.background="repeating-linear-gradient(45deg, rgba(255,0,0,.2), rgba(255,0,0,.2) 10px, transparent 10px, transparent 20px)";
+    };
+    return i;
+  }
   function mountFrame(frame, s){
     frame.innerHTML="";
     const img=createImg(s.url); frame.appendChild(img);
     const cap=document.createElement("div"); cap.className="caption";
-    const h=document.createElement("h3"); h.className="cap-title"; h.textContent=s.title||"";
+    const h=document.createElement("h3"); h.className="cap-title"; h.textContent=s.title || (s.url? s.url.split("/").pop() : "");
     const p=document.createElement("p"); p.className="cap-desc"; p.textContent=s.desc||"";
     cap.appendChild(h); cap.appendChild(p); frame.appendChild(cap);
     requestAnimationFrame(()=>img.classList.add("show"));
@@ -354,13 +432,77 @@
     qsrc.textContent  = item.source || "";
     setTimeout(()=>{ quoteOverlay.style.display="none"; exitOverlay(); }, (durSec||settings.overlayShowSec)*1000);
   }
+
   async function showVideoFullscreen(item){
     enterOverlay();
     videoOverlay.style.display="flex";
-    vplayer.src = item.video; vplayer.loop=false; vplayer.muted=true;
-    try{ await vplayer.play(); }catch(_){}
-    vplayer.onended=()=>{ videoOverlay.style.display="none"; exitOverlay(); };
+
+    // bersihkan kalau ada sisa
+    const old = videoOverlay.querySelector("iframe"); if(old) old.remove();
+    if(ytTimeout){ clearTimeout(ytTimeout); ytTimeout = null; }
+    if(ytPlayer){ try{ ytPlayer.stopVideo(); ytPlayer.destroy(); }catch(_){ } ytPlayer=null; }
+
+    const url = String(item.video||"").trim();
+    const dur = Number(item.durationSec || settings.overlayShowSec || 12);
+
+    if(isYouTubeUrl(url)){
+      // Mode YouTube pakai Iframe API
+      try{ vplayer.pause(); vplayer.removeAttribute('src'); vplayer.load(); }catch(_){}
+      ensureYouTubeAPI();
+
+      const ex = extractYouTube(url);
+      if(!ex){ videoOverlay.style.display="none"; exitOverlay(); return; }
+
+      // container player (ukuran seperti iframe responsive)
+      const holder = document.createElement('div');
+      holder.id = "ytHolder-" + Math.random().toString(36).slice(2);
+      holder.style.width = "min(92vw,1600px)";
+      holder.style.aspectRatio = "16/9";
+      holder.style.background = "#000";
+      holder.style.borderRadius = "16px";
+      holder.style.boxShadow = "0 16px 48px rgba(0,0,0,.5)";
+      holder.style.outline = "1px solid rgba(255,255,255,.2)";
+      videoOverlay.appendChild(holder);
+
+      whenYouTubeReady(()=>{
+        ytPlayer = new YT.Player(holder, {
+          videoId: ex.id,
+          playerVars: {
+            autoplay: 1, mute: 1, controls: 0, rel: 0,
+            playsinline: 1, modestbranding: 1, iv_load_policy: 3,
+            start: ex.start || 0
+          },
+          events: {
+            onReady: (e)=>{ try{ e.target.playVideo(); }catch(_){ } },
+            onStateChange: (e)=>{
+              if(e.data === YT.PlayerState.ENDED){
+                closeVideoOverlay();
+              }
+            }
+          }
+        });
+      });
+
+      // Fallback: pakai durationSec jika diset
+      if(dur>0){
+        ytTimeout = setTimeout(()=>{ closeVideoOverlay(); }, Math.max(4,dur)*1000);
+      }
+
+    }else{
+      // Mode file video (mp4/webm/ogg)
+      vplayer.loop=false; vplayer.muted=true; vplayer.playsInline=true;
+      vplayer.src = withBust(resolveAsset(url));
+      try{ await vplayer.play(); }catch(_){ /* ignore autoplay errors */ }
+
+      if(dur>0){
+        ytTimeout = setTimeout(()=>{ closeVideoOverlay(); }, Math.max(4,dur)*1000);
+        vplayer.onended = null;
+      }else{
+        vplayer.onended = ()=> closeVideoOverlay();
+      }
+    }
   }
+
   function drawFinance(){
     if(!finance) return;
     const c=finCanvas, dpr=window.devicePixelRatio||1, w=c.clientWidth, h=c.clientHeight;
@@ -370,23 +512,19 @@
     const maxV=Math.max(1, ...data.map(v=>Math.abs(v)));
     const barW=(w-pad*2)/(labels.length*1.6), gap=barW*0.6, baseY=h-pad-30, scale=(h-pad*2-40)/maxV;
 
-    /* grid tipis */
     ctx.strokeStyle="rgba(255,255,255,.2)"; ctx.lineWidth=1; ctx.beginPath();
     for(let i=0;i<=4;i++){ const y=pad+i*((baseY-pad)/4); ctx.moveTo(pad,y); ctx.lineTo(w-pad,y); } ctx.stroke();
 
-    /* batang + label (font dibesarkan otomatis) */
     labels.forEach((lab,i)=>{
       const v=data[i]||0, bh=v*scale, x=pad+i*(barW+gap), y=baseY-bh;
 
       ctx.fillStyle="#e8c15a";
       ctx.fillRect(x,y,barW,bh);
 
-      /* label kategori (bawah) */
-      const labelFont = Math.max(12, Math.round(w/60)); // contoh: 1200px → 20px
+      const labelFont = Math.max(12, Math.round(w/60));
       ctx.fillStyle="#fff"; ctx.font = `${labelFont}px Inter, Arial`; ctx.textAlign="center";
       ctx.fillText(lab, x+barW/2, baseY+16);
 
-      /* nilai (atas batang) */
       const valueFont = Math.max(14, Math.round(w/50));
       ctx.fillStyle="#e8c15a"; ctx.font = `bold ${valueFont}px Inter, Arial`;
       ctx.fillText(formatRupiah(v), x+barW/2, y-6);
@@ -414,7 +552,7 @@
 
   /* ===== Ticker ===== */
   function startTicker(){
-    if(tickerRunning) return; // cegah multiple loop
+    if(tickerRunning) return;
     tickerRunning=true;
     const run=()=>{
       tickerInner.style.transition="none";
@@ -444,7 +582,7 @@
 
   /* ===== Jadwal Sholat & Iqomah ===== */
   const tz="Asia/Jakarta";
-  let pTimes=null; // {Fajr, Syuruq, Dhuhr, Asr, Maghrib, Isha: Date}
+  let pTimes=null;
 
   function parseLcl(hhmm){
     const [H,M]=hhmm.split(":").map(Number);
@@ -521,7 +659,6 @@
       if(prayerOverlay.style.display!=="none"){ prayerOverlay.style.display="none"; stage.classList.remove('overlay-active'); }
       return;
     }
-    // tampilkan overlay iqomah penuh
     stage.classList.add('overlay-active');
     hideAllOverlays();
     prayerOverlay.style.display="flex";
@@ -545,13 +682,19 @@
       slides = cfg.slides.map(s=>{
         const base={durationSec:Number(s.durationSec||8)};
         if(s.quote){ return {...base, quote:String(s.quote), source:s.source||""}; }
-        if(s.video){ return {...base, video:String(s.video)}; }
-        if(s.url){  return {...base, url:String(s.url).trim(), title:s.title||"", desc:s.desc||""}; }
+        if(s.video){
+          const vv = String(s.video).trim();
+          return {...base, video: isYouTubeUrl(vv) ? vv : withBust(resolveAsset(vv))};
+        }
+        if(s.url){
+          const uu = String(s.url).trim();
+          return {...base, url: withBust(resolveAsset(uu)), title:s.title||"", desc:s.desc||""};
+        }
         return null;
       }).filter(Boolean);
     }else if(imagesParam){
       slides = imagesParam.split(",").map(u=>u.trim()).filter(Boolean)
-        .map(u=>({url:u,title:"",desc:"",durationSec:8}));
+        .map(u=>({url: withBust(resolveAsset(u)), title:"", desc:"", durationSec:8}));
     }else{
       slides = [];
     }
@@ -560,7 +703,7 @@
     quotes = slides.filter(isQuote);
     videos = slides.filter(isVideo);
 
-    // RESCUE jika kosong total
+    // Rescue
     if(!slides || slides.length===0){
       slides=[
         {quote:"“Sebaik-baik kalian adalah yang mempelajari Al-Qur’an dan mengajarkannya.”", source:"HR. Bukhari", durationSec:12},
@@ -575,7 +718,7 @@
     if(finance && finance.title) ftitle.textContent = finance.title;
     schedule = Array.isArray(cfg?.schedule) ? cfg.schedule : [];
 
-    // Mulai board
+    // Board
     if(!onlyQuoteQ && imgs.length>0){
       stage.classList.remove('overlay-active');
       board.style.display="grid";
@@ -585,14 +728,13 @@
       board.style.display="none";
     }
 
-    // Rotasi overlay (video → finance → schedule → quote) — clear timer lama dulu
+    // Overlay Rotation
     if(rotationTimer){ clearInterval(rotationTimer); rotationTimer=null; }
     const order = (cfg?.overlaysOrder && cfg.overlaysOrder.length) ? cfg.overlaysOrder
                   : ["video","finance","schedule","quote"];
     const rotSec = Math.max(6, Number(settings.overlayRotationSec||60));
     let idx=0;
     rotationTimer=setInterval(()=>{
-      // Jangan ganggu saat overlay iqomah/overlay lain aktif
       if(stage.classList.contains('overlay-active')) return;
       const kind = order[idx%order.length]; idx++;
       if(kind==="video"   && videos.length>0)   showVideoFullscreen(videos[0]);
@@ -601,13 +743,13 @@
       else if(kind==="quote"   && quotes.length>0)   showQuoteFullscreen(quotes[0], Number(quotes[0].durationSec||settings.overlayShowSec));
     }, rotSec*1000);
 
-    // Ticker — reset loop agar pasti jalan
+    // Ticker
     const t = tickerParam ?? cfg?.ticker;
     const s = showTickerQ || !!cfg?.showTicker || !!t;
     if (s && t) {
       ticker.style.display="flex";
       tickerText.textContent=t;
-      tickerRunning=false;   // reset sebelum start
+      tickerRunning=false;
       startTicker();
     } else {
       ticker.style.display="none";
@@ -622,13 +764,10 @@
 
   /* ===== Init ===== */
   (async function init(){
-    // Jadwal sholat
     await loadPrayer();
     renderPrayerTable();
-    // Header & iqomah update tiap detik
     setInterval(()=>{ renderPrayerTable(); updateNextHeader(); updateIqomahOverlay(); }, 1000);
 
-    // muat config & apply
     const cfg=await fetchConfig(); applyConfig(cfg||{});
     if(refreshMin>0 && configUrl){
       setInterval(async()=>{ const c=await fetchConfig(); if(c) applyConfig(c); }, refreshMin*60*1000);
