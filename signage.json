@@ -37,7 +37,7 @@
 
   "overlaysOrder": ["video", "finance", "schedule", "quote"],
 
-  "ticker": "Infaq Operasional : BCA Syariah 003131 0006 a/n Masjid Baitussalam Premier Estate 3 | Ayo ajak anak kita untuk hadir di Kajian Anak bersama Kak Agung Tyo, Hari Ahad 7 Sept 2025 pkl 09:00 pagi | Shalat berjamaah lebih utama daripada shalat sendirian sebanyak 27 derajat (HR. Bukhari dan Muslim) | Barangsiapa shalat Isya berjamaah, seakan telah shalat separuh malam. Dan barangsiapa shalat Subuh berjamaah, seakan telah shalat sepanjang malam (HR. Muslim)",
+  "ticker": "Infaq Operasional : BCA Syariah 003 131 0006 a/n Masjid Baitussalam Premier Estate 3 | Ayo ajak anak kita untuk hadir di Kajian Anak bersama Kak Agung Tyo, Hari Ahad 7 Sept 2025 pkl 09:00 pagi | Shalat berjamaah lebih utama daripada shalat sendirian sebanyak 27 derajat (HR. Bukhari dan Muslim) | Barangsiapa shalat Isya berjamaah, seakan telah shalat separuh malam. Dan barangsiapa shalat Subuh berjamaah, seakan telah shalat sepanjang malam (HR. Muslim)",
   "showTicker": true,
 
   "countdownMinutes": { "Fajr": 20, "Dhuhr": 15, "Asr": 15, "Maghrib": 15, "Isha": 15 }
