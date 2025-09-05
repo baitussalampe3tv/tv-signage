@@ -25,64 +25,72 @@
     --shadow:0 14px 36px rgba(0,0,0,.18);
   }
 
+  *{box-sizing:border-box}
   html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--text);font-family:Inter,"Segoe UI",Roboto,system-ui,Arial,sans-serif}
-  /* konten mobile scrollable */
   .page{min-height:100%; display:flex; flex-direction:column}
-  .pad{padding:12px 14px 18px}
+  .content{padding:12px 12px 72px}
 
   /* HEADER sticky */
-  .topbar{position:sticky; top:0; z-index:8; padding:10px 12px; backdrop-filter:blur(8px);
+  .topbar{position:sticky; top:0; z-index:10; padding:10px 12px; backdrop-filter:blur(8px);
     background:linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,.08)); border-bottom:1px solid var(--border)}
-  .brand{display:flex; gap:10px; align-items:center}
-  .brand img{height:34px}
-  .brand .txt{line-height:1.05}
-  .brand .name{font-size:16px; font-weight:900}
-  .brand .sub{font-size:12px; font-weight:700; color:var(--muted)}
+  .brand{display:flex; gap:10px; align-items:center; min-width:0}
+  .brand img{height:34px; flex:0 0 auto}
+  .brand .txt{line-height:1.05; min-width:0}
+  .brand .name{font-size:16px; font-weight:900; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .brand .sub{font-size:12px; font-weight:700; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 
   /* WAKTU SHOLAT */
-  .prayer{display:grid; gap:10px; padding:12px; margin:12px; background:linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.08));
-    border:1px solid var(--border); border-radius:14px; box-shadow:var(--shadow)}
+  .prayer{display:flex; flex-direction:column; gap:10px; padding:12px; margin:12px 12px 0; background:linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.08));
+    border:1px solid var(--border); border-radius:14px; box-shadow:var(--shadow); width:calc(100% - 24px)}
   .phdr{font-weight:900; font-size:15px}
-  .pt{display:grid; grid-template-columns: repeat(3, auto auto); gap:6px 12px}
+  .pt{
+    display:grid; grid-template-columns: repeat(3, minmax(0,auto)) repeat(3, minmax(0,auto)); /* 3 pasang nama/waktu */
+    column-gap:12px; row-gap:6px; width:100%;
+  }
   .pt .name{color:var(--muted); font-weight:800}
   .pt .time{font-weight:900}
-  .nextRow{display:flex; justify-content:space-between; align-items:center; gap:10px; padding-top:6px; border-top:1px dashed var(--border)}
+  .nextRow{
+    display:flex; justify-content:space-between; align-items:center; gap:10px; padding-top:8px; border-top:1px dashed var(--border);
+    width:100%;
+  }
   .next{font-weight:900; color:var(--gold)}
   .cd{font-weight:900}
 
-  /* SLIDES area */
-  .card{margin:0 12px 12px; background:var(--panel); border:1px solid var(--border); border-radius:14px; box-shadow:var(--shadow); overflow:hidden}
-  .frame{position:relative; width:100%; min-height:38vh; background:linear-gradient(180deg, rgba(0,0,0,.04), rgba(0,0,0,.08))}
-  .frame img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .6s}
-  .frame img.show{opacity:1}
-  .caption{position:absolute; left:10px; right:10px; bottom:10px; background:linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.35)); color:#fff; border-radius:10px; padding:10px 12px}
-  .cap-title{margin:0 0 4px; font-size:clamp(16px,4.2vw,22px); font-weight:900}
-  .cap-desc{margin:0; font-size:clamp(13px,3.8vw,18px); font-weight:600}
+  /* CARD umum */
+  .card{margin:12px; background:var(--panel); border:1px solid var(--border); border-radius:14px; box-shadow:var(--shadow); overflow:hidden}
+
+  /* SLIDE GAMBAR (caption di bawah, bukan overlay) */
+  .imgBox{width:100%; background:#00000010}
+  .imgBox img{display:block; width:100%; height:auto}
+  .capBox{padding:10px 12px}
+  .capTitle{margin:0 0 4px; font-size:clamp(16px,4.4vw,22px); font-weight:900}
+  .capDesc{margin:0; font-size:clamp(13px,3.8vw,18px); font-weight:600; color:#2b2b2b}
 
   /* QUOTE */
-  .qcard{margin:0 12px 12px; border-radius:14px; border:1px solid var(--border); box-shadow:var(--shadow);
+  .qcard{color:#fff; padding:18px 16px;
     background:
       radial-gradient(700px 240px at 30% 0%, rgba(231, 196, 94, .25), transparent 60%),
       linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.55)),
       url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="300" viewBox="0 0 600 300"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="%23c79d2b"/><stop offset="1" stop-color="%23e6c86a"/></linearGradient></defs><g fill="none" stroke="url(%23g)" stroke-opacity=".2"><path d="M0 60 C150 120 450 0 600 60" /><path d="M0 140 C150 200 450 80 600 140" /><path d="M0 220 C150 280 450 160 600 220" /></g></svg>') center/cover no-repeat;
-    color:#fff; padding:18px 16px}
+  }
   .qtext{margin:0 0 8px; font-weight:900; color:var(--gold); text-shadow:0 2px 6px rgba(0,0,0,.6); font-size:clamp(18px,5.5vw,28px); text-align:center}
   .qsrc{margin:0; text-align:center; color:#fff; opacity:.95; font-weight:800; font-size:clamp(14px,4.4vw,18px)}
 
   /* VIDEO (fit 16:9) */
-  .vcard{margin:0 12px 12px; border-radius:14px; border:1px solid var(--border); box-shadow:var(--shadow); overflow:hidden; background:#000}
-  .vwrap{position:relative; width:100%; height:0; padding-bottom:56.25%} /* 16:9 */
-  .vwrap > *{position:absolute; inset:0; width:100%; height:100%; display:block}
+  .vwrap{position:relative; width:100%; height:0; padding-bottom:56.25%; background:#000}
+  .vwrap > *{position:absolute; inset:0; width:100%; height:100%; display:block; border:0}
 
   /* FINANCE */
-  .fcard{margin:0 12px 12px; padding:16px; border-radius:14px; border:1px solid var(--border); box-shadow:var(--shadow);
-    background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.08)); color:#fff}
+  .fcard{padding:16px; color:#fff;
+    background:linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.10));
+  }
   .ftitle{margin:0 0 10px; text-align:center; color:var(--gold); font-weight:900; font-size:clamp(18px,5.4vw,26px)}
   #finCanvas{width:100%; height:42vh; background:rgba(0,0,0,.18); border-radius:10px}
 
   /* SCHEDULE */
-  .scard{margin:0 12px 12px; padding:16px; border-radius:14px; border:1px solid var(--border); box-shadow:var(--shadow);
-    background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.08)); color:#fff}
+  .scard{padding:16px; color:#fff;
+    background:linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.10));
+  }
   .stitle{margin:0 0 10px; text-align:center; color:var(--gold); font-weight:900; font-size:clamp(18px,5.4vw,26px)}
   .slist{display:grid; gap:10px}
   .srow{display:grid; grid-template-columns: 1fr; gap:6px; background:rgba(0,0,0,.22); border:1px solid rgba(255,255,255,.18); border-radius:10px; padding:10px 12px}
@@ -91,12 +99,9 @@
   .srow .ust{font-weight:700; opacity:.95; font-size:clamp(13px,3.8vw,17px)}
 
   /* TICKER sticky bottom */
-  .ticker{position:sticky; bottom:0; z-index:9; background:var(--tickerBg); color:var(--tickerText); min-height:40px; overflow:hidden}
+  .ticker{position:fixed; left:0; right:0; bottom:0; z-index:12; background:var(--tickerBg); color:var(--tickerText); min-height:44px; overflow:hidden}
   .tkInner{white-space:nowrap; will-change:transform; padding:0 100vw 0 0}
-  .tkText{display:inline-block; padding:10px 16px; font-size:clamp(13px,3.6vw,16px); font-weight:800}
-
-  /* spasi ekstra agar ticker tidak menimpa konten */
-  .spacer{height:12px}
+  .tkText{display:inline-block; padding:12px 16px; font-size:clamp(13px,3.6vw,16px); font-weight:800}
 </style>
 </head>
 <body class="theme-gold">
@@ -113,45 +118,17 @@
     </div>
   </div>
 
-  <!-- WAKTU SHOLAT -->
-  <section class="prayer" id="prayerBox">
-    <div class="phdr">Waktu Sholat</div>
-    <div class="pt" id="pt"></div>
-    <div class="nextRow"><div class="next" id="next">Selanjutnya: -</div><div class="cd" id="cd">--:--:--</div></div>
-  </section>
+  <div class="content" id="content">
+    <!-- WAKTU SHOLAT -->
+    <section class="prayer" id="prayerBox">
+      <div class="phdr">Waktu Sholat</div>
+      <div class="pt" id="pt"></div>
+      <div class="nextRow"><div class="next" id="next">Selanjutnya: -</div><div class="cd" id="cd">--:--:--</div></div>
+    </section>
 
-  <!-- SLIDES (gambar) -->
-  <section class="card">
-    <div class="frame" id="frame"></div>
-  </section>
-
-  <!-- QUOTE (akan diganti kontennya saat rotasi) -->
-  <section class="qcard" id="qcard" style="display:none">
-    <p class="qtext" id="qtext"></p>
-    <p class="qsrc" id="qsrc"></p>
-  </section>
-
-  <!-- VIDEO -->
-  <section class="vcard" id="vcard" style="display:none">
-    <div class="vwrap" id="vwrap">
-      <!-- akan diisi <iframe> (YouTube) atau <video> (MP4) sesuai item -->
-    </div>
-  </section>
-
-  <!-- FINANCE -->
-  <section class="fcard" id="fcard" style="display:none">
-    <h3 class="ftitle" id="ftitle">Laporan Keuangan</h3>
-    <canvas id="finCanvas"></canvas>
-  </section>
-
-  <!-- SCHEDULE -->
-  <section class="scard" id="scard" style="display:none">
-    <h3 class="stitle">Jadwal Kajian</h3>
-    <div class="slist" id="slist"></div>
-  </section>
-
-  <!-- spacer untuk ticker -->
-  <div class="spacer"></div>
+    <!-- Container untuk semua slide & section -->
+    <div id="sections"></div>
+  </div>
 
   <!-- TICKER -->
   <div class="ticker" id="ticker" style="display:none">
@@ -176,41 +153,9 @@
   const tickerParam=qs.get("ticker");
   const showTickerQ=["1","true","yes","on"].includes((qs.get("showTicker")||"").toLowerCase());
   const tickerPauseSec = parseFloat(qs.get("tickerPauseSec")||"2");
-  const tickerSpeed = parseFloat(qs.get("tickerSpeed")||"90"); // lebih pelan utk mobile
+  const tickerSpeed = parseFloat(qs.get("tickerSpeed")||"90"); // mobile nyaman
 
-  /* ===== Elements ===== */
-  const frameEl=document.getElementById("frame");
-  const qcard=document.getElementById("qcard");
-  const qtext=document.getElementById("qtext");
-  const qsrc =document.getElementById("qsrc");
-  const vcard=document.getElementById("vcard");
-  const vwrap=document.getElementById("vwrap");
-  const fcard=document.getElementById("fcard");
-  const finCanvas=document.getElementById("finCanvas");
-  const ftitle=document.getElementById("ftitle");
-  const scard=document.getElementById("scard");
-  const slist=document.getElementById("slist");
-
-  const ticker=document.getElementById("ticker");
-  const tkInner=document.getElementById("tkInner");
-  const tkText=document.getElementById("tkText");
-
-  const ptEl=document.getElementById("pt");
-  const nextEl=document.getElementById("next");
-  const cdEl=document.getElementById("cd");
-
-  /* ===== Data ===== */
-  let slides=[],imgs=[],quotes=[],videos=[],finance=null,schedule=[];
-  let settings={overlayRotationSec:12,overlayShowSec:10};
-  let imgPtr=0, qPtr=0, vPtr=0;
-  let imgTimer=null, rotTimer=null, tickerRunning=false;
-
-  /* ===== Helpers ===== */
-  const isImg   = s => !!s.url;
-  const isQuote = s => !!s.quote;
-  const isVideo = s => !!s.video;
-
-  /* cache-buster + base */
+  /* ===== Base path & cache-bust ===== */
   function baseOf(urlStr){
     try{ const u=new URL(urlStr, location.href); u.hash=""; u.search=""; return u.href.replace(/[^/]+$/,""); }
     catch(_){ return ""; }
@@ -229,35 +174,19 @@
     catch(_){ return u + (u.includes("?")?"&":"?") + "v="+encodeURIComponent(__bust); }
   }
 
-  /* ===== Slides (gambar) ===== */
-  function mountImage(item){
-    frameEl.innerHTML="";
-    const im=new Image();
-    im.decoding="async"; im.loading="eager";
-    im.src = withBust(resolveAsset(item.url));
-    im.onerror = ()=>{ im.style.opacity=1; im.style.objectFit="contain"; im.style.background="#0002"; };
-    frameEl.appendChild(im);
-    requestAnimationFrame(()=> im.classList.add("show"));
-  }
-  function nextImage(){
-    if(imgs.length===0) return;
-    const it=imgs[imgPtr]; imgPtr=(imgPtr+1)%imgs.length;
-    mountImage(it);
-    const dur = Number(it.durationSec||8);
-    clearTimeout(imgTimer); imgTimer=setTimeout(nextImage, Math.max(3,dur)*1000);
-  }
+  /* ===== Elements ===== */
+  const sections = document.getElementById("sections");
+  const ticker=document.getElementById("ticker");
+  const tkInner=document.getElementById("tkInner");
+  const tkText=document.getElementById("tkText");
+  const ptEl=document.getElementById("pt");
+  const nextEl=document.getElementById("next");
+  const cdEl=document.getElementById("cd");
 
-  /* ===== Quote ===== */
-  function showQuote(item){
-    if(!item) return;
-    qtext.textContent = item.quote||"";
-    qsrc.textContent  = item.source||"";
-    qcard.style.display="block";
-    const dur = Number(item.durationSec||settings.overlayShowSec);
-    setTimeout(()=>{ qcard.style.display="none"; }, Math.max(3,dur)*1000);
-  }
+  /* ===== Data ===== */
+  let cfg=null;
 
-  /* ===== Video (YT / MP4) ===== */
+  /* ===== Build Sections (no overlay, scrollable) ===== */
   function isYouTubeUrl(u){ return /(?:youtube\.com|youtu\.be)/i.test(u||""); }
   function extractYouTube(u){
     try{
@@ -270,35 +199,63 @@
       return id?{id,start}:null;
     }catch(_){ return null; }
   }
-  function showVideo(item){
-    vwrap.innerHTML="";
-    vcard.style.display="block";
-    const dur = Number(item.durationSec||settings.overlayShowSec||15);
 
-    if(isYouTubeUrl(item.video||"")){
-      const ex=extractYouTube(item.video);
-      if(!ex){ vcard.style.display="none"; return; }
-      const src = `https://www.youtube-nocookie.com/embed/${ex.id}?autoplay=1&mute=1&controls=0&rel=0&playsinline=1&modestbranding=1&iv_load_policy=3&cc_load_policy=1&start=${ex.start||0}`;
-      const ifr=document.createElement("iframe");
-      ifr.src=src; ifr.allow="autoplay; encrypted-media; picture-in-picture"; ifr.setAttribute("frameborder","0");
-      vwrap.appendChild(ifr);
-    }else{
-      const vid=document.createElement("video");
-      vid.muted=true; vid.playsInline=true; vid.autoplay=true; vid.controls=false;
-      vid.src = withBust(resolveAsset(item.video));
-      vwrap.appendChild(vid);
-      vid.play().catch(()=>{});
-    }
-    setTimeout(()=>{ vcard.style.display="none"; vwrap.innerHTML=""; }, Math.max(4,dur)*1000);
+  function addImageCard(item){
+    const card=document.createElement('section'); card.className='card';
+    const box=document.createElement('div'); box.className='imgBox';
+    const im=new Image(); im.decoding='async'; im.loading='eager';
+    im.src = withBust(resolveAsset(item.url));
+    im.onerror=()=>{ im.style.background='#0002'; };
+    box.appendChild(im);
+    const cap=document.createElement('div'); cap.className='capBox';
+    const h=document.createElement('h3'); h.className='capTitle'; h.textContent=item.title||'';
+    const p=document.createElement('p'); p.className='capDesc';  p.textContent=item.desc||'';
+    cap.append(h,p);
+    card.append(box,cap);
+    sections.appendChild(card);
   }
 
-  /* ===== Finance ===== */
-  function drawFinance(){
-    const c=finCanvas, dpr=window.devicePixelRatio||1, w=c.clientWidth, h=c.clientHeight;
+  function addQuoteCard(item){
+    const card=document.createElement('section'); card.className='card qcard';
+    const h=document.createElement('p'); h.className='qtext'; h.textContent=item.quote||'';
+    const s=document.createElement('p'); s.className='qsrc';  s.textContent=item.source||'';
+    card.append(h,s);
+    sections.appendChild(card);
+  }
+
+  function addVideoCard(item){
+    const card=document.createElement('section'); card.className='card';
+    const wrap=document.createElement('div'); wrap.className='vwrap';
+    if(isYouTubeUrl(item.video||"")){
+      const ex=extractYouTube(item.video);
+      if(ex){
+        const src = `https://www.youtube-nocookie.com/embed/${ex.id}?autoplay=0&mute=0&controls=1&rel=0&playsinline=1&modestbranding=1&iv_load_policy=3&cc_load_policy=1&start=${ex.start||0}`;
+        const ifr=document.createElement("iframe");
+        ifr.src=src; ifr.allow="autoplay; encrypted-media; picture-in-picture"; ifr.setAttribute("frameborder","0");
+        wrap.appendChild(ifr);
+      }
+    }else{
+      const vid=document.createElement("video");
+      vid.controls=true; vid.playsInline=true;
+      vid.src = withBust(resolveAsset(item.video));
+      wrap.appendChild(vid);
+    }
+    card.appendChild(wrap);
+    sections.appendChild(card);
+  }
+
+  function addFinanceCard(fin){
+    const card=document.createElement('section'); card.className='card fcard';
+    const t=document.createElement('h3'); t.className='ftitle'; t.id='ftitle'; t.textContent = fin.title||'Laporan Keuangan';
+    const canvas=document.createElement('canvas'); canvas.id='finCanvas';
+    card.append(t,canvas); sections.appendChild(card);
+
+    // draw
+    const c=canvas, dpr=window.devicePixelRatio||1, w=c.clientWidth, h= Math.max(220, c.clientHeight||220);
     c.width=Math.floor(w*dpr); c.height=Math.floor(h*dpr);
     const ctx=c.getContext('2d'); ctx.scale(dpr,dpr); ctx.clearRect(0,0,w,h);
 
-    const pad=16, labels=finance.labels||[], data=finance.data||[];
+    const pad=16, labels=fin.labels||[], data=fin.data||[];
     const maxV=Math.max(1, ...data.map(v=>Math.abs(v)));
     const barW=(w-pad*2)/(labels.length*1.6), gap=barW*0.6, baseY=h-pad-24, scale=(h-pad*2-36)/maxV;
 
@@ -319,35 +276,20 @@
     });
   }
 
-  /* ===== Schedule ===== */
-  function renderSchedule(){
-    slist.innerHTML="";
-    schedule.forEach(it=>{
-      const row=document.createElement('div'); row.className="srow";
+  function addScheduleCard(list){
+    const card=document.createElement('section'); card.className='card scard';
+    const t=document.createElement('h3'); t.className='stitle'; t.textContent='Jadwal Kajian';
+    const ul=document.createElement('div'); ul.className='slist';
+    (list||[]).forEach(it=>{
+      const row=document.createElement('div'); row.className='srow';
       row.innerHTML=`<div class="time">${it.time||""}</div><div class="topic">${it.topic||""}</div><div class="ust">${it.ustadz||""}</div>`;
-      slist.appendChild(row);
+      ul.appendChild(row);
     });
-  }
-
-  /* ===== Rotasi overlay (quote / video / finance / schedule) ===== */
-  function startRotation(){
-    if(rotTimer){ clearInterval(rotTimer); rotTimer=null; }
-    const order = (cfg?.overlaysOrder && cfg.overlaysOrder.length) ? cfg.overlaysOrder
-                  : ["video","finance","schedule","quote"];
-    const rotSec = Math.max(6, Number(settings.overlayRotationSec||12));
-    let idx=0;
-    rotTimer=setInterval(()=>{
-      const kind = order[idx%order.length]; idx++;
-      if(kind==="quote" && quotes.length){ const q=quotes[qPtr]; qPtr=(qPtr+1)%quotes.length; showQuote(q); }
-      else if(kind==="video" && videos.length){ const v=videos[vPtr]; vPtr=(vPtr+1)%videos.length; showVideo(v); }
-      else if(kind==="finance" && finance){ fcard.style.display="block"; drawFinance(); setTimeout(()=>fcard.style.display="none", (finance.durationSec||settings.overlayShowSec)*1000); }
-      else if(kind==="schedule" && schedule.length){ scard.style.display="block"; renderSchedule(); setTimeout(()=>scard.style.display="none", (settings.overlayShowSec)*1000); }
-    }, rotSec*1000);
+    card.append(t,ul); sections.appendChild(card);
   }
 
   /* ===== Ticker ===== */
   function startTicker(){
-    if(tickerRunning) return; tickerRunning=true;
     const run=()=>{
       tkInner.style.transition="none";
       tkInner.style.transform=`translateX(${window.innerWidth}px)`;
@@ -366,7 +308,6 @@
   /* ===== Jadwal Sholat ===== */
   const tz="Asia/Jakarta";
   let pTimes=null;
-
   function parseLcl(hhmm){
     const [H,M]=hhmm.split(":").map(Number);
     const d=new Date(new Date().toLocaleString('en-US',{timeZone:tz}));
@@ -422,43 +363,27 @@
 
   /* ===== Config ===== */
   async function fetchConfig(){ try{ const r=await fetch(configUrl,{cache:'no-store'}); if(!r.ok) return null; return await r.json(); }catch(_){ return null; } }
-  function applyConfig(cfg){
-    if(cfg?.settings)  settings = Object.assign(settings, cfg.settings);
+  function applyConfig(c){
+    cfg=c||{};
+    sections.innerHTML=""; // rebuild semua
 
-    // slides
-    if(cfg && Array.isArray(cfg.slides)){
-      slides = cfg.slides.map(s=>{
-        const base={durationSec:Number(s.durationSec||8)};
-        if(s.quote){ return {...base, quote:String(s.quote), source:s.source||""}; }
-        if(s.video){
+    // slides → render sebagai cards berurutan
+    if(Array.isArray(cfg.slides)){
+      cfg.slides.forEach(s=>{
+        if(s.url){ addImageCard({url: withBust(resolveAsset(s.url)), title:s.title||"", desc:s.desc||""}); }
+        else if(s.quote){ addQuoteCard({quote:String(s.quote), source:s.source||""}); }
+        else if(s.video){
           const vv = String(s.video).trim();
-          return {...base, video: /^https?:\/\//i.test(vv) ? vv : withBust(resolveAsset(vv))};
+          addVideoCard({video: /^https?:\/\//i.test(vv) ? vv : withBust(resolveAsset(vv))});
         }
-        if(s.url){
-          const uu = String(s.url).trim();
-          return {...base, url: withBust(resolveAsset(uu)), title:s.title||"", desc:s.desc||""};
-        }
-        return null;
-      }).filter(Boolean);
-    } else {
-      slides = [];
+      });
     }
-    imgs   = slides.filter(isImg);
-    quotes = slides.filter(isQuote);
-    videos = slides.filter(isVideo);
 
-    // finance & schedule
-    finance  = cfg?.finance || null;
-    if(finance && finance.title) ftitle.textContent = finance.title;
-    schedule = Array.isArray(cfg?.schedule) ? cfg.schedule : [];
+    // Finance & Schedule sebagai section terpisah (jika ada)
+    if(cfg.finance){ addFinanceCard(cfg.finance); }
+    if(Array.isArray(cfg.schedule) && cfg.schedule.length){ addScheduleCard(cfg.schedule); }
 
-    // mulai slideshow gambar
-    if(imgs.length){ imgPtr=0; nextImage(); }
-
-    // rotasi overlay
-    startRotation();
-
-    // ticker
+    // Ticker
     const t = tickerParam ?? cfg?.ticker;
     const s = showTickerQ || !!cfg?.showTicker || !!t;
     if (s && t) { ticker.style.display="block"; tkText.textContent=t; startTicker(); }
@@ -472,13 +397,12 @@
   }
 
   /* ===== Init ===== */
-  let cfg=null;
   (async function init(){
     await loadPrayer();
     renderPrayerTable();
     setInterval(()=>{ renderPrayerTable(); updateNextHeader(); }, 1000);
 
-    cfg=await fetchConfig(); applyConfig(cfg||{});
+    const conf=await fetchConfig(); applyConfig(conf||{});
     if(refreshMin>0 && configUrl){
       setInterval(async()=>{ const c=await fetchConfig(); if(c) applyConfig(c); }, refreshMin*60*1000);
     }
