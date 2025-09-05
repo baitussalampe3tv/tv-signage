@@ -36,7 +36,7 @@
     { "time": "Sabtu Pekan 1&3 - Ba'da Maghrib", "topic": "Kajian Kitab Adabul Mufrad", "ustadz": "Ust. Muhammad Azizan Lc. MSi" },
     { "time": "Ahad Pekan 2&4 - Ba'da Subuh",    "topic": "Kajian Kitab Minhajul Muslim", "ustadz": "Ust. Ibrahim Saleh Lc. MKom" },
     { "time": "Ahad Pekan 2&4 - Ba'da Maghrib",  "topic": "Kajian Sirah Nabawiyyah",      "ustadz": "Ust. Chamdan Subkhi" },
-    { "time": "Jumat 5 Sept 2025",             "topic": "Khutbah Jumat",                "ustadz": "Mahfuzh Al Ayyubi, Lc" }
+    { "time": "Jumat 5 Sept 2025",             "topic": "Khutbah Jumat",                "ustadz": "Ust. Mahfuzh Al Ayyubi, Lc" }
   ],
 
   "overlaysOrder": ["video", "finance", "schedule", "quote"],
