@@ -39,55 +39,22 @@
   .brand .name{font-size:16px; font-weight:900; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
   .brand .sub{font-size:12px; font-weight:700; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 
-  /* WAKTU SHOLAT */
+  /* WAKTU SHOLAT (tidak tumpuk) */
   .prayer{display:flex; flex-direction:column; gap:10px; padding:12px; margin:12px 12px 0; background:linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.08));
     border:1px solid var(--border); border-radius:14px; box-shadow:var(--shadow); width:calc(100% - 24px)}
   .phdr{font-weight:900; font-size:15px}
-  .pt{
-    display:grid; grid-template-columns: repeat(3, minmax(0,auto)) repeat(3, minmax(0,auto)); /* 3 pasang nama/waktu */
-    column-gap:12px; row-gap:6px; width:100%;
-  }
-  .pt .name{color:var(--muted); font-weight:800}
-  .pt .time{font-weight:900}
-  .nextRow{
-    display:flex; justify-content:space-between; align-items:center; gap:10px; padding-top:8px; border-top:1px dashed var(--border);
-    width:100%;
-  }
+  .pt{display:flex; flex-direction:column; gap:6px; width:100%}
+  .prow{display:flex; justify-content:space-between; gap:10px; width:100%}
+  .name{color:var(--muted); font-weight:800}
+  .time{font-weight:900}
+  .nextRow{display:flex; justify-content:space-between; align-items:center; gap:10px; padding-top:8px; border-top:1px dashed var(--border); width:100%}
   .next{font-weight:900; color:var(--gold)}
   .cd{font-weight:900}
 
   /* CARD umum */
   .card{margin:12px; background:var(--panel); border:1px solid var(--border); border-radius:14px; box-shadow:var(--shadow); overflow:hidden}
 
-  /* SLIDE GAMBAR (caption di bawah, bukan overlay) */
-  .imgBox{width:100%; background:#00000010}
-  .imgBox img{display:block; width:100%; height:auto}
-  .capBox{padding:10px 12px}
-  .capTitle{margin:0 0 4px; font-size:clamp(16px,4.4vw,22px); font-weight:900}
-  .capDesc{margin:0; font-size:clamp(13px,3.8vw,18px); font-weight:600; color:#2b2b2b}
-
-  /* QUOTE */
-  .qcard{color:#fff; padding:18px 16px;
-    background:
-      radial-gradient(700px 240px at 30% 0%, rgba(231, 196, 94, .25), transparent 60%),
-      linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.55)),
-      url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="300" viewBox="0 0 600 300"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="%23c79d2b"/><stop offset="1" stop-color="%23e6c86a"/></linearGradient></defs><g fill="none" stroke="url(%23g)" stroke-opacity=".2"><path d="M0 60 C150 120 450 0 600 60" /><path d="M0 140 C150 200 450 80 600 140" /><path d="M0 220 C150 280 450 160 600 220" /></g></svg>') center/cover no-repeat;
-  }
-  .qtext{margin:0 0 8px; font-weight:900; color:var(--gold); text-shadow:0 2px 6px rgba(0,0,0,.6); font-size:clamp(18px,5.5vw,28px); text-align:center}
-  .qsrc{margin:0; text-align:center; color:#fff; opacity:.95; font-weight:800; font-size:clamp(14px,4.4vw,18px)}
-
-  /* VIDEO (fit 16:9) */
-  .vwrap{position:relative; width:100%; height:0; padding-bottom:56.25%; background:#000}
-  .vwrap > *{position:absolute; inset:0; width:100%; height:100%; display:block; border:0}
-
-  /* FINANCE */
-  .fcard{padding:16px; color:#fff;
-    background:linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.10));
-  }
-  .ftitle{margin:0 0 10px; text-align:center; color:var(--gold); font-weight:900; font-size:clamp(18px,5.4vw,26px)}
-  #finCanvas{width:100%; height:42vh; background:rgba(0,0,0,.18); border-radius:10px}
-
-  /* SCHEDULE */
+  /* SCHEDULE (di atas) */
   .scard{padding:16px; color:#fff;
     background:linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.10));
   }
@@ -98,7 +65,35 @@
   .srow .topic{font-weight:800; font-size:clamp(14px,4vw,18px)}
   .srow .ust{font-weight:700; opacity:.95; font-size:clamp(13px,3.8vw,17px)}
 
-  /* TICKER sticky bottom */
+  /* FINANCE (setelah schedule) */
+  .fcard{padding:16px; color:#fff;
+    background:linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.10));
+  }
+  .ftitle{margin:0 0 10px; text-align:center; color:var(--gold); font-weight:900; font-size:clamp(18px,5.4vw,26px)}
+  #finCanvas{width:100%; height:42vh; background:rgba(0,0,0,.18); border-radius:10px}
+
+  /* QUOTE (setelah finance) */
+  .qcard{color:#fff; padding:18px 16px;
+    background:
+      radial-gradient(700px 240px at 30% 0%, rgba(231, 196, 94, .25), transparent 60%),
+      linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.55)),
+      url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="300" viewBox="0 0 600 300"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="%23c79d2b"/><stop offset="1" stop-color="%23e6c86a"/></linearGradient></defs><g fill="none" stroke="url(%23g)" stroke-opacity=".2"><path d="M0 60 C150 120 450 0 600 60" /><path d="M0 140 C150 200 450 80 600 140" /><path d="M0 220 C150 280 450 160 600 220" /></g></svg>') center/cover no-repeat;
+  }
+  .qtext{margin:0 0 8px; font-weight:900; color:var(--gold); text-shadow:0 2px 6px rgba(0,0,0,.6); font-size:clamp(18px,5.5vw,28px); text-align:center}
+  .qsrc{margin:0; text-align:center; color:#fff; opacity:.95; font-weight:800; font-size:clamp(14px,4.4vw,18px)}
+
+  /* VIDEO (setelah quote) */
+  .vwrap{position:relative; width:100%; height:0; padding-bottom:56.25%; background:#000}
+  .vwrap > *{position:absolute; inset:0; width:100%; height:100%; display:block; border:0}
+
+  /* GAMBAR (paling bawah) */
+  .imgBox{width:100%; background:#00000010}
+  .imgBox img{display:block; width:100%; height:auto}
+  .capBox{padding:10px 12px}
+  .capTitle{margin:0 0 4px; font-size:clamp(16px,4.4vw,22px); font-weight:900}
+  .capDesc{margin:0; font-size:clamp(13px,3.8vw,18px); font-weight:600; color:#2b2b2b}
+
+  /* TICKER fixed */
   .ticker{position:fixed; left:0; right:0; bottom:0; z-index:12; background:var(--tickerBg); color:var(--tickerText); min-height:44px; overflow:hidden}
   .tkInner{white-space:nowrap; will-change:transform; padding:0 100vw 0 0}
   .tkText{display:inline-block; padding:12px 16px; font-size:clamp(13px,3.6vw,16px); font-weight:800}
@@ -126,8 +121,12 @@
       <div class="nextRow"><div class="next" id="next">Selanjutnya: -</div><div class="cd" id="cd">--:--:--</div></div>
     </section>
 
-    <!-- Container untuk semua slide & section -->
-    <div id="sections"></div>
+    <!-- Urutan section berikut: Schedule → Finance → Quote → Video → Foto -->
+    <div id="secSchedule"></div>
+    <div id="secFinance"></div>
+    <div id="secQuotes"></div>
+    <div id="secVideos"></div>
+    <div id="secImages"></div>
   </div>
 
   <!-- TICKER -->
@@ -152,8 +151,8 @@
   const refreshMin=parseFloat(qs.get("refreshMin")||"5");
   const tickerParam=qs.get("ticker");
   const showTickerQ=["1","true","yes","on"].includes((qs.get("showTicker")||"").toLowerCase());
-  const tickerPauseSec = parseFloat(qs.get("tickerPauseSec")||"2");
-  const tickerSpeed = parseFloat(qs.get("tickerSpeed")||"90"); // mobile nyaman
+  const tickerPauseSec = 2; // sesuai permintaan
+  const tickerSpeed = parseFloat(qs.get("tickerSpeed")||"90");
 
   /* ===== Base path & cache-bust ===== */
   function baseOf(urlStr){
@@ -175,18 +174,25 @@
   }
 
   /* ===== Elements ===== */
-  const sections = document.getElementById("sections");
+  const secSchedule=document.getElementById("secSchedule");
+  const secFinance=document.getElementById("secFinance");
+  const secQuotes =document.getElementById("secQuotes");
+  const secVideos =document.getElementById("secVideos");
+  const secImages =document.getElementById("secImages");
+
   const ticker=document.getElementById("ticker");
   const tkInner=document.getElementById("tkInner");
   const tkText=document.getElementById("tkText");
+
   const ptEl=document.getElementById("pt");
   const nextEl=document.getElementById("next");
   const cdEl=document.getElementById("cd");
 
-  /* ===== Data ===== */
-  let cfg=null;
+  /* ===== Helpers ===== */
+  function clear(el){ el.innerHTML=""; }
+  function add(child,to){ to.appendChild(child); }
+  function make(tag, cls){ const e=document.createElement(tag); if(cls) e.className=cls; return e; }
 
-  /* ===== Build Sections (no overlay, scrollable) ===== */
   function isYouTubeUrl(u){ return /(?:youtube\.com|youtu\.be)/i.test(u||""); }
   function extractYouTube(u){
     try{
@@ -200,58 +206,30 @@
     }catch(_){ return null; }
   }
 
-  function addImageCard(item){
-    const card=document.createElement('section'); card.className='card';
-    const box=document.createElement('div'); box.className='imgBox';
-    const im=new Image(); im.decoding='async'; im.loading='eager';
-    im.src = withBust(resolveAsset(item.url));
-    im.onerror=()=>{ im.style.background='#0002'; };
-    box.appendChild(im);
-    const cap=document.createElement('div'); cap.className='capBox';
-    const h=document.createElement('h3'); h.className='capTitle'; h.textContent=item.title||'';
-    const p=document.createElement('p'); p.className='capDesc';  p.textContent=item.desc||'';
-    cap.append(h,p);
-    card.append(box,cap);
-    sections.appendChild(card);
+  /* ===== Builders ===== */
+  function buildSchedule(list){
+    if(!list || !list.length) return;
+    const card=make('section','card scard');
+    const t=make('h3','stitle'); t.textContent='Jadwal Kajian';
+    const ul=make('div','slist');
+    list.forEach(it=>{
+      const row=make('div','srow');
+      row.innerHTML=`<div class="time">${it.time||""}</div><div class="topic">${it.topic||""}</div><div class="ust">${it.ustadz||""}</div>`;
+      ul.appendChild(row);
+    });
+    card.append(t,ul);
+    add(card,secSchedule);
   }
 
-  function addQuoteCard(item){
-    const card=document.createElement('section'); card.className='card qcard';
-    const h=document.createElement('p'); h.className='qtext'; h.textContent=item.quote||'';
-    const s=document.createElement('p'); s.className='qsrc';  s.textContent=item.source||'';
-    card.append(h,s);
-    sections.appendChild(card);
-  }
+  function buildFinance(fin){
+    if(!fin) return;
+    const card=make('section','card fcard');
+    const t=make('h3','ftitle'); t.textContent=fin.title||'Laporan Keuangan';
+    const canvas=make('canvas'); canvas.id='finCanvas';
+    card.append(t,canvas);
+    add(card,secFinance);
 
-  function addVideoCard(item){
-    const card=document.createElement('section'); card.className='card';
-    const wrap=document.createElement('div'); wrap.className='vwrap';
-    if(isYouTubeUrl(item.video||"")){
-      const ex=extractYouTube(item.video);
-      if(ex){
-        const src = `https://www.youtube-nocookie.com/embed/${ex.id}?autoplay=0&mute=0&controls=1&rel=0&playsinline=1&modestbranding=1&iv_load_policy=3&cc_load_policy=1&start=${ex.start||0}`;
-        const ifr=document.createElement("iframe");
-        ifr.src=src; ifr.allow="autoplay; encrypted-media; picture-in-picture"; ifr.setAttribute("frameborder","0");
-        wrap.appendChild(ifr);
-      }
-    }else{
-      const vid=document.createElement("video");
-      vid.controls=true; vid.playsInline=true;
-      vid.src = withBust(resolveAsset(item.video));
-      wrap.appendChild(vid);
-    }
-    card.appendChild(wrap);
-    sections.appendChild(card);
-  }
-
-  function addFinanceCard(fin){
-    const card=document.createElement('section'); card.className='card fcard';
-    const t=document.createElement('h3'); t.className='ftitle'; t.id='ftitle'; t.textContent = fin.title||'Laporan Keuangan';
-    const canvas=document.createElement('canvas'); canvas.id='finCanvas';
-    card.append(t,canvas); sections.appendChild(card);
-
-    // draw
-    const c=canvas, dpr=window.devicePixelRatio||1, w=c.clientWidth, h= Math.max(220, c.clientHeight||220);
+    const c=canvas, dpr=window.devicePixelRatio||1, w=c.clientWidth, h=Math.max(220,c.clientHeight||220);
     c.width=Math.floor(w*dpr); c.height=Math.floor(h*dpr);
     const ctx=c.getContext('2d'); ctx.scale(dpr,dpr); ctx.clearRect(0,0,w,h);
 
@@ -265,38 +243,68 @@
     labels.forEach((lab,i)=>{
       const v=data[i]||0, bh=v*scale, x=pad+i*(barW+gap), y=baseY-bh;
       ctx.fillStyle="#e8c15a"; ctx.fillRect(x,y,barW,bh);
-
       const labelFont = Math.max(12, Math.round(w/22));
       ctx.fillStyle="#fff"; ctx.font = `${labelFont}px Inter, Arial`; ctx.textAlign="center";
       ctx.fillText(lab, x+barW/2, baseY+14);
-
       const valueFont = Math.max(13, Math.round(w/20));
       ctx.fillStyle="#e8c15a"; ctx.font = `bold ${valueFont}px Inter, Arial`;
       ctx.fillText(formatRupiah(v), x+barW/2, Math.max(14,y-6));
     });
   }
 
-  function addScheduleCard(list){
-    const card=document.createElement('section'); card.className='card scard';
-    const t=document.createElement('h3'); t.className='stitle'; t.textContent='Jadwal Kajian';
-    const ul=document.createElement('div'); ul.className='slist';
-    (list||[]).forEach(it=>{
-      const row=document.createElement('div'); row.className='srow';
-      row.innerHTML=`<div class="time">${it.time||""}</div><div class="topic">${it.topic||""}</div><div class="ust">${it.ustadz||""}</div>`;
-      ul.appendChild(row);
-    });
-    card.append(t,ul); sections.appendChild(card);
+  function buildQuote(it){
+    const card=make('section','card qcard');
+    const h=make('p','qtext'); h.textContent=it.quote||'';
+    const s=make('p','qsrc');  s.textContent=it.source||'';
+    card.append(h,s); add(card,secQuotes);
+  }
+
+  function buildVideo(it){
+    const card=make('section','card');
+    const wrap=make('div','vwrap');
+    if(isYouTubeUrl(it.video||"")){
+      const ex=extractYouTube(it.video);
+      if(ex){
+        const src = `https://www.youtube-nocookie.com/embed/${ex.id}?autoplay=0&mute=0&controls=1&rel=0&playsinline=1&modestbranding=1&iv_load_policy=3&cc_load_policy=1&start=${ex.start||0}`;
+        const ifr=document.createElement("iframe");
+        ifr.src=src; ifr.allow="autoplay; encrypted-media; picture-in-picture"; ifr.setAttribute("frameborder","0");
+        wrap.appendChild(ifr);
+      }
+    }else{
+      const vid=document.createElement("video");
+      vid.controls=true; vid.playsInline=true;
+      vid.src = withBust(resolveAsset(it.video));
+      wrap.appendChild(vid);
+    }
+    card.appendChild(wrap); add(card,secVideos);
+  }
+
+  function buildImage(it){
+    const card=make('section','card');
+    const box=make('div','imgBox');
+    const im=new Image(); im.decoding='async'; im.loading='eager';
+    im.src = withBust(resolveAsset(it.url));
+    im.onerror=()=>{ im.style.background='#0002'; };
+    box.appendChild(im);
+    const cap=make('div','capBox');
+    const h=make('h3','capTitle'); h.textContent=it.title||'';
+    const p=make('p','capDesc');  p.textContent=it.desc||'';
+    cap.append(h,p);
+    card.append(box,cap);
+    add(card,secImages);
   }
 
   /* ===== Ticker ===== */
+  let tickerLooping=false;
   function startTicker(){
+    if(tickerLooping) return; tickerLooping=true;
     const run=()=>{
       tkInner.style.transition="none";
       tkInner.style.transform=`translateX(${window.innerWidth}px)`;
       requestAnimationFrame(()=>{
-        const width=tkInner.getBoundingClientRect().width;
+        const width=tkInner.getBoundingClientRect().width || 0;
         const total=width + window.innerWidth;
-        const dur= total / Math.max(50, tickerSpeed);
+        const dur= total / Math.max(50, tickerSpeed); // px per detik
         tkInner.style.transition=`transform ${dur}s linear`;
         tkInner.style.transform=`translateX(-${width}px)`;
         tkInner.ontransitionend = ()=> setTimeout(run, Math.max(0,tickerPauseSec)*1000);
@@ -339,9 +347,11 @@
     function fmt(d){const hh=String(d.getHours()).padStart(2,"0"),mm=String(d.getMinutes()).padStart(2,"0");return `${hh}:${mm}`;}
     ptEl.innerHTML="";
     order.forEach(k=>{
-      const nm=document.createElement("div"); nm.className="name"; nm.textContent=nameMap[k];
-      const tm=document.createElement("div"); tm.className="time"; tm.textContent=fmt(pTimes[k]);
-      ptEl.append(nm,tm);
+      const row=make('div','prow');
+      const nm=make('div','name'); nm.textContent=nameMap[k];
+      const tm=make('div','time'); tm.textContent=fmt(pTimes[k]);
+      row.append(nm,tm);
+      ptEl.appendChild(row);
     });
   }
   function updateNextHeader(){
@@ -363,25 +373,40 @@
 
   /* ===== Config ===== */
   async function fetchConfig(){ try{ const r=await fetch(configUrl,{cache:'no-store'}); if(!r.ok) return null; return await r.json(); }catch(_){ return null; } }
-  function applyConfig(c){
-    cfg=c||{};
-    sections.innerHTML=""; // rebuild semua
+  function applyConfig(cfg){
+    // Kosongkan container, lalu render dalam urutan yang diminta:
+    clear(secSchedule); clear(secFinance); clear(secQuotes); clear(secVideos); clear(secImages);
 
-    // slides → render sebagai cards berurutan
-    if(Array.isArray(cfg.slides)){
+    // 1) Schedule
+    if(Array.isArray(cfg?.schedule) && cfg.schedule.length){ buildSchedule(cfg.schedule); }
+
+    // 2) Finance
+    if(cfg?.finance){ buildFinance(cfg.finance); }
+
+    // Klasifikasikan slides untuk urutan berikutnya
+    const imgs=[], quotes=[], videos=[];
+    if(Array.isArray(cfg?.slides)){
       cfg.slides.forEach(s=>{
-        if(s.url){ addImageCard({url: withBust(resolveAsset(s.url)), title:s.title||"", desc:s.desc||""}); }
-        else if(s.quote){ addQuoteCard({quote:String(s.quote), source:s.source||""}); }
+        if(s.quote){ quotes.push({quote:String(s.quote), source:s.source||""}); }
         else if(s.video){
           const vv = String(s.video).trim();
-          addVideoCard({video: /^https?:\/\//i.test(vv) ? vv : withBust(resolveAsset(vv))});
+          videos.push({video: /^https?:\/\//i.test(vv) ? vv : withBust(resolveAsset(vv))});
+        }
+        else if(s.url){
+          const uu = String(s.url).trim();
+          imgs.push({url: withBust(resolveAsset(uu)), title:s.title||"", desc:s.desc||""});
         }
       });
     }
 
-    // Finance & Schedule sebagai section terpisah (jika ada)
-    if(cfg.finance){ addFinanceCard(cfg.finance); }
-    if(Array.isArray(cfg.schedule) && cfg.schedule.length){ addScheduleCard(cfg.schedule); }
+    // 3) Quotes
+    quotes.forEach(buildQuote);
+
+    // 4) Videos
+    videos.forEach(buildVideo);
+
+    // 5) Images
+    imgs.forEach(buildImage);
 
     // Ticker
     const t = tickerParam ?? cfg?.ticker;
@@ -407,6 +432,8 @@
       setInterval(async()=>{ const c=await fetchConfig(); if(c) applyConfig(c); }, refreshMin*60*1000);
     }
   })();
+
+  /* YouTube helper is used inside buildVideo */
 })();
 </script>
 </body>
