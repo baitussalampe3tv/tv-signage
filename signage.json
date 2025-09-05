@@ -2,6 +2,11 @@
   "settings": { "overlayRotationSec": 8, "overlayShowSec": 10 },
 
   "slides": [
+    { "url": "images/pembangunan-1.jpg", "title": "Proses Pembangunan Masjid", "desc": "Site Survey", "durationSec": 10 },
+    { "url": "images/pembangunan-2.jpg", "title": "Proses Pembangunan Masjid", "desc": "Presentasi Design", "durationSec": 10 },
+    { "url": "images/pembangunan-3.jpg", "title": "Proses Pembangunan Masjid", "desc": "Tim Pekerja - Barakallahu Fiikum", "durationSec": 10 },
+    { "url": "images/pembangunan-4.jpg", "title": "Proses Pembangunan Masjid", "desc": "Pekerjaan Struktur", "durationSec": 10 },
+    { "url": "images/pembangunan-5.jpg", "title": "Proses Pembangunan Masjid", "desc": "Proses Pengecoran", "durationSec": 10 },
     { "url": "images/peresmian-1.jpg", "title": "Peresmian Masjid", "desc": "28 Juli 2024", "durationSec": 10 },
     { "url": "images/peresmian-3.jpg", "title": "Peresmian Masjid", "desc": "Kumpul Warga 28 Juli 2024", "durationSec": 10 },
     { "url": "images/peresmian-4.jpg", "title": "Masjid Kita hari ini", "desc": "Masjid Baitussalam", "durationSec": 10 },
