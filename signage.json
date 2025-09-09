@@ -1,5 +1,5 @@
 {
-  "settings": { "overlayRotationSec": 15, "overlayShowSec": 10 },
+  "settings": { "overlayRotationSec": 10, "overlayShowSec": 10 },
 
   "slides": [
     { "url": "images/pembangunan-1.jpg", "title": "Proses Pembangunan Masjid", "desc": "Site Survey", "durationSec": 10 },
@@ -18,16 +18,16 @@
     { "url": "images/sholat-idul-adha-6.jpg", "title": "Sholat Idul Adha 2025M/1446H", "desc": "Sambutan Kegiatan Idul Adha", "durationSec": 10 },
 
     { "quote": "“Sebaik-baik kalian adalah yang mempelajari Al-Qur’an dan mengajarkannya.”", "source": "HR. Bukhari", "durationSec": 10 },
-    { "quote": "“Ketika kalian melewati taman‑taman surga, maka singgahlah. Para sahabat bertanya: Wahai Rasulullah, apa taman‑taman surga itu? Rasulullah ﷺ menjawab: Taman‑taman surga itu adalah majelis‑majelis ilmu.”", "source": "HR. At‑Tirmidzi", "durationSec": 15 },
+    { "quote": "“Ketika kalian melewati taman‑taman surga, maka singgahlah. Para sahabat bertanya: Wahai Rasulullah, apa taman‑taman surga itu? Rasulullah ﷺ menjawab: Taman‑taman surga itu adalah majelis‑majelis ilmu.”", "source": "HR. At‑Tirmidzi", "durationSec": 10 },
     
-    { "video": "https://youtu.be/K44VUjxJhWs?si=KgPgK1lR2R8v1UWi", "durationSec": 264}
+    { "video": "https://youtu.be/K44VUjxJhWs?si=KgPgK1lR2R8v1UWi", "durationSec": 250}
   ],
 
   "finance": {
     "title": "Laporan Penerimaan Kotak Amal – Bulan Agustus 2025",
     "labels": ["Pekan ke-2", "Pekan ke-3", "Pekan ke-4", "Pekan ke-5" ],
     "data":   [3458000, 3022000, 2794000, 2846500],
-    "durationSec": 12
+    "durationSec": 10
   },
 
   "schedule": [
@@ -37,7 +37,7 @@
     { "time": "Jumat 12 Sept 2025",             "topic": "Khutbah Jumat",                "ustadz": "Ust. Chamdan Subchi, Lc." }
   ],
 
-  "overlaysOrder": ["video", "finance", "schedule", "quote"],
+  "overlaysOrder": ["video", "schedule", "finance", "quote", "schedule", "quote", "finance"],
 
   "ticker": "Infaq Operasional : BCA Syariah 003 131 0006 a/n Masjid Baitussalam Premier Estate 3 | Khotib Sholat Jum'at 12 Sept bersama Ustadz Chamdan Subchi, Lc. | Shalat berjamaah lebih utama daripada shalat sendirian sebanyak 27 derajat (HR. Bukhari dan Muslim) | Barangsiapa shalat Isya berjamaah, seakan telah shalat separuh malam. Dan barangsiapa shalat Subuh berjamaah, seakan telah shalat sepanjang malam (HR. Muslim)",
   "showTicker": true,
