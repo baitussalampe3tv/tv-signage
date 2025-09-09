@@ -18,6 +18,7 @@
     { "url": "images/sholat-idul-adha-6.jpg", "title": "Sholat Idul Adha 2025M/1446H", "desc": "Sambutan Kegiatan Idul Adha", "durationSec": 10 },
 
     { "quote": "“Sebaik-baik kalian adalah yang mempelajari Al-Qur’an dan mengajarkannya.”", "source": "HR. Bukhari", "durationSec": 10 },
+    { "quote": "“Seandainya kalian bertawakal kepada Allah dengan sebenar-benarnya tawakal, niscaya kalian akan diberi rezeki sebagaimana burung diberi rezeki. Ia pergi pagi hari dalam keadaan lapar, lalu pulang sore hari dalam keadaan kenyang.”", "source": "HR. Tirmidzi", "durationSec": 15 },
     { "quote": "“Ketika kalian melewati taman‑taman surga, maka singgahlah. Para sahabat bertanya: Wahai Rasulullah, apa taman‑taman surga itu? Rasulullah ﷺ menjawab: Taman‑taman surga itu adalah majelis‑majelis ilmu.”", "source": "HR. At‑Tirmidzi", "durationSec": 10 },
     
     { "video": "https://youtu.be/K44VUjxJhWs?si=KgPgK1lR2R8v1UWi", "durationSec": 150}
@@ -37,7 +38,7 @@
     { "time": "Jumat 12 Sept 2025",             "topic": "Khutbah Jumat",                "ustadz": "Ust. Chamdan Subchi, Lc." }
   ],
 
-  "overlaysOrder": ["video", "schedule", "finance", "quote", "schedule", "quote", "finance"],
+  "overlaysOrder": ["schedule", "finance", "video", "quote", "schedule", "quote", "finance", "quote"],
 
   "ticker": "Infaq Operasional : BCA Syariah 003 131 0006 a/n Masjid Baitussalam Premier Estate 3 | Khotib Sholat Jum'at 12 Sept bersama Ustadz Chamdan Subchi, Lc. | Shalat berjamaah lebih utama daripada shalat sendirian sebanyak 27 derajat (HR. Bukhari dan Muslim) | Barangsiapa shalat Isya berjamaah, seakan telah shalat separuh malam. Dan barangsiapa shalat Subuh berjamaah, seakan telah shalat sepanjang malam (HR. Muslim)",
   "showTicker": true,
