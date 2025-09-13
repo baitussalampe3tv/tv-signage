@@ -25,9 +25,9 @@
   ],
 
   "finance": {
-    "title": "Laporan Penerimaan Kotak Amal – Bulan Agustus 2025",
-    "labels": ["Pekan ke-2", "Pekan ke-3", "Pekan ke-4", "Pekan ke-5" ],
-    "data":   [3458000, 3022000, 2794000, 2846500],
+    "title": "Laporan Penerimaan Kotak Amal – Bulan September 2025",
+    "labels": ["Pekan ke-1", "Pekan ke-2" ],
+    "data":   [3758000, 2189500],
     "durationSec": 10
   },
 
@@ -35,13 +35,13 @@
     { "time": "Sabtu Pekan 1&3 - Ba'da Maghrib", "topic": "Kajian Kitab Adabul Mufrad", "ustadz": "Ust. Muhammad Azizan Lc. MSi" },
     { "time": "Ahad Pekan 2&4 - Ba'da Subuh",    "topic": "Kajian Kitab Minhajul Muslim", "ustadz": "Ust. Ibrahim Saleh Lc. MKom" },
     { "time": "Ahad Pekan 2&4 - Ba'da Maghrib",  "topic": "Kajian Sirah Nabawiyyah",      "ustadz": "Ust. Chamdan Subchi, Lc." },
-    { "time": "Jumat 12 Sept 2025",             "topic": "Khutbah Jumat",                "ustadz": "Ust. Chamdan Subchi, Lc." }
+    { "time": "Jumat 19 Sept 2025",             "topic": "Khutbah Jumat",                "ustadz": "Ust. Alfiansyah, Lc." }
   ],
 
   "overlaysOrder": ["schedule", "finance", "video", "quote", "schedule", "quote", "finance", "quote"],
 
-  "ticker": "Infaq Operasional : BCA Syariah 003 131 0006 a/n Masjid Baitussalam Premier Estate 3 | Khotib Sholat Jum'at 12 Sept bersama Ustadz Chamdan Subchi, Lc. | Shalat berjamaah lebih utama daripada shalat sendirian sebanyak 27 derajat (HR. Bukhari dan Muslim) | Barangsiapa shalat Isya berjamaah, seakan telah shalat separuh malam. Dan barangsiapa shalat Subuh berjamaah, seakan telah shalat sepanjang malam (HR. Muslim)",
+  "ticker": "Infaq Operasional : BCA Syariah 003 131 0006 a/n Masjid Baitussalam Premier Estate 3 | Khotib Sholat Jum'at 19 Sept bersama Ustadz Alfiansydah, Lc. | Shalat berjamaah lebih utama daripada shalat sendirian sebanyak 27 derajat (HR. Bukhari dan Muslim) | Barangsiapa shalat Isya berjamaah, seakan telah shalat separuh malam. Dan barangsiapa shalat Subuh berjamaah, seakan telah shalat sepanjang malam (HR. Muslim)",
   "showTicker": true,
 
-  "countdownMinutes": { "Fajr": 20, "Dhuhr": 15, "Asr": 15, "Maghrib": 15, "Isha": 15 }
+  "countdownMinutes": { "Fajr": 21, "Dhuhr": 15, "Asr": 15, "Maghrib": 15, "Isha": 15 }
 }
