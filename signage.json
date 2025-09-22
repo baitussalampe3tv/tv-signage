@@ -26,8 +26,8 @@
 
   "finance": {
     "title": "Laporan Penerimaan Kotak Amal – Bulan September 2025",
-    "labels": ["Pekan ke-1", "Pekan ke-2" ],
-    "data":   [3758000, 2189500],
+    "labels": ["Pekan ke-1", "Pekan ke-2", "Pekan ke-3" ],
+    "data":   [3758000, 2189500, 2523000],
     "durationSec": 10
   },
 
