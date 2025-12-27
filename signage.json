@@ -42,10 +42,10 @@
   },
 
   "schedule": [
-    { "time": "Sabtu Pekan 1&3 - Ba'da Maghrib", "topic": "Kajian Kitab Adabul Mufrad", "ustadz": "Ust. Muhammad Azizan Lc. MSi" },
-    { "time": "Ahad Pekan 2&4 - Ba'da Subuh",    "topic": "Kajian Kitab Minhajul Muslim", "ustadz": "Ust. Ibrahim Saleh Lc. MKom" },
+    { "time": "Sabtu Pekan 1&3 - Ba'da Maghrib", "topic": "Kajian Kitab Adabul Mufrad", "ustadz": "Ust. Muhammad Azizan Lc., MSi" },
+    { "time": "Ahad Pekan 2&4 - Ba'da Subuh",    "topic": "Kajian Kitab Minhajul Muslim", "ustadz": "Ust. Ibrahim Saleh Lc., MKom" },
     { "time": "Ahad Pekan 1&3 - Ba'da Maghrib",  "topic": "Kajian Sirah Nabawiyyah",      "ustadz": "Ust. Chamdan Subchi Lc." },
-    { "time": "Jumat 26 Des 2025",             "topic": "Khutbah Jumat",                "ustadz": "Ust. Alfiansyah Lc." }
+    { "time": "Jumat 2 Jan 2026",             "topic": "Khutbah Jumat",                "ustadz": "Ust. Muhammad Azizan Lc., MSi" }
   ],
 
   "overlaysOrder": ["schedule", "finance", "video", "quote", "schedule", "quote", "finance", "quote"],
