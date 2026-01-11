@@ -37,7 +37,7 @@
   "finance": {
     "title": "Laporan Penerimaan Kotak Amal – Bulan Januari 2026",
     "labels": ["Pekan ke-1, Pekan ke-2"],
-    "data":   ["2527000, 3677000"],
+    "data":   [2527000, 3677000],
     "durationSec": 10
   },
 
