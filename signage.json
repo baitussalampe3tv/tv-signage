@@ -31,13 +31,13 @@
     { "quote": "“Seandainya kalian bertawakal kepada Allah dengan sebenar-benarnya tawakal, niscaya kalian akan diberi rezeki sebagaimana burung diberi rezeki. Ia pergi pagi hari dalam keadaan lapar, lalu pulang sore hari dalam keadaan kenyang.”", "source": "HR. Tirmidzi", "durationSec": 15 },
     { "quote": "“Aku melihat seorang lelaki bersenang-senang di surga karena sebatang pohon yang ia pangkas dari jalan yang mengganggu orang ”", "source": "HR. Muslim", "durationSec": 10 },
     
-    { "video": "https://youtu.be/Dim2y9KS6Vo?si=tbf419ruxH1rM2Y0", "durationSec": 254}
+    { "video": "https://youtu.be/C68V1StKj-I?t=11", "durationSec": 332}
   ],
 
   "finance": {
     "title": "Laporan Penerimaan Kotak Amal – Bulan Januari 2026",
-    "labels": ["Pekan ke-1"],
-    "data":   [2527000],
+    "labels": ["Pekan ke-1, Pekan ke-2"],
+    "data":   [2527000, 3677000],
     "durationSec": 10
   },
 
@@ -45,7 +45,7 @@
     { "time": "Sabtu Pekan 1&3 - Ba'da Maghrib", "topic": "Kajian Kitab Adabul Mufrad", "ustadz": "Ust. Muhammad Azizan Lc., MSi" },
     { "time": "Ahad Pekan 2&4 - Ba'da Subuh",    "topic": "Kajian Kitab Minhajul Muslim", "ustadz": "Ust. Ibrahim Saleh Lc., MKom" },
     { "time": "Ahad Pekan 1&3 - Ba'da Maghrib",  "topic": "Kajian Sirah Nabawiyyah",      "ustadz": "Ust. Chamdan Subchi Lc." },
-    { "time": "Jumat 9 Jan 2026",             "topic": "Khutbah Jumat",                "ustadz": "Ust. Derma Permana Lc." }
+    { "time": "Jumat 16 Jan 2026",             "topic": "Khutbah Jumat",                "ustadz": "Ust. Muhammad Azizan Lc., MSi" }
   ],
 
   "overlaysOrder": ["schedule", "finance", "video", "quote", "schedule", "quote", "finance", "quote"],
