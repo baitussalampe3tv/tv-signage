@@ -2,30 +2,21 @@
   "settings": { "overlayRotationSec": 10, "overlayShowSec": 10 },
 
   "slides": [
-    { "url": "images/kajian-ahad-subuh-1.jpg", "title": "Kajian Ahad Ba'da Subuh", "desc": "Tauhid dan Fiqih", "durationSec": 10 },
-    { "url": "images/tahsin-anak-1.jpg", "title": "TPA Anak", "desc": "Senin - Kamis Ba'da Ashar", "durationSec": 10 },
-    { "url": "images/tahsin-ibu-selasa-1.jpg", "title": "Tahsin Ummahat", "desc": "Rutin Selasa Pagi", "durationSec": 10 }, 
-    { "url": "images/tahsin-remaja-senin-rabu-1.jpg", "title": "Tahsin Remaja Putra", "desc": "Senin Rabu Ba'da Maghrib", "durationSec": 10 },
-    { "url": "images/bhs-arab-sabtu-subuh-1.jpg", "title": "Belajar Bahasa Arab", "desc": "Rutin Sabtu Ba'da Subuh", "durationSec": 10 },
-    { "url": "images/tahsin-anak-2.jpg", "title": "TPA Anak", "desc": "Senin - Kamis Ba'da Ashar", "durationSec": 10 },
-    { "url": "images/tahsin-ibu-kamis-1.jpg", "title": "Tahsin Ummahat", "desc": "Rutin Kamis Pagi", "durationSec": 10 },
-    { "url": "images/tahsin-remaja-selasa-kamis-1.jpg", "title": "Tahsin Remaja Putri", "desc": "Selasa Kamis Ba'da Maghrib", "durationSec": 10 },
-    { "url": "images/bhs-arab-sabtu-subuh-2.jpg", "title": "Belajar Bahasa Arab", "desc": "Sabtu Ba'da Subuh", "durationSec": 10 },
-    { "url": "images/tahsin-anak-3.jpg", "title": "TPA Anak", "desc": "Senin - Kamis Ba'da Ashar", "durationSec": 10 },
-    { "url": "images/tahsin-remaja-senin-rabu-2.jpg", "title": "Tahsin Remaja Putra", "desc": "Senin Rabu Ba'da Maghrib", "durationSec": 10 },
-    { "url": "images/tahsin-ibu-sabtu-1.jpg", "title": "Tahsin Ummahat", "desc": "Rutin Sabtu Pagi", "durationSec": 10 },
+    { "url": "images/tarawih-1.jpg", "title": "Sholat Tarawih", "desc": "Sholat Tarawih setiap Malam Bulan Ramadhan", "durationSec": 10 },
+    { "url": "images/bukber-1.jpg", "title": "Ifthor Bersama", "desc": "Buka Puasa Bersama setiap hari Bulan Ramadhan", "durationSec": 10 },
+    { "url": "images/kultum-1.jpg", "title": "Kultum Sebelum Sholat Tarawih", "desc": "Setiap Sabtu dan Ahad selama Bulan Ramadhan", "durationSec": 10 }, 
+    { "url": "images/tarawih-2.jpg", "title": "Sholat Tarawih", "desc": "Sholat Tarawih setiap Malam Bulan Ramadhan", "durationSec": 10 },
+    { "url": "images/itikaf-1.jpg", "title": "I'tikaf Ramadhan", "desc": "10 Hari Terakhir Bulan Ramadhan", "durationSec": 10 },
+    { "url": "images/qiyamullail-1.jpg", "title": "Qiyamullail I'tikaf Ramadhan", "desc": "10 Hari Terakhir Bulan Ramadhan", "durationSec": 10 },
+    { "url": "images/kajian-1.jpg", "title": "Kajian Anak", "desc": "Kajian Tematik Anak di Bulan Ramadhan", "durationSec": 10 }, 
+    { "url": "images/sahur-1.jpg", "title": "Sahur Bersama selama I'tikaf Ramadhan", "desc": "10 Hari Terakhir Bulan Ramadhan", "durationSec": 10 },
+    { "url": "images/tarawih-3.jpg", "title": "Sholat Tarawih", "desc": "Sholat Tarawih setiap Malam Bulan Ramadhan", "durationSec": 10 },
+    { "url": "images/itikaf-2.jpg", "title": "I'tikaf Ramadhan", "desc": "10 Hari Terakhir Bulan Ramadhan", "durationSec": 10 },
+    { "url": "images/kultum-2.jpg", "title": "Kultum Sebelum Sholat Tarawih", "desc": "Setiap Sabtu dan Ahad selama Bulan Ramadhan", "durationSec": 10 },
+    { "url": "images/kultum-3.jpg", "title": "Kultum Sebelum Sholat Tarawih", "desc": "Setiap Sabtu dan Ahad selama Bulan Ramadhan", "durationSec": 10 },
     { "url": "images/sholat-idul-fitri-2.jpg", "title": "Sholat Idul Fitri 2025M/1446H", "desc": "Khutbah Ied", "durationSec": 10 },
-    { "url": "images/tahsin-remaja-senin-rabu-2.jpg", "title": "Tahsin Remaja Putra", "desc": "Senin Rabu Ba'da Maghrib", "durationSec": 10 },
     { "url": "images/sholat-idul-fitri-3.jpg", "title": "Sholat Idul Fitri 2025M/1446H", "desc": "Jama'ah di Lantai 1 (Ruang Utama)", "durationSec": 10 },
-    { "url": "images/kajian-ahad-subuh-2.jpg", "title": "Kajian Ahad Ba'da Subuh", "desc": "Tauhid dan Fiqih", "durationSec": 10 },
     { "url": "images/sholat-idul-fitri-1.jpg", "title": "Sholat Idul Fitri 2025M/1446H", "desc": "Jamaah Ibu Ibu", "durationSec": 10 },
-    { "url": "images/tahsin-remaja-senin-rabu-3.jpg", "title": "Tahsin Remaja Putra", "desc": "Senin Rabu Ba'da Maghrib", "durationSec": 10 },
-    { "url": "images/tahsin-remaja-senin-rabu-4.jpg", "title": "Tahsin Remaja Putra", "desc": "Senin Rabu Ba'da Maghrib", "durationSec": 10 },
-    { "url": "images/sholat-idul-adha-2.jpg", "title": "Sholat Idul Adha 2025M/1446H", "desc": "Khutbah Ied", "durationSec": 10 },
-    { "url": "images/tahsin-anak-3.jpg", "title": "TPA Anak", "desc": "Senin - Kamis Ba'da Ashar", "durationSec": 10 },
-    { "url": "images/sholat-idul-adha-5.jpg", "title": "Sholat Idul Adha 2025M/1446H", "desc": "Jamaah Bapak Bapak", "durationSec": 10 },
-    { "url": "images/tahsin-anak-4.jpg", "title": "TPA Anak", "desc": "Senin - Kamis Ba'da Ashar", "durationSec": 10 },
-    { "url": "images/sholat-idul-adha-6.jpg", "title": "Sholat Idul Adha 2025M/1446H", "desc": "Sambutan Kegiatan Idul Adha", "durationSec": 10 },
 
     { "quote": "“Sebaik-baik kalian adalah yang mempelajari Al-Qur’an dan mengajarkannya.”", "source": "HR. Bukhari", "durationSec": 10 },
     { "quote": "“Seandainya kalian bertawakal kepada Allah dengan sebenar-benarnya tawakal, niscaya kalian akan diberi rezeki sebagaimana burung diberi rezeki. Ia pergi pagi hari dalam keadaan lapar, lalu pulang sore hari dalam keadaan kenyang.”", "source": "HR. Tirmidzi", "durationSec": 15 },
@@ -35,9 +26,9 @@
   ],
 
   "finance": {
-    "title": "Laporan Penerimaan Kotak Amal – Bulan Januari 2026",
-    "labels": ["Pekan ke-1", "Pekan ke-2", "Pekan ke-3", "Pekan ke-4"],
-    "data":   [2527000, 3677000, 4368000, 2810500],
+    "title": "Laporan Penerimaan Kotak Amal – Bulan Februari 2026",
+    "labels": ["Pekan ke-1"],
+    "data":   [3916500],
     "durationSec": 10
   },
 
@@ -45,7 +36,7 @@
     { "time": "Sabtu Pekan 1&3 - Ba'da Maghrib", "topic": "Kajian Kitab Adabul Mufrad", "ustadz": "Ust. Muhammad Azizan Lc., MSi" },
     { "time": "Ahad Pekan 2&4 - Ba'da Subuh",    "topic": "Kajian Kitab Minhajul Muslim", "ustadz": "Ust. Ibrahim Saleh Lc., MKom" },
     { "time": "Ahad Pekan 1&3 - Ba'da Maghrib",  "topic": "Kajian Sirah Nabawiyyah",      "ustadz": "Ust. Chamdan Subchi Lc." },
-    { "time": "Jumat 30 Jan 2026",             "topic": "Khutbah Jumat",                "ustadz": "Ust. Dede Kurniawan Lc." }
+    { "time": "Ahad 22 Feb 2026",             "topic": "Kajian Anak",                "ustadz": "Ust. Raihan Sapda Akbar" }
   ],
 
   "overlaysOrder": ["schedule", "finance", "video", "quote", "schedule", "quote", "finance", "quote"],
