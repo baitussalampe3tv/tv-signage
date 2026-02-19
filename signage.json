@@ -22,20 +22,21 @@
     { "quote": "“Seandainya kalian bertawakal kepada Allah dengan sebenar-benarnya tawakal, niscaya kalian akan diberi rezeki sebagaimana burung diberi rezeki. Ia pergi pagi hari dalam keadaan lapar, lalu pulang sore hari dalam keadaan kenyang.”", "source": "HR. Tirmidzi", "durationSec": 15 },
     { "quote": "“Aku melihat seorang lelaki bersenang-senang di surga karena sebatang pohon yang ia pangkas dari jalan yang mengganggu orang ”", "source": "HR. Muslim", "durationSec": 10 },
     
-    { "video": "https://youtu.be/C68V1StKj-I?t=11", "durationSec": 332}
+    { "video": "https://youtu.be/TVMwxRw4pps?si=QEl-Wl3G86R1x1li?t=18", "durationSec": 72}
   ],
 
   "finance": {
-    "title": "Laporan Penerimaan Kotak Amal – Bulan Februari 2026",
-    "labels": ["Pekan ke-1"],
-    "data":   [3916500],
+    "title": "Laporan Penerimaan Infaq Ramadhan 1447H",
+    "labels": ["Hari ke-1 Ramadhan"],
+    "data":   [29450000],
     "durationSec": 10
   },
 
   "schedule": [
-    { "time": "Sabtu Pekan 1&3 - Ba'da Maghrib", "topic": "Kajian Kitab Adabul Mufrad", "ustadz": "Ust. Muhammad Azizan Lc., MSi" },
-    { "time": "Ahad Pekan 2&4 - Ba'da Subuh",    "topic": "Kajian Kitab Minhajul Muslim", "ustadz": "Ust. Ibrahim Saleh Lc., MKom" },
-    { "time": "Ahad Pekan 1&3 - Ba'da Maghrib",  "topic": "Kajian Sirah Nabawiyyah",      "ustadz": "Ust. Chamdan Subchi Lc." },
+    { "time": "Malam ke 1-6", "topic": "Imam Sholat Tarawih", "ustadz": "Ust. Faturrizqan, BA" },
+    { "time": "Malam ke 7-9",    "topic": "Imam Sholat Tarawih", "ustadz": "Ust. Muhammad Ramadhani Majid" },
+    { "time": "Sabtu 21 Feb 2026",  "topic": "Kultum Tarawih",      "ustadz": "Ust. Muhammad Azizan, Lc., MSi" },
+    { "time": "Ahad 22 Feb 2026",  "topic": "Kultum Tarawih",      "ustadz": "Ust. Ibrahim Saleh, Lc., M.Kom" },
     { "time": "Ahad 22 Feb 2026",             "topic": "Kajian Anak",                "ustadz": "Ust. Raihan Sapda Akbar" }
   ],
 
