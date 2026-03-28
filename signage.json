@@ -26,18 +26,17 @@
   ],
 
   "finance": {
-    "title": "Laporan Penerimaan Infaq Ramadhan 1447H",
-    "labels": ["Hari ke-1 Ramadhan"],
-    "data":   [29450000],
+    "title": "Laporan Penerimaan Infaq Ramadhan dan Sholat Idul Fitri 1447H",
+    "labels": ["Infaq Ramadhan","Infaq Sholat Idul Fitri","Kotak Amal Pekan ke-2:8-14 Mar","Kotak Amal Pekan ke-3:15-20 Mar"],
+    "data":   [101489000,8650000,5915300,5156000],
     "durationSec": 10
   },
 
   "schedule": [
-    { "time": "Malam ke 1-6", "topic": "Imam Sholat Tarawih", "ustadz": "Ust. Faturrizqan, BA" },
-    { "time": "Malam ke 7-9",    "topic": "Imam Sholat Tarawih", "ustadz": "Ust. Muhammad Ramadhani Majid" },
-    { "time": "Sabtu 21 Feb 2026",  "topic": "Kultum Tarawih",      "ustadz": "Ust. Muhammad Azizan, Lc., MSi" },
-    { "time": "Ahad 22 Feb 2026",  "topic": "Kultum Tarawih",      "ustadz": "Ust. Ibrahim Saleh, Lc., M.Kom" },
-    { "time": "Ahad 22 Feb 2026",             "topic": "Kajian Anak",                "ustadz": "Ust. Raihan Sapda Akbar" }
+    { "time": "Ahad 29 Mar 2026", "topic": "Membangun Keluarga Surgawi", "ustadz": "Ust. Muhammad Azizan, Lc., MSi" },
+    { "time": "Ahad Ba'da Subuh - Pekan 1 & 3",    "topic": "Kajian Minhajul Muslim", "ustadz": "Ust. Ibrahim Saleh, Lc., M.Kom" },
+    { "time": "Sabtu Ba'da Maghrib - Pekan 2 & 4",  "topic": "Kajian Adabul Mufrad",      "ustadz": "Ust. Muhammad Azizan, Lc., MSi" },
+    { "time": "Jum'at 3 Apr 2026",  "topic": "Khutbah Jum'at",      "ustadz": "Ust. Dede Kurniawan, Lc." }
   ],
 
   "overlaysOrder": ["schedule", "finance", "video", "quote", "schedule", "quote", "finance", "quote"],
