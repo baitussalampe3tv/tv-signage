@@ -5,9 +5,9 @@
     { "url": "images/qurban-1.jpg", "title": "Kegiatan Qurban", "desc": "Pemotongan Qurban bersama warga di Masjid Baitussalam PE3", "durationSec": 10 },
     { "url": "images/qurban-2.jpg", "title": "Kegiatan Qurban", "desc": "Pemotongan Qurban bersama warga di Masjid Baitussalam PE3", "durationSec": 10 },
     { "url": "images/qurban-3.jpg", "title": "Kegiatan Qurban", "desc": "Pemotongan Qurban bersama warga di Masjid Baitussalam PE3", "durationSec": 10 }, 
-    { "url": "images/sholat-idul-adha-1.jpg", "title": "Sholat Idul Fitri 2025M/1446H", "desc": "Sholat Ied", "durationSec": 10 },
-    { "url": "images/sholat-idul-adha-2.jpg", "title": "Sholat Idul Fitri 2025M/1446H", "desc": "Sholat Ied", "durationSec": 10 },
-    { "url": "images/sholat-idul-adha-3.jpg", "title": "Sholat Idul Fitri 2025M/1446H", "desc": "Sholat Ied", "durationSec": 10 },
+    { "url": "images/sholat-idul-adha-1.jpg", "title": "Sholat Idul Adha 2025M/1446H", "desc": "Sholat Ied", "durationSec": 10 },
+    { "url": "images/sholat-idul-adha-2.jpg", "title": "Sholat Idul Adha 2025M/1446H", "desc": "Sholat Ied", "durationSec": 10 },
+    { "url": "images/sholat-idul-adha-3.jpg", "title": "Sholat Idul Adha 2025M/1446H", "desc": "Sholat Ied", "durationSec": 10 },
 
     { "quote": "“Dari Aisyah, Rasulullah ﷺ bersabda: Tidak ada amalan anak Adam pada hari Nahr (Idul Adha) yang lebih dicintai Allah selain menyembelih hewan qurban. Sesungguhnya hewan qurban itu akan datang pada hari kiamat dengan tanduk, bulu, dan kukunya. Dan sesungguhnya darah qurban itu telah sampai kepada Allah sebelum jatuh ke tanah, maka ikhlaskanlah qurban itu.”", "source": "HR. Jami` at-Tirmidhi no. 1493, Ibnu Majah", "durationSec": 10 },
     { "quote": "“Dari Anas bin Malik: Nabi ﷺ berqurban dengan dua ekor kambing kibas yang putih dan bertanduk. Beliau menyembelih sendiri dengan tangan beliau, membaca basmalah dan bertakbir.”", "source": "HR. Sahih al-Bukhari dan Sahih Muslim", "durationSec": 15 },
@@ -30,7 +30,7 @@
 
   "overlaysOrder": ["schedule", "finance", "video", "quote", "schedule", "quote", "finance", "quote"],
 
-  "ticker": "Infaq Operasional : BCA Syariah 003 131 0006 a/n Masjid Baitussalam Premier Estate 3 | Shalat berjamaah lebih utama daripada shalat sendirian sebanyak 27 derajat (HR. Bukhari dan Muslim) | Barangsiapa shalat Isya berjamaah, seakan telah shalat separuh malam. Dan barangsiapa shalat Subuh berjamaah, seakan telah shalat sepanjang malam (HR. Muslim)",
+  "ticker": "Infaq Operasional : BCA Syariah 003 131 0006 a/n Masjid Baitussalam Premier Estate 3 | Shalat berjamaah lebih utama daripada shalat sendirian sebanyak 27 derajat (HR. Bukhari dan Muslim) | Dari Aisyah, Rasulullah ﷺ bersabda: Tidak ada amalan anak Adam pada hari Nahr (Idul Adha) yang lebih dicintai Allah selain menyembelih hewan qurban. Sesungguhnya hewan qurban itu akan datang pada hari kiamat dengan tanduk, bulu, dan kukunya. Dan sesungguhnya darah qurban itu telah sampai kepada Allah sebelum jatuh ke tanah, maka ikhlaskanlah qurban itu.",
   "showTicker": true,
 
   "countdownMinutes": { "Fajr": 18, "Dhuhr": 13, "Asr": 14, "Maghrib": 15, "Isha": 14 }
